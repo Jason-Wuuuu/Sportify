@@ -20,7 +20,11 @@ const create = async (sportID, address, description, capacity, price) => {
   return await get(newId.toString());
 };
 
-const getAll = async () => {};
+const getAll = async () => {
+  const sportPlaceCollection = await sportPlaces();
+  const sportPlaceList = await sportPlaceCollection.find({}).toArray();
+  return sportPlaceList;
+};
 
 const get = async (sportPlaceID) => {
   sportPlaceID = validation.checkId(sportPlaceID);
@@ -32,7 +36,17 @@ const get = async (sportPlaceID) => {
   return sportPlace;
 };
 
-const remove = async (sportPlaceID) => {};
+const remove = async (sportPlaceID) => {
+  sportPlaceID = validation.checkId(sportPlaceID);
+  const sportPlaceCollection = await sportPlaces();
+  const deletionInfo = await sportPlaceCollection.findOneAndDelete({
+    _id: new ObjectId(sportPlaceID),
+  });
+  if (deletionInfo.lastErrorObject.n === 0)
+    throw [404, `Error: Could not delete user with id of ${sportPlaceID}`];
+
+  return { ...deletionInfo.value, deleted: true };
+};
 
 const update = async (
   sportPlaceID,
@@ -45,4 +59,4 @@ const update = async (
 
 // const getAllUsers = async (sportPlaceID) => {};
 
-export { create, getAll, get };
+export { create, getAll, get, remove, update };
