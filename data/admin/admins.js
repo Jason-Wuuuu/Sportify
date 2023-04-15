@@ -49,7 +49,17 @@ const get = async (adminID) => {
   return admin;
 };
 
-const remove = async (adminID) => {};
+const remove = async (adminID) => {
+  adminID = validation.checkId(adminID);
+  const adminCollection = await admins();
+  const deletionInfo = await adminCollection.findOneAndDelete({
+    _id: new ObjectId(adminID),
+  });
+  if (deletionInfo.lastErrorObject.n === 0)
+    throw [404, `Error: Could not delete user with id of ${adminID}`];
+
+  return { ...deletionInfo.value, deleted: true };
+};
 
 const update = async (
   adminID,

@@ -14,7 +14,11 @@ const create = async (name) => {
   return await get(newId.toString());
 };
 
-const getAll = async () => {};
+const getAll = async () => {
+  const sportCollection = await sports();
+  const sportList = await sportCollection.find({}).toArray();
+  return sportList;
+};
 
 const get = async (sportID) => {
   sportID = validation.checkId(sportID);
@@ -24,8 +28,38 @@ const get = async (sportID) => {
   return sport;
 };
 
-const remove = async (sportID) => {};
+const remove = async (sportID) => {
+  sportID = validation.checkId(sportID);
+  const sportCollection = await sports();
+  const deletionInfo = await sportCollection.findOneAndDelete({
+    _id: new ObjectId(sportID),
+  });
+  if (deletionInfo.lastErrorObject.n === 0)
+    throw [404, `Error: Could not delete user with id of ${sportID}`];
 
-const update = async (sportID, name) => {};
+  return { ...deletionInfo.value, deleted: true };
+};
 
-export { create, getAll, get };
+const update = async (sportID, name) => {
+  sportID = validation.checkId(sportID);
+  name = validation.checkString(name, "name");
+
+  const sportUpdateInfo = {
+    name: name,
+  };
+  const sportCollection = await sports();
+  const updateInfo = await sportCollection.findOneAndUpdate(
+    { _id: new ObjectId(sportID) },
+    { $set: sportUpdateInfo },
+    { returnDocument: "after" }
+  );
+  if (updateInfo.lastErrorObject.n === 0)
+    throw [
+      404,
+      `Error: Update failed, could not find a user with id of ${sportID}`,
+    ];
+
+  return await updateInfo.value;
+};
+
+export { create, getAll, get, remove, update };
