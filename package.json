@@ -1,0 +1,19 @@
+{
+  "name": "sportify",
+  "version": "1.0.0",
+  "description": "CS546_C_Final_Project_Group38",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "node seed.js",
+    "start": "node app.js"
+  },
+  "author": "Khyati Visavadiya, Dev Gupta, Chia-Hsiang Wu, Dhruv Parmar",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-handlebars": "^7.0.6",
+    "mongodb": "^5.2.0"
+  }
+}
