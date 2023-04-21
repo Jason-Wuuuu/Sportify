@@ -3,9 +3,10 @@ import { ObjectId } from "mongodb";
 import validation from "./helpers.js";
 
 //
-const create = async (sportID, address, description, capacity, price) => {
+const create = async (name, sport, address, description, capacity, price) => {
   let newSportPlace = {
-    sportID: sportID,
+    name: name,
+    sport: sport,
     address: address,
     description: description,
     capacity: capacity,
@@ -50,7 +51,7 @@ const remove = async (sportPlaceID) => {
 
 const update = async (
   sportPlaceID,
-  sportID,
+  sport,
   address,
   description,
   capacity,
