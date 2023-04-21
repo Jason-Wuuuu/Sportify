@@ -9,70 +9,161 @@ const router = Router();
 
 // http://localhost:3000/admin/
 router
-  .route("/")
+  .route("/register")
   .get(async (req, res) => {
-    try {
-      const adminList = await adminData.getAll();
-      res.json(adminList);
-    } catch (e) {
-      res.status(500).json({ error: e });
-    }
+    return res.render("admin/register", { title: "Register" });
   })
   .post(async (req, res) => {
     let adminInfo = req.body;
-    if (!adminInfo || Object.keys(adminInfo).length === 0) {
-      return res
-        .status(400)
-        .json({ error: "There are no fields in the request body" });
-    }
 
     try {
-      adminInfo.firstName = validation.checkString(
-        adminInfo.firstName,
+      adminInfo.firstNameInput = validation.checkString(
+        adminInfo.firstNameInput,
         "First Name"
       );
-      adminInfo.lastName = validation.checkString(
-        adminInfo.lastName,
+      adminInfo.lastNameInput = validation.checkString(
+        adminInfo.lastNameInput,
         "Last Name"
       );
-      adminInfo.email = validation.checkString(adminInfo.email, "email");
-      adminInfo.gender = validation.checkString(adminInfo.gender, "gender");
-      adminInfo.dateOfBirth = validation.checkString(
-        adminInfo.dateOfBirth,
-        "dateOfBirth"
+      adminInfo.emailInput = validation.checkString(
+        adminInfo.emailInput,
+        "Email"
       );
-      adminInfo.contactNumber = validation.checkString(
-        adminInfo.contactNumber,
-        "contactNumber"
+      adminInfo.dateOfBirthInput = validation.checkString(
+        adminInfo.dateOfBirthInput,
+        "Date Of Birth"
+      );
+      adminInfo.contactNumberInput = validation.checkString(
+        adminInfo.contactNumberInput,
+        "Contact Number"
+      );
+      adminInfo.genderInput = validation.checkString(
+        adminInfo.genderInput,
+        "Gender"
+      );
+      adminInfo.passwordInput = validation.checkString(
+        adminInfo.passwordInput,
+        "Password"
       );
     } catch (e) {
-      return res.status(400).json({ error: e });
+      return res.status(400).render("admin/register", {
+        title: "Register",
+        hidden: "",
+        error: e,
+        firstName: adminInfo.firstNameInput,
+        lastName: adminInfo.lastNameInput,
+        email: adminInfo.emailInput,
+        dateOfBirth: adminInfo.dateOfBirth,
+        contactNumber: adminInfo.contactNumber,
+        gender: adminInfo.gender,
+        password: adminInfo.passwordInput,
+      });
     }
 
     try {
       const newAdmin = await adminData.create(
-        adminInfo.firstName,
-        adminInfo.lastName,
-        adminInfo.email,
-        adminInfo.gender,
-        adminInfo.dateOfBirth,
-        adminInfo.contactNumber
+        adminInfo.firstNameInput,
+        adminInfo.lastNameInput,
+        adminInfo.emailInput,
+        adminInfo.genderInput,
+        adminInfo.dateOfBirthInput,
+        adminInfo.contactNumberInput,
+        adminInfo.passwordInput
       );
-      res.json(newAdmin);
+      if (!newAdmin.insertedAdmin) throw "Internal Server Error";
+      return res.redirect("login");
     } catch (e) {
       res.sendStatus(500);
     }
   });
 
 router
+  .route("/login")
+  .get(async (req, res) => {
+    //code here for GET
+    return res.render("admin/login", { title: "Login" });
+  })
+  .post(async (req, res) => {
+    const admin = req.body;
+
+    // input checking
+    try {
+      admin.emailAddressInput = validation.checkString(
+        admin.emailAddressInput,
+        "Email Address"
+      );
+
+      admin.passwordInput = validation.checkString(
+        admin.passwordInput,
+        "Password"
+      );
+    } catch (error) {
+      return res.status(400).render("admin/login", { title: "Login" });
+    }
+    try {
+      const { emailAddressInput, passwordInput } = admin;
+      const validAdmin = await adminData.check(
+        emailAddressInput,
+        passwordInput
+      );
+
+      req.session.admin = validAdmin;
+      return res.redirect("home");
+    } catch (e) {
+      return res.status(400).render("admin/login", {
+        title: "Login",
+        hidden: "",
+        error: e,
+        firstName: admin.firstName,
+      });
+    }
+  });
+
+router.route("/logout").get(async (req, res) => {
+  //code here for GET
+  req.session.destroy();
+  return res.render("admin/logout", { title: "Logout" });
+});
+
+router.route("/home").get(async (req, res) => {
+  const admin = req.session.admin;
+  if (admin) {
+    return res.render("admin/home", {
+      title: "Home",
+      authenticated: true,
+      firstName: admin.firstName,
+      adminID: admin.adminID,
+    });
+  } else {
+    return res.render("admin/home", {
+      title: "Home",
+      authenticated: false,
+    });
+  }
+});
+
+router
   .route("/classes")
   .get(async (req, res) => {
-    try {
-      const classList = await classData.getAll();
-      res.json(classList);
-    } catch (e) {
-      res.status(500).json({ error: e });
-    }
+    const sportList = await sportData.getAll();
+    const sports = sportList.map((sport) => sport.name);
+
+    const sportPlacetList = await sportPlaceData.getAll();
+    const sportPlaces = sportPlacetList.map((sportPlace) => sportPlace.name);
+
+    const classList = await classData.getAll();
+    const classes = classList.map((class_) =>
+      Object({
+        classID: class_._id,
+        className: class_.title,
+      })
+    );
+    return res.render("admin/classes", {
+      title: "Classes",
+      sports: sports,
+      sportPlaces: sportPlaces,
+      classes: classes,
+    });
   })
   .post(async (req, res) => {
     let classInfo = req.body;
@@ -86,14 +177,14 @@ router
 
     try {
       const newClass = await classData.create(
-        classInfo.title,
-        classInfo.sportID,
-        classInfo.sportPlaceID,
-        classInfo.capacity,
-        classInfo.instructor,
-        classInfo.time
+        classInfo.titleInput,
+        classInfo.sportInput,
+        classInfo.sportPlaceInput,
+        classInfo.capacityInput,
+        classInfo.instructorInput,
+        classInfo.timeInput
       );
-      res.json(newClass);
+      return res.redirect("classes");
     } catch (e) {
       res.sendStatus(500);
     }
@@ -102,12 +193,14 @@ router
 router
   .route("/sports")
   .get(async (req, res) => {
-    try {
-      const sportList = await sportData.getAll();
-      res.json(sportList);
-    } catch (e) {
-      res.status(500).json({ error: e });
-    }
+    const sportList = await sportData.getAll();
+    const sports = sportList.map((sport) =>
+      Object({
+        sportID: sport._id,
+        sportName: sport.name,
+      })
+    );
+    return res.render("admin/sports", { title: "Sports", sports: sports });
   })
   .post(async (req, res) => {
     let sportInfo = req.body;
@@ -120,8 +213,8 @@ router
     // validation
 
     try {
-      const newSport = await sportData.create(sportInfo.name);
-      res.json(newSport);
+      const newSport = await sportData.create(sportInfo.nameInput);
+      return res.redirect("sports");
     } catch (e) {
       res.sendStatus(500);
     }
@@ -130,12 +223,22 @@ router
 router
   .route("/sportPlaces")
   .get(async (req, res) => {
-    try {
-      const sportPlaceList = await sportPlaceData.getAll();
-      res.json(sportPlaceList);
-    } catch (e) {
-      res.status(500).json({ error: e });
-    }
+    const sportList = await sportData.getAll();
+    const sports = sportList.map((sport) => sport.name);
+
+    const sportPlacetList = await sportPlaceData.getAll();
+    const sportPlaces = sportPlacetList.map((sportPlace) =>
+      Object({
+        sportPlaceID: sportPlace._id,
+        sportPlaceName: sportPlace.name,
+      })
+    );
+
+    return res.render("admin/sportPlaces", {
+      title: "Sport Places",
+      sports: sports,
+      sportPlaces: sportPlaces,
+    });
   })
   .post(async (req, res) => {
     let sportPlaceInfo = req.body;
@@ -149,13 +252,14 @@ router
 
     try {
       const newSportPlace = await sportPlaceData.create(
-        sportPlaceInfo.sportID,
-        sportPlaceInfo.address,
-        sportPlaceInfo.description,
-        sportPlaceInfo.capacity,
-        sportPlaceInfo.price
+        sportPlaceInfo.nameInput,
+        sportPlaceInfo.sportInput,
+        sportPlaceInfo.addressInput,
+        sportPlaceInfo.descriptionInput,
+        sportPlaceInfo.capacityInput,
+        sportPlaceInfo.priceInput
       );
-      res.json(newSportPlace);
+      return res.redirect("sportPlaces");
     } catch (e) {
       res.sendStatus(500);
     }
@@ -172,7 +276,15 @@ router
     }
     try {
       let admin = await adminData.get(req.params.id);
-      res.json(admin);
+      return res.render("admin/profile", {
+        title: "Profile",
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+        email: admin.email,
+        gender: admin.gender,
+        dateOfBirth: admin.dateOfBirth,
+        contactNumber: admin.contactNumber,
+      });
     } catch (e) {
       res.status(404).json({ error: "Admin not found" });
     }
@@ -208,7 +320,14 @@ router.route("/classes/:id").get(async (req, res) => {
   }
   try {
     let foundClass = await classData.get(req.params.id);
-    res.json(foundClass);
+    return res.render("admin/classInfo", {
+      title: foundClass.title,
+      sport: foundClass.sport,
+      sportPlace: foundClass.sportPlace,
+      capacity: foundClass.capacity,
+      instructor: foundClass.instructor,
+      time: foundClass.time,
+    });
   } catch (e) {
     res.status(404).json({ error: "Class not found" });
   }
@@ -222,7 +341,7 @@ router.route("/sports/:id").get(async (req, res) => {
   }
   try {
     let sport = await sportData.get(req.params.id);
-    res.json(sport);
+    return res.render("admin/sportInfo", { title: sport.name });
   } catch (e) {
     res.status(404).json({ error: "Sport not found" });
   }
@@ -236,7 +355,14 @@ router.route("/sportPlaces/:id").get(async (req, res) => {
   }
   try {
     let sportPlace = await sportPlaceData.get(req.params.id);
-    res.json(sportPlace);
+    return res.render("admin/sportPlaceInfo", {
+      title: sportPlace.name,
+      sport: sportPlace.sport,
+      address: sportPlace.address,
+      description: sportPlace.description,
+      capacity: sportPlace.capacity,
+      price: sportPlace.price,
+    });
   } catch (e) {
     res.status(404).json({ error: "Sport Place not found" });
   }

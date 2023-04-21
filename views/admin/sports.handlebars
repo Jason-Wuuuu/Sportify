@@ -1,0 +1,24 @@
+{{!--
+
+login form handlebar template
+
+--}}
+
+<h1>{{title}}</h1>
+
+<form action="/admin/sports" method="post" id="sport-form">
+    <label for="nameInput">Name:</label>
+    <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
+
+    <input type="submit" value="Submit" />
+</form>
+
+<div id="sportList">
+    <ul>
+        {{#each sports}}
+        <li><a href="/admin/sports/{{sportID}}">{{sportName}}</a></li>
+        {{/each}}
+    </ul>
+</div>
+
+<a href="/admin/home">home</a>

@@ -1,5 +1,6 @@
 import express from "express";
 const app = express();
+import session from "express-session";
 import configRoutes from "./routes/index.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -21,6 +22,15 @@ const rewriteUnsupportedBrowserMethods = (req, res, next) => {
   // let the next middleware run:
   next();
 };
+
+app.use(
+  session({
+    name: "AuthCookie",
+    secret: "some secret string!",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
 app.use("/public", staticDir);
 app.use(express.json());

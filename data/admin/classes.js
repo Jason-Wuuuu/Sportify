@@ -5,8 +5,8 @@ import validation from "./helpers.js";
 //
 const create = async (
   title,
-  sportID,
-  sportPlaceID,
+  sport,
+  sportPlace,
   capacity,
   instructor,
   time
@@ -14,8 +14,8 @@ const create = async (
 ) => {
   let newClass = {
     title: title,
-    sportID: sportID,
-    sportPlaceID: sportPlaceID,
+    sport: sport,
+    sportPlace: sportPlace,
     capacity: capacity,
     instructor: instructor,
     time: time,
@@ -58,8 +58,8 @@ const remove = async (classID) => {
 const update = async (
   classID,
   title,
-  sportID,
-  sportPlaceID,
+  sport,
+  sportPlace,
   capacity,
   instructor,
   time
