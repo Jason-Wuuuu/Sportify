@@ -1,3 +1,4 @@
+import * as user from "./data/user/users.js";
 import * as admin from "./data/admin/admins.js";
 import * as sports from "./data/admin/sports.js";
 import * as classes from "./data/admin/classes.js";
@@ -12,6 +13,23 @@ const number_of_data = 10;
 
 // add valid data
 for (let i = 0; i < number_of_data; i++) {
+  try {
+    let gender = "Male";
+    if (i % 2 == 0) gender = "Female";
+    const newUser = await user.create(
+      `User_0${i}_FN`,
+      `User_0${i}_LN`,
+      `user_0${i}@stevens.edu`,
+      gender,
+      `03-0${i}-1995`,
+      `123-456-789${i}`,
+      `password${i}`
+    );
+    // console.log(newAdmin);
+  } catch (e) {
+    console.log(e);
+  }
+
   try {
     let gender = "Male";
     if (i % 2 == 0) gender = "Female";
@@ -69,6 +87,7 @@ for (let i = 0; i < number_of_data; i++) {
   }
 }
 
+console.log(`${number_of_data} new valid users added.`);
 console.log(`${number_of_data} new valid admins added.`);
 console.log(`${number_of_data} new valid sports added.`);
 console.log(`${number_of_data} new valid sport places added.`);
