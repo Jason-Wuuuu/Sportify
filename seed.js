@@ -13,15 +13,16 @@ const number_of_data = 10;
 // add valid data
 for (let i = 0; i < number_of_data; i++) {
   try {
-    let gender = "M";
-    if (i % 2 == 0) gender = "F";
+    let gender = "Male";
+    if (i % 2 == 0) gender = "Female";
     const newAdmin = await admin.create(
       `Admin_0${i}_FN`,
       `Admin_0${i}_LN`,
-      `admin_0${i}@gmail.com`,
+      `admin_0${i}@stevens.edu`,
       gender,
       `03-0${i}-1995`,
-      `123-456-789${i}`
+      `123-456-789${i}`,
+      `$2b$10$hk7Auz8yNLUy2sQioMENvOmeoMZmMsfxuEIhvy.NFkh14qJH3ZEp${i}`
     );
     // console.log(newAdmin);
   } catch (e) {

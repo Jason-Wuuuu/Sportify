@@ -9,70 +9,132 @@ const router = Router();
 
 // http://localhost:3000/admin/
 router
-  .route("/")
+  .route("/register")
   .get(async (req, res) => {
-    try {
-      const adminList = await adminData.getAll();
-      res.json(adminList);
-    } catch (e) {
-      res.status(500).json({ error: e });
-    }
+    return res.render("admin/register", { title: "Register" });
   })
   .post(async (req, res) => {
     let adminInfo = req.body;
-    if (!adminInfo || Object.keys(adminInfo).length === 0) {
-      return res
-        .status(400)
-        .json({ error: "There are no fields in the request body" });
-    }
 
     try {
-      adminInfo.firstName = validation.checkString(
-        adminInfo.firstName,
+      adminInfo.firstNameInput = validation.checkString(
+        adminInfo.firstNameInput,
         "First Name"
       );
-      adminInfo.lastName = validation.checkString(
-        adminInfo.lastName,
+      adminInfo.lastNameInput = validation.checkString(
+        adminInfo.lastNameInput,
         "Last Name"
       );
-      adminInfo.email = validation.checkString(adminInfo.email, "email");
-      adminInfo.gender = validation.checkString(adminInfo.gender, "gender");
-      adminInfo.dateOfBirth = validation.checkString(
-        adminInfo.dateOfBirth,
-        "dateOfBirth"
+      adminInfo.emailInput = validation.checkString(
+        adminInfo.emailInput,
+        "Email"
       );
-      adminInfo.contactNumber = validation.checkString(
-        adminInfo.contactNumber,
-        "contactNumber"
+      adminInfo.dateOfBirthInput = validation.checkString(
+        adminInfo.dateOfBirthInput,
+        "Date Of Birth"
+      );
+      adminInfo.contactNumberInput = validation.checkString(
+        adminInfo.contactNumberInput,
+        "Contact Number"
+      );
+      adminInfo.genderInput = validation.checkString(
+        adminInfo.genderInput,
+        "Gender"
+      );
+      adminInfo.passwordInput = validation.checkString(
+        adminInfo.passwordInput,
+        "Password"
       );
     } catch (e) {
-      return res.status(400).json({ error: e });
+      return res.status(400).render("admin/register", {
+        title: "Register",
+        hidden: "",
+        error: e,
+        firstName: adminInfo.firstNameInput,
+        lastName: adminInfo.lastNameInput,
+        email: adminInfo.emailInput,
+        dateOfBirth: adminInfo.dateOfBirth,
+        contactNumber: adminInfo.contactNumber,
+        gender: adminInfo.gender,
+        password: adminInfo.passwordInput,
+      });
     }
 
     try {
       const newAdmin = await adminData.create(
-        adminInfo.firstName,
-        adminInfo.lastName,
-        adminInfo.email,
-        adminInfo.gender,
-        adminInfo.dateOfBirth,
-        adminInfo.contactNumber
+        adminInfo.firstNameInput,
+        adminInfo.lastNameInput,
+        adminInfo.emailInput,
+        adminInfo.genderInput,
+        adminInfo.dateOfBirthInput,
+        adminInfo.contactNumberInput,
+        adminInfo.passwordInput
       );
-      res.json(newAdmin);
+      if (!newAdmin.insertedAdmin) throw "Internal Server Error";
+      return res.redirect("login");
     } catch (e) {
       res.sendStatus(500);
     }
   });
 
 router
+  .route("/login")
+  .get(async (req, res) => {
+    //code here for GET
+    return res.render("admin/login", { title: "Login" });
+  })
+  .post(async (req, res) => {
+    const admin = req.body;
+
+    // input checking
+    try {
+      admin.emailAddressInput = validation.checkString(
+        admin.emailAddressInput,
+        "Email Address"
+      );
+
+      admin.passwordInput = validation.checkString(
+        admin.passwordInput,
+        "Password"
+      );
+    } catch (error) {
+      return res.status(400).render("admin/login", { title: "Login" });
+    }
+    try {
+      const { emailAddressInput, passwordInput } = admin;
+      const validAdmin = await adminData.check(
+        emailAddressInput,
+        passwordInput
+      );
+
+      /*
+      req.session.user = validUser;
+
+      if (req.session.user.role === "admin") {
+        return res.redirect("/admin");
+      } else {
+        return res.redirect("/protected");
+      }
+      */
+      return res.redirect("home");
+    } catch (e) {
+      return res.status(400).render("admin/login", {
+        title: "Login",
+        hidden: "",
+        error: e,
+        firstName: admin.firstName,
+      });
+    }
+  });
+
+router.route("/home").get(async (req, res) => {
+  return res.render("admin/home", { title: "Home" });
+});
+
+router
   .route("/classes")
   .get(async (req, res) => {
-    try {
-      const classList = await classData.getAll();
-      res.json(classList);
-    } catch (e) {
-      res.status(500).json({ error: e });
-    }
+    return res.render("admin/classes", { title: "Classes" });
   })
   .post(async (req, res) => {
     let classInfo = req.body;
@@ -102,12 +164,9 @@ router
 router
   .route("/sports")
   .get(async (req, res) => {
-    try {
-      const sportList = await sportData.getAll();
-      res.json(sportList);
-    } catch (e) {
-      res.status(500).json({ error: e });
-    }
+    const sportList = await sportData.getAll();
+    const sports = sportList.map((sport) => sport.name);
+    return res.render("admin/sports", { title: "Sports", sports: sports });
   })
   .post(async (req, res) => {
     let sportInfo = req.body;
@@ -120,8 +179,8 @@ router
     // validation
 
     try {
-      const newSport = await sportData.create(sportInfo.name);
-      res.json(newSport);
+      const newSport = await sportData.create(sportInfo.sportInput);
+      return res.redirect("sports");
     } catch (e) {
       res.sendStatus(500);
     }
@@ -130,12 +189,7 @@ router
 router
   .route("/sportPlaces")
   .get(async (req, res) => {
-    try {
-      const sportPlaceList = await sportPlaceData.getAll();
-      res.json(sportPlaceList);
-    } catch (e) {
-      res.status(500).json({ error: e });
-    }
+    return res.render("admin/sportPlaces", { title: "Sport Places" });
   })
   .post(async (req, res) => {
     let sportPlaceInfo = req.body;
