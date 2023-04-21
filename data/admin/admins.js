@@ -92,6 +92,7 @@ const check = async (email, password) => {
   if (!valid) throw "Error: Either the email address or password is invalid.";
 
   const adminInfo = {
+    adminID: admin._id,
     firstName: admin.firstName,
     lastName: admin.lastName,
     email: admin.email,

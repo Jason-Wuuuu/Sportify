@@ -107,15 +107,7 @@ router
         passwordInput
       );
 
-      /*
-      req.session.user = validUser;
-
-      if (req.session.user.role === "admin") {
-        return res.redirect("/admin");
-      } else {
-        return res.redirect("/protected");
-      }
-      */
+      req.session.admin = validAdmin;
       return res.redirect("home");
     } catch (e) {
       return res.status(400).render("admin/login", {
@@ -127,14 +119,51 @@ router
     }
   });
 
+router.route("/logout").get(async (req, res) => {
+  //code here for GET
+  req.session.destroy();
+  return res.render("admin/logout", { title: "Logout" });
+});
+
 router.route("/home").get(async (req, res) => {
-  return res.render("admin/home", { title: "Home" });
+  const admin = req.session.admin;
+  if (admin) {
+    return res.render("admin/home", {
+      title: "Home",
+      authenticated: true,
+      firstName: admin.firstName,
+      adminID: admin.adminID,
+    });
+  } else {
+    return res.render("admin/home", {
+      title: "Home",
+      authenticated: false,
+    });
+  }
 });
 
 router
   .route("/classes")
   .get(async (req, res) => {
-    return res.render("admin/classes", { title: "Classes" });
+    const sportList = await sportData.getAll();
+    const sports = sportList.map((sport) => sport.name);
+
+    const sportPlacetList = await sportPlaceData.getAll();
+    const sportPlaces = sportPlacetList.map((sportPlace) => sportPlace.name);
+
+    const classList = await classData.getAll();
+    const classes = classList.map((class_) =>
+      Object({
+        classID: class_._id,
+        className: class_.title,
+      })
+    );
+    return res.render("admin/classes", {
+      title: "Classes",
+      sports: sports,
+      sportPlaces: sportPlaces,
+      classes: classes,
+    });
   })
   .post(async (req, res) => {
     let classInfo = req.body;
@@ -148,14 +177,14 @@ router
 
     try {
       const newClass = await classData.create(
-        classInfo.title,
-        classInfo.sportID,
-        classInfo.sportPlaceID,
-        classInfo.capacity,
-        classInfo.instructor,
-        classInfo.time
+        classInfo.titleInput,
+        classInfo.sportInput,
+        classInfo.sportPlaceInput,
+        classInfo.capacityInput,
+        classInfo.instructorInput,
+        classInfo.timeInput
       );
-      res.json(newClass);
+      return res.redirect("classes");
     } catch (e) {
       res.sendStatus(500);
     }
@@ -165,7 +194,12 @@ router
   .route("/sports")
   .get(async (req, res) => {
     const sportList = await sportData.getAll();
-    const sports = sportList.map((sport) => sport.name);
+    const sports = sportList.map((sport) =>
+      Object({
+        sportID: sport._id,
+        sportName: sport.name,
+      })
+    );
     return res.render("admin/sports", { title: "Sports", sports: sports });
   })
   .post(async (req, res) => {
@@ -179,7 +213,7 @@ router
     // validation
 
     try {
-      const newSport = await sportData.create(sportInfo.sportInput);
+      const newSport = await sportData.create(sportInfo.nameInput);
       return res.redirect("sports");
     } catch (e) {
       res.sendStatus(500);
@@ -189,7 +223,22 @@ router
 router
   .route("/sportPlaces")
   .get(async (req, res) => {
-    return res.render("admin/sportPlaces", { title: "Sport Places" });
+    const sportList = await sportData.getAll();
+    const sports = sportList.map((sport) => sport.name);
+
+    const sportPlacetList = await sportPlaceData.getAll();
+    const sportPlaces = sportPlacetList.map((sportPlace) =>
+      Object({
+        sportPlaceID: sportPlace._id,
+        sportPlaceName: sportPlace.name,
+      })
+    );
+
+    return res.render("admin/sportPlaces", {
+      title: "Sport Places",
+      sports: sports,
+      sportPlaces: sportPlaces,
+    });
   })
   .post(async (req, res) => {
     let sportPlaceInfo = req.body;
@@ -203,13 +252,14 @@ router
 
     try {
       const newSportPlace = await sportPlaceData.create(
-        sportPlaceInfo.sportID,
-        sportPlaceInfo.address,
-        sportPlaceInfo.description,
-        sportPlaceInfo.capacity,
-        sportPlaceInfo.price
+        sportPlaceInfo.nameInput,
+        sportPlaceInfo.sportInput,
+        sportPlaceInfo.addressInput,
+        sportPlaceInfo.descriptionInput,
+        sportPlaceInfo.capacityInput,
+        sportPlaceInfo.priceInput
       );
-      res.json(newSportPlace);
+      return res.redirect("sportPlaces");
     } catch (e) {
       res.sendStatus(500);
     }
@@ -226,7 +276,15 @@ router
     }
     try {
       let admin = await adminData.get(req.params.id);
-      res.json(admin);
+      return res.render("admin/profile", {
+        title: "Profile",
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+        email: admin.email,
+        gender: admin.gender,
+        dateOfBirth: admin.dateOfBirth,
+        contactNumber: admin.contactNumber,
+      });
     } catch (e) {
       res.status(404).json({ error: "Admin not found" });
     }
@@ -262,7 +320,14 @@ router.route("/classes/:id").get(async (req, res) => {
   }
   try {
     let foundClass = await classData.get(req.params.id);
-    res.json(foundClass);
+    return res.render("admin/classInfo", {
+      title: foundClass.title,
+      sport: foundClass.sport,
+      sportPlace: foundClass.sportPlace,
+      capacity: foundClass.capacity,
+      instructor: foundClass.instructor,
+      time: foundClass.time,
+    });
   } catch (e) {
     res.status(404).json({ error: "Class not found" });
   }
@@ -276,7 +341,7 @@ router.route("/sports/:id").get(async (req, res) => {
   }
   try {
     let sport = await sportData.get(req.params.id);
-    res.json(sport);
+    return res.render("admin/sportInfo", { title: sport.name });
   } catch (e) {
     res.status(404).json({ error: "Sport not found" });
   }
@@ -290,7 +355,14 @@ router.route("/sportPlaces/:id").get(async (req, res) => {
   }
   try {
     let sportPlace = await sportPlaceData.get(req.params.id);
-    res.json(sportPlace);
+    return res.render("admin/sportPlaceInfo", {
+      title: sportPlace.name,
+      sport: sportPlace.sport,
+      address: sportPlace.address,
+      description: sportPlace.description,
+      capacity: sportPlace.capacity,
+      price: sportPlace.price,
+    });
   } catch (e) {
     res.status(404).json({ error: "Sport Place not found" });
   }

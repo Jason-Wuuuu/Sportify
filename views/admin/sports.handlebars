@@ -7,8 +7,8 @@ login form handlebar template
 <h1>{{title}}</h1>
 
 <form action="/admin/sports" method="post" id="sport-form">
-    <label for="sportInput">Sport:</label>
-    <input type="text" id="sportInput" name="sportInput" value="{{sportInput}}" />
+    <label for="nameInput">Name:</label>
+    <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
 
     <input type="submit" value="Submit" />
 </form>
@@ -16,7 +16,7 @@ login form handlebar template
 <div id="sportList">
     <ul>
         {{#each sports}}
-        <li><input type="checkbox">{{this}}</li>
+        <li><a href="/admin/sports/{{sportID}}">{{sportName}}</a></li>
         {{/each}}
     </ul>
 </div>
