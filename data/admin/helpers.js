@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import bcrypt from "bcrypt";
 
 const validationMethods = {
   checkId(id, varName) {
@@ -17,35 +18,36 @@ const validationMethods = {
     strVal = strVal.trim();
     if (strVal.length === 0)
       throw `Error: ${varName} cannot be an empty string or string with just spaces`;
-    if (!isNaN(strVal))
-      throw `Error: ${strVal} is not a valid value for ${varName} as it only contains digits`;
     return strVal;
-  },
-
-  checkStringArray(arr, varName) {
-    //We will allow an empty array for this,
-    //if it's not empty, we will make sure all tags are strings
-    if (!arr || !Array.isArray(arr))
-      throw `You must provide an array of ${varName}`;
-    for (let i in arr) {
-      if (typeof arr[i] !== "string" || arr[i].trim().length === 0) {
-        throw `One or more elements in ${varName} array is not a string or is an empty string`;
-      }
-      arr[i] = arr[i].trim();
-    }
-
-    return arr;
   },
 
   checkDateOfBirth(dateOfBirth) {},
 
   checkAge(dateOfBirth) {},
 
-  checkEmail(email) {},
+  checkEmail(email) {
+    this.checkString(email);
+  },
 
   checkGender(gender) {},
 
   checkContactNumber(contactNumber) {},
+
+  checkPassword(password) {
+    this.checkString(password);
+  },
+};
+
+export const passwordMethods = {
+  async encrypt(password, sr = 10) {
+    const saltRounds = sr;
+    const hash = await bcrypt.hash(password, saltRounds);
+    return hash;
+  },
+
+  async compare(orig_pw, hashed_pw) {
+    return await bcrypt.compare(orig_pw, hashed_pw);
+  },
 };
 
 export default validationMethods;

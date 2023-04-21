@@ -1,6 +1,6 @@
 import { admins } from "../../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
-import validation from "./helpers.js";
+import validation, { passwordMethods } from "./helpers.js";
 
 const create = async (
   firstName,
@@ -8,8 +8,8 @@ const create = async (
   email,
   gender,
   dateOfBirth, // 01-01-1999 (> 13 years old)
-  contactNumber
-  // password
+  contactNumber,
+  password
 ) => {
   // validation
   firstName = validation.checkString(firstName, "firstName");
@@ -18,6 +18,9 @@ const create = async (
   gender = validation.checkString(gender, "gender");
   dateOfBirth = validation.checkString(dateOfBirth, "dateOfBirth");
   contactNumber = validation.checkString(contactNumber, "contactNumber");
+  password = validation.checkString(password, "password");
+
+  password = await passwordMethods.encrypt(password);
 
   let newAdmin = {
     firstName: firstName,
@@ -26,13 +29,15 @@ const create = async (
     gender: gender,
     dateOfBirth: dateOfBirth, // 01-01-1999 (> 13 years old)
     contactNumber: contactNumber,
-    // password: password,
+    password: password,
   };
 
   const adminCollection = await admins();
   const newInsertInformation = await adminCollection.insertOne(newAdmin);
   const newId = newInsertInformation.insertedId;
-  return await get(newId.toString());
+  await get(newId.toString());
+
+  return { insertedAdmin: true };
 };
 
 const getAll = async () => {
@@ -56,7 +61,7 @@ const remove = async (adminID) => {
     _id: new ObjectId(adminID),
   });
   if (deletionInfo.lastErrorObject.n === 0)
-    throw [404, `Error: Could not delete user with id of ${adminID}`];
+    throw [404, `Error: Could not delete admin with id of ${adminID}`];
 
   return { ...deletionInfo.value, deleted: true };
 };
@@ -72,4 +77,27 @@ const update = async (
   password
 ) => {};
 
-export { create, getAll, get, remove, update };
+const check = async (email, password) => {
+  // validation
+  email = validation.checkString(email, "Email Address");
+  password = validation.checkString(password, "Password");
+
+  const adminCollection = await admins();
+  const admin = await adminCollection.findOne({ email: email });
+  if (!admin) throw "Error: Either the email address or password is invalid.";
+
+  const hashed_pw = admin.password;
+  const valid = await passwordMethods.compare(password, hashed_pw);
+
+  if (!valid) throw "Error: Either the email address or password is invalid.";
+
+  const adminInfo = {
+    firstName: admin.firstName,
+    lastName: admin.lastName,
+    email: admin.email,
+  };
+
+  return adminInfo;
+};
+
+export { create, getAll, get, remove, update, check };
