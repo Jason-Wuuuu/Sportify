@@ -127,20 +127,53 @@ router.route("/logout").get(async (req, res) => {
 
 router.route("/home").get(async (req, res) => {
   const admin = req.session.admin;
-  if (admin) {
-    return res.render("admin/home", {
-      title: "Home",
-      authenticated: true,
-      firstName: admin.firstName,
-      adminID: admin.adminID,
-    });
-  } else {
-    return res.render("admin/home", {
-      title: "Home",
-      authenticated: false,
-    });
-  }
+  return res.render("admin/home", {
+    title: "Home",
+    firstName: admin.firstName,
+  });
 });
+
+router
+  .route("/profile")
+  .get(async (req, res) => {
+    try {
+      let adminInfo = await adminData.get(req.session.admin.adminID);
+
+      return res.render("admin/profile", {
+        title: "Profile",
+        firstName: adminInfo.firstName,
+        lastName: adminInfo.lastName,
+        email: adminInfo.email,
+        gender: adminInfo.gender,
+        dateOfBirth: adminInfo.dateOfBirth,
+        contactNumber: adminInfo.contactNumber,
+      });
+    } catch (e) {
+      res.status(404).json({ error: "Admin not found" });
+    }
+  })
+  .put(async (req, res) => {
+    try {
+    } catch (e) {
+      res.status(500).json({ error: e });
+    }
+  })
+  .delete(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id);
+    } catch (e) {
+      return res.status(400).json({ error: e });
+    }
+
+    try {
+      let deletedAdmin = await adminData.remove(req.params.id);
+      res.json(deletedAdmin);
+    } catch (e) {
+      let status = e[0] ? e[0] : 500;
+      let message = e[1] ? e[1] : "Internal Server Error";
+      res.status(500).send({ error: message });
+    }
+  });
 
 router
   .route("/classes")
@@ -262,53 +295,6 @@ router
       return res.redirect("sportPlaces");
     } catch (e) {
       res.sendStatus(500);
-    }
-  });
-
-// http://localhost:3000/admin/id
-router
-  .route("/:id")
-  .get(async (req, res) => {
-    try {
-      req.params.id = validation.checkId(req.params.id, "ID URL Param");
-    } catch (e) {
-      return res.status(400).json({ error: e });
-    }
-    try {
-      let admin = await adminData.get(req.params.id);
-      return res.render("admin/profile", {
-        title: "Profile",
-        firstName: admin.firstName,
-        lastName: admin.lastName,
-        email: admin.email,
-        gender: admin.gender,
-        dateOfBirth: admin.dateOfBirth,
-        contactNumber: admin.contactNumber,
-      });
-    } catch (e) {
-      res.status(404).json({ error: "Admin not found" });
-    }
-  })
-  .put(async (req, res) => {
-    try {
-    } catch (e) {
-      res.status(500).json({ error: e });
-    }
-  })
-  .delete(async (req, res) => {
-    try {
-      req.params.id = validation.checkId(req.params.id);
-    } catch (e) {
-      return res.status(400).json({ error: e });
-    }
-
-    try {
-      let deletedAdmin = await adminData.remove(req.params.id);
-      res.json(deletedAdmin);
-    } catch (e) {
-      let status = e[0] ? e[0] : 500;
-      let message = e[1] ? e[1] : "Internal Server Error";
-      res.status(500).send({ error: message });
     }
   });
 

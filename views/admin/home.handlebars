@@ -6,11 +6,9 @@ login form handlebar template
 
 <h1>{{title}}</h1>
 
-{{#if authenticated}}
-
 <h2>Welcome back {{firstName}}, you're an admin.</h2>
 
-<a href="/admin/{{adminID}}">Profile</a>
+<a href="/admin/profile">Profile</a>
 <br>
 
 <a href="/admin/sports">Sports</a>
@@ -24,13 +22,3 @@ login form handlebar template
 
 <a href="/admin/logout">Logout</a>
 <br>
-
-{{else}}
-
-<a href="/admin/register">Register</a>
-<br>
-
-<a href="/admin/login">Login</a>
-<br>
-
-{{/if}}

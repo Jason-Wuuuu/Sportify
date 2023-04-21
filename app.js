@@ -32,6 +32,82 @@ app.use(
   })
 );
 
+app.all("/admin", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  return res.redirect("/admin/home");
+});
+
+app.use("/admin/login", (req, res, next) => {
+  if (req.session.admin) {
+    return res.redirect("/admin/home");
+  }
+  next();
+});
+
+app.use("/admin/register", (req, res, next) => {
+  if (req.session.admin) {
+    return res.redirect("/admin/home");
+  }
+  next();
+});
+
+app.use("/admin/home", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  next();
+});
+
+app.use("/admin/profile", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  next();
+});
+
+app.use("/admin/classes", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  next();
+});
+
+app.use("/admin/sports", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  next();
+});
+
+app.use("/admin/sportPlaces", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  next();
+});
+
+app.use("/admin/logout", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  next();
+});
+
+app.use(async (req, res, next) => {
+  const currentTime = new Date().toUTCString();
+  const req_method = req.method;
+  const req_route = req.originalUrl;
+  let authenticated = "Non-Authenticated Admin";
+  if (req.session.admin) authenticated = "Authenticated Admin";
+
+  const log_msg = `[${currentTime}]: ${req_method} ${req_route} (${authenticated})`;
+  console.log(log_msg);
+
+  next();
+});
+
 app.use("/public", staticDir);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
