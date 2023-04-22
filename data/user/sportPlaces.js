@@ -1,4 +1,6 @@
-const reserve = async (sportPlaceID, userID) => {};
+const reserve = async (sportPlaceID, userID) => {
+  // add user to the users field (an array) in sportPlace collection
+};
 
 const quit = async (sportPlaceID, userID) => {};
 

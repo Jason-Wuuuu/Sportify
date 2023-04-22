@@ -1,0 +1,20 @@
+{{!--
+
+login form handlebar template
+
+--}}
+
+<h1>{{title}}</h1>
+
+<h3>We have {{n}} users.</h3>
+
+<div id="userList">
+    {{#each users}}
+    <dl>
+        <dt>ID: {{userID}}</dt>
+        <dd>Name: {{userFirstName}}, {{userLastName}}</dd>
+    </dl>
+    {{/each}}
+</div>
+
+<a href="/admin/home">home</a>

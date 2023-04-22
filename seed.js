@@ -14,8 +14,8 @@ const number_of_data = 10;
 // add valid data
 for (let i = 0; i < number_of_data; i++) {
   try {
-    let gender = "Male";
-    if (i % 2 == 0) gender = "Female";
+    let gender = "male";
+    if (i % 2 == 0) gender = "female";
     const newUser = await user.create(
       `User_0${i}_FN`,
       `User_0${i}_LN`,
@@ -31,8 +31,8 @@ for (let i = 0; i < number_of_data; i++) {
   }
 
   try {
-    let gender = "Male";
-    if (i % 2 == 0) gender = "Female";
+    let gender = "male";
+    if (i % 2 == 0) gender = "female";
     const newAdmin = await admin.create(
       `Admin_0${i}_FN`,
       `Admin_0${i}_LN`,
