@@ -1,8 +1,17 @@
 <h1>{{title}}</h1>
 
-<p>This is the homepage for non-admin Users.</p>
+{{#if authenticated}}
 
+<h2>Welcome Back! {{firstName}}</h2>
+
+<a href="/logout">Logout</a>
+
+{{else}}
+
+<h2>You're and unauthenticated user.</h2>
 
 <a href="/register">Register</a>
 
 <a href="/login">Login</a>
+
+{{/if}}

@@ -32,6 +32,7 @@ app.use(
   })
 );
 
+// middleware for admin
 app.all("/admin", (req, res, next) => {
   if (!req.session.admin) {
     return res.redirect("/admin/login");
@@ -95,12 +96,28 @@ app.use("/admin/logout", (req, res, next) => {
   next();
 });
 
+// middleware for users
+app.use("/login", (req, res, next) => {
+  if (req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
+app.use("/register", (req, res, next) => {
+  if (req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
 app.use(async (req, res, next) => {
   const currentTime = new Date().toUTCString();
   const req_method = req.method;
   const req_route = req.originalUrl;
-  let authenticated = "Non-Authenticated Admin";
-  if (req.session.admin) authenticated = "Authenticated Admin";
+  let authenticated = "Non-Authenticated User";
+  if (req.session.user) authenticated = "Authenticated User";
+  if (req.session.admin) authenticated = "Admin";
 
   const log_msg = `[${currentTime}]: ${req_method} ${req_route} (${authenticated})`;
   console.log(log_msg);
