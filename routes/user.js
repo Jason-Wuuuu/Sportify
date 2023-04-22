@@ -5,7 +5,19 @@ import { helperMethodsForUsers } from "../data/user/helpers.js";
 const router = Router();
 
 router.route("/").get(async (req, res) => {
-  return res.render("homepage", { title: "Homepage" });
+  const userInfo = req.session.user;
+  if (userInfo) {
+    return res.render("homepage", {
+      title: "Homepage",
+      authenticated: true,
+      firstName: userInfo.firstName,
+    });
+  } else {
+    return res.render("homepage", {
+      title: "Homepage",
+      authenticated: false,
+    });
+  }
 });
 
 router
@@ -114,5 +126,10 @@ router
       });
     }
   });
+
+router.route("/logout").get(async (req, res) => {
+  req.session.destroy();
+  return res.render("logout", { title: "Logout" });
+});
 
 export default router;
