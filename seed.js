@@ -21,8 +21,8 @@ for (let i = 0; i < number_of_data; i++) {
       `User_0${i}_LN`,
       `user_0${i}@stevens.edu`,
       gender,
-      `03-0${i}-1995`,
-      `123-456-789${i}`,
+      `1995-03-0${i}`,
+      `123456789${i}`,
       `password${i}`
     );
     // console.log(newAdmin);
@@ -38,8 +38,8 @@ for (let i = 0; i < number_of_data; i++) {
       `Admin_0${i}_LN`,
       `admin_0${i}@stevens.edu`,
       gender,
-      `03-0${i}-1995`,
-      `123-456-789${i}`,
+      `1995-03-0${i}`,
+      `123456789${i}`,
       `password${i}`
     );
     // console.log(newAdmin);

@@ -15,7 +15,13 @@ router
   })
   .post(async (req, res) => {
     let adminInfo = req.body;
-
+    if (!adminInfo || Object.keys(adminInfo).length === 0) {
+      res.status(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+    // validation
     try {
       adminInfo.firstNameInput = validation.checkString(
         adminInfo.firstNameInput,
@@ -25,19 +31,19 @@ router
         adminInfo.lastNameInput,
         "Last Name"
       );
-      adminInfo.emailInput = validation.checkString(
+      adminInfo.emailInput = validation.checkEmail(
         adminInfo.emailInput,
         "Email"
       );
-      adminInfo.dateOfBirthInput = validation.checkString(
+      adminInfo.dateOfBirthInput = validation.checkDateOfBirth(
         adminInfo.dateOfBirthInput,
         "Date Of Birth"
       );
-      adminInfo.contactNumberInput = validation.checkString(
+      adminInfo.contactNumberInput = validation.checkContactNumber(
         adminInfo.contactNumberInput,
         "Contact Number"
       );
-      adminInfo.genderInput = validation.checkString(
+      adminInfo.genderInput = validation.checkGender(
         adminInfo.genderInput,
         "Gender"
       );
@@ -73,7 +79,18 @@ router
       if (!newAdmin.insertedAdmin) throw "Internal Server Error";
       return res.redirect("login");
     } catch (e) {
-      res.sendStatus(500);
+      return res.status(500).render("admin/register", {
+        title: "Register",
+        hidden: "",
+        error: e,
+        firstName: adminInfo.firstNameInput,
+        lastName: adminInfo.lastNameInput,
+        email: adminInfo.emailInput,
+        dateOfBirth: adminInfo.dateOfBirthInput,
+        contactNumber: adminInfo.contactNumberInput,
+        gender: adminInfo.genderInput,
+        password: adminInfo.passwordInput,
+      });
     }
   });
 
@@ -85,7 +102,12 @@ router
   })
   .post(async (req, res) => {
     const admin = req.body;
-
+    if (!admin || Object.keys(admin).length === 0) {
+      res.status(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
     // input checking
     try {
       admin.emailAddressInput = validation.checkString(
@@ -153,7 +175,10 @@ router
         contactNumber: adminInfo.contactNumber,
       });
     } catch (e) {
-      res.status(404).json({ error: "Admin not found" });
+      res.status(404).render("admin/error", {
+        title: "Error",
+        error: "Admin not found",
+      });
     }
   })
   .put(async (req, res) => {
@@ -183,18 +208,28 @@ router
   .route("/classes")
   .get(async (req, res) => {
     const sportList = await sportData.getAll();
-    const sports = sportList.map((sport) => sport.name);
+    let sports = [];
+    if (sportList) {
+      sports = sportList.map((sport) => sport.name);
+    }
 
     const sportPlacetList = await sportPlaceData.getAll();
-    const sportPlaces = sportPlacetList.map((sportPlace) => sportPlace.name);
+    let sportPlaces = [];
+    if (sportPlacetList) {
+      sportPlaces = sportPlacetList.map((sportPlace) => sportPlace.name);
+    }
 
     const classList = await classData.getAll();
-    const classes = classList.map((class_) =>
-      Object({
-        classID: class_._id,
-        className: class_.title,
-      })
-    );
+    let classes = [];
+    if (classList) {
+      classes = classList.map((class_) =>
+        Object({
+          classID: class_._id,
+          className: class_.title,
+        })
+      );
+    }
+
     return res.render("admin/classes", {
       title: "Classes",
       sports: sports,
@@ -205,11 +240,11 @@ router
   .post(async (req, res) => {
     let classInfo = req.body;
     if (!classInfo || Object.keys(classInfo).length === 0) {
-      return res
-        .status(400)
-        .json({ error: "There are no fields in the request body" });
+      res.status(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
     }
-
     // validation
 
     try {
@@ -221,9 +256,13 @@ router
         classInfo.instructorInput,
         classInfo.timeInput
       );
+      if (!newClass.insertedClass) throw "Internal Server Error";
       return res.redirect("classes");
     } catch (e) {
-      res.sendStatus(500);
+      res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
     }
   });
 
@@ -242,15 +281,17 @@ router
   .post(async (req, res) => {
     let sportInfo = req.body;
     if (!sportInfo || Object.keys(sportInfo).length === 0) {
-      return res
-        .status(400)
-        .json({ error: "There are no fields in the request body" });
+      res.status(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
     }
 
     // validation
 
     try {
       const newSport = await sportData.create(sportInfo.nameInput);
+      if (!newSport.insertedSport) throw "Internal Server Error";
       return res.redirect("sports");
     } catch (e) {
       res.sendStatus(500);
@@ -280,9 +321,10 @@ router
   .post(async (req, res) => {
     let sportPlaceInfo = req.body;
     if (!sportPlaceInfo || Object.keys(sportPlaceInfo).length === 0) {
-      return res
-        .status(400)
-        .json({ error: "There are no fields in the request body" });
+      res.status(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
     }
 
     // validation
@@ -296,6 +338,7 @@ router
         sportPlaceInfo.capacityInput,
         sportPlaceInfo.priceInput
       );
+      if (!newSportPlace.insertedSportPlace) throw "Internal Server Error";
       return res.redirect("sportPlaces");
     } catch (e) {
       res.sendStatus(500);
