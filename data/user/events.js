@@ -1,28 +1,34 @@
+import { events } from "../../config/mongoCollections.js";
+import { ObjectId } from "mongodb";
+
 const create = async (
   userID,
   name,
-  sportID,
+  sport,
   type,
   description,
-  location, // groundID ?
-  time,
-  capacity
+  location,
+  capacity,
+  date,
+  startTime,
+  endTime
   // approved ?
-  // users: list of userIDs
 ) => {};
 
 const remove = async (eventID) => {}; // ?
 
 const update = async (
-  userID,
   eventID,
+  userID,
   name,
-  sportID,
+  sport,
   type,
   description,
   location,
-  time,
-  capacity
+  capacity,
+  date,
+  startTime,
+  endTime
 ) => {};
 
 //

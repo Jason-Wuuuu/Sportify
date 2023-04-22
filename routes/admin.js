@@ -22,7 +22,7 @@ router
         error: "There are no fields in the request body",
       });
     }
-    // validation
+    // validation for admin registration
     try {
       adminInfo.firstNameInput = validation.checkString(
         adminInfo.firstNameInput,
@@ -271,7 +271,9 @@ router
         classInfo.sportPlaceInput,
         classInfo.capacityInput,
         classInfo.instructorInput,
-        classInfo.timeInput
+        classInfo.dateInput,
+        classInfo.startTimeInput,
+        classInfo.endTimeInput
       );
       if (!newClass.insertedClass) throw "Internal Server Error";
       return res.redirect("classes");
@@ -376,7 +378,9 @@ router.route("/classes/:id").get(async (req, res) => {
       sportPlace: foundClass.sportPlace,
       capacity: foundClass.capacity,
       instructor: foundClass.instructor,
-      time: foundClass.time,
+      date: foundClass.date,
+      startTime: foundClass.startTime,
+      endTime: foundClass.endTime,
       rating: foundClass.rating,
       n: foundClass.students.length,
       users: foundClass.students,
