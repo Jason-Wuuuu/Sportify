@@ -1,5 +1,4 @@
-//
-const getAll = async () => {};
+import { events } from "../../config/mongoCollections.js";
 
 const remove = async (eventID) => {};
 
