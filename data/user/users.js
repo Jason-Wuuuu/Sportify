@@ -11,16 +11,19 @@ const create = async (
   contactNumber,
   password
 ) => {
-  firstName = helperMethodsForUsers.checkString(firstName, "First Name");
-  lastName = helperMethodsForUsers.checkString(lastName, "Last Name");
-  email = helperMethodsForUsers.checkString(email, "Email");
-  gender = helperMethodsForUsers.checkString(gender, "Gender");
-  dateOfBirth = helperMethodsForUsers.checkString(dateOfBirth, "Date Of Birth");
-  contactNumber = helperMethodsForUsers.checkString(
+  firstName = helperMethodsForUsers.checkName(firstName, "First Name");
+  lastName = helperMethodsForUsers.checkName(lastName, "Last Name");
+  email = helperMethodsForUsers.checkEmail(email, "Email");
+  gender = helperMethodsForUsers.checkGender(gender, "Gender");
+  dateOfBirth = helperMethodsForUsers.checkDateOfBirth(
+    dateOfBirth,
+    "Date Of Birth"
+  );
+  contactNumber = helperMethodsForUsers.checkContactNumber(
     contactNumber,
     "Contact Number"
   );
-  password = helperMethodsForUsers.checkString(password, "Password");
+  password = helperMethodsForUsers.checkPassword(password, "Password");
 
   password = await helperMethodsForUsers.encryptPassword(password);
 
@@ -63,8 +66,8 @@ const update = async (
 
 const check = async (email, password) => {
   // helperMethodsForUsers
-  email = helperMethodsForUsers.checkString(email, "Email Address");
-  password = helperMethodsForUsers.checkString(password, "Password");
+  email = helperMethodsForUsers.checkEmail(email, "Email Address");
+  password = helperMethodsForUsers.checkPassword(password, "Password");
 
   const userCollection = await users();
   const user = await userCollection.findOne({ email: email });

@@ -20,6 +20,12 @@ const create = async (
   contactNumber = validation.checkString(contactNumber, "Contact Number");
   password = validation.checkString(password, "Password");
 
+  // check if email has already been used
+  const adminCollection = await admins();
+  const admin = await adminCollection.findOne({ email: email });
+  if (admin) throw "Error: Email address already been used.";
+
+  // encrypt password
   password = await passwordMethods.encrypt(password);
 
   let newAdmin = {
@@ -32,7 +38,7 @@ const create = async (
     password: password,
   };
 
-  const adminCollection = await admins();
+  // add valid admin to db
   const newInsertInformation = await adminCollection.insertOne(newAdmin);
   const newId = newInsertInformation.insertedId;
   await get(newId.toString());
@@ -72,15 +78,15 @@ const update = async (
   lastName,
   email,
   gender,
-  dateOfBirth, // 01-01-1999 (> 13 years old)
+  dateOfBirth,
   contactNumber,
   password
 ) => {};
 
 const check = async (email, password) => {
   // validation
-  email = validation.checkString(email, "Email Address");
-  password = validation.checkString(password, "Password");
+  email = validation.checkEmail(email, "Email Address");
+  password = validation.checkPassword(password, "Password");
 
   const adminCollection = await admins();
   const admin = await adminCollection.findOne({ email: email });

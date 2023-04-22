@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as adminData from "../data/admin/admins.js";
+import * as userData from "../data/admin/users.js";
 import * as classData from "../data/admin/classes.js";
 import * as sportData from "../data/admin/sports.js";
 import * as sportPlaceData from "../data/admin/sportPlaces.js";
@@ -203,6 +204,22 @@ router
       res.status(500).send({ error: message });
     }
   });
+
+router.route("/users").get(async (req, res) => {
+  const userList = await userData.getAll();
+  const users = userList.map((user) =>
+    Object({
+      userID: user._id,
+      userFirstName: user.firstName,
+      userLastName: user.lastName,
+    })
+  );
+  return res.render("admin/users", {
+    title: "Users",
+    n: users.length,
+    users: users,
+  });
+});
 
 router
   .route("/classes")

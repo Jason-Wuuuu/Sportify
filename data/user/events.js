@@ -26,7 +26,9 @@ const update = async (
 ) => {};
 
 //
-const join = async (eventID, userID) => {};
+const join = async (eventID, userID) => {
+  // add user to the participant field (an array) in events collection
+};
 
 const quit = async (eventID, userID) => {};
 

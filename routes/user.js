@@ -29,31 +29,31 @@ router
     let userInfo = req.body;
 
     try {
-      userInfo.firstNameInput = helperMethodsForUsers.checkString(
+      userInfo.firstNameInput = helperMethodsForUsers.checkName(
         userInfo.firstNameInput,
         "First Name"
       );
-      userInfo.lastNameInput = helperMethodsForUsers.checkString(
+      userInfo.lastNameInput = helperMethodsForUsers.checkName(
         userInfo.lastNameInput,
         "Last Name"
       );
-      userInfo.emailInput = helperMethodsForUsers.checkString(
+      userInfo.emailInput = helperMethodsForUsers.checkEmail(
         userInfo.emailInput,
         "Email"
       );
-      userInfo.dateOfBirthInput = helperMethodsForUsers.checkString(
+      userInfo.dateOfBirthInput = helperMethodsForUsers.checkDateOfBirth(
         userInfo.dateOfBirthInput,
         "Date Of Birth"
       );
-      userInfo.contactNumberInput = helperMethodsForUsers.checkString(
+      userInfo.contactNumberInput = helperMethodsForUsers.checkContactNumber(
         userInfo.contactNumberInput,
         "Contact Number"
       );
-      userInfo.genderInput = helperMethodsForUsers.checkString(
+      userInfo.genderInput = helperMethodsForUsers.checkGender(
         userInfo.genderInput,
         "Gender"
       );
-      userInfo.passwordInput = helperMethodsForUsers.checkString(
+      userInfo.passwordInput = helperMethodsForUsers.checkPassword(
         userInfo.passwordInput,
         "Password"
       );
@@ -99,12 +99,12 @@ router
 
     // input checking
     try {
-      user.emailAddressInput = helperMethodsForUsers.checkString(
+      user.emailAddressInput = helperMethodsForUsers.checkEmail(
         user.emailAddressInput,
         "Email Address"
       );
 
-      user.passwordInput = helperMethodsForUsers.checkString(
+      user.passwordInput = helperMethodsForUsers.checkPassword(
         user.passwordInput,
         "Password"
       );

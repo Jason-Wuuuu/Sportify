@@ -11,6 +11,8 @@ const create = async (name, sport, address, description, capacity, price) => {
     description: description,
     capacity: capacity,
     price: price,
+    rating: 0,
+    users: [],
   };
 
   const sportPlaceCollection = await sportPlaces();

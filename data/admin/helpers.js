@@ -22,7 +22,7 @@ const validationMethods = {
   },
 
   checkName(name, varName) {
-    name = checkString(name, varName);
+    name = this.checkString(name, varName);
 
     const re_name = /[a-zA-Z ]{2,25}/g;
     if (!name.match(re_name))
@@ -64,7 +64,7 @@ const validationMethods = {
   },
 
   checkContactNumber(contactNumber, varName) {
-    contactNumber = checkString(contactNumber, varName);
+    contactNumber = this.checkString(contactNumber, varName);
 
     contactNumber = contactNumber.replace(" ", "");
     const re_contactNumber = /^[\d]{8,20}$/g;
@@ -74,7 +74,7 @@ const validationMethods = {
   },
 
   checkGender(gender, varName) {
-    gender = checkString(gender, varName);
+    gender = this.checkString(gender, varName);
     gender = gender.toLowerCase();
 
     const gender_domain = [

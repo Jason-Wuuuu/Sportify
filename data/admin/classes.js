@@ -3,15 +3,9 @@ import { ObjectId } from "mongodb";
 import validation from "./helpers.js";
 
 //
-const create = async (
-  title,
-  sport,
-  sportPlace,
-  capacity,
-  instructor,
-  time
-  // users: list of userIDs
-) => {
+const create = async (title, sport, sportPlace, capacity, instructor, time) => {
+  // validation
+
   let newClass = {
     title: title,
     sport: sport,
@@ -19,6 +13,8 @@ const create = async (
     capacity: capacity,
     instructor: instructor,
     time: time,
+    rating: 0,
+    students: [],
   };
 
   const classCollection = await classes();
