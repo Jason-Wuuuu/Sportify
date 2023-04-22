@@ -12,13 +12,13 @@ const create = async (
   password
 ) => {
   // validation
-  firstName = validation.checkString(firstName, "firstName");
-  lastName = validation.checkString(lastName, "lastName");
-  email = validation.checkString(email, "email");
-  gender = validation.checkString(gender, "gender");
-  dateOfBirth = validation.checkString(dateOfBirth, "dateOfBirth");
-  contactNumber = validation.checkString(contactNumber, "contactNumber");
-  password = validation.checkString(password, "password");
+  firstName = validation.checkString(firstName, "First Name");
+  lastName = validation.checkString(lastName, "Last Name");
+  email = validation.checkString(email, "Email");
+  gender = validation.checkString(gender, "Gender");
+  dateOfBirth = validation.checkString(dateOfBirth, "Date Of Birth");
+  contactNumber = validation.checkString(contactNumber, "Contact Number");
+  password = validation.checkString(password, "Password");
 
   password = await passwordMethods.encrypt(password);
 

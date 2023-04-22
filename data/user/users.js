@@ -11,16 +11,16 @@ const create = async (
   contactNumber,
   password
 ) => {
-  firstName = helperMethodsForUsers.checkString(firstName, "firstName");
-  lastName = helperMethodsForUsers.checkString(lastName, "lastName");
-  email = helperMethodsForUsers.checkString(email, "email");
-  gender = helperMethodsForUsers.checkString(gender, "gender");
-  dateOfBirth = helperMethodsForUsers.checkString(dateOfBirth, "dateOfBirth");
+  firstName = helperMethodsForUsers.checkString(firstName, "First Name");
+  lastName = helperMethodsForUsers.checkString(lastName, "Last Name");
+  email = helperMethodsForUsers.checkString(email, "Email");
+  gender = helperMethodsForUsers.checkString(gender, "Gender");
+  dateOfBirth = helperMethodsForUsers.checkString(dateOfBirth, "Date Of Birth");
   contactNumber = helperMethodsForUsers.checkString(
     contactNumber,
-    "contactNumber"
+    "Contact Number"
   );
-  password = helperMethodsForUsers.checkString(password, "password");
+  password = helperMethodsForUsers.checkString(password, "Password");
 
   password = await helperMethodsForUsers.encryptPassword(password);
 
@@ -42,7 +42,13 @@ const create = async (
   return { insertedUser: true };
 };
 
-const get = async (userID) => {};
+const get = async (userID) => {
+  userID = helperMethodsForUsers.checkString(userID);
+  const userCollection = await users();
+  const user = await userCollection.findOne({ _id: new ObjectId(userID) });
+  if (!user) throw "Error: user not found";
+  return user;
+};
 
 const update = async (
   userID,

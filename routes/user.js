@@ -132,4 +132,18 @@ router.route("/logout").get(async (req, res) => {
   return res.render("logout", { title: "Logout" });
 });
 
+router.route("/profile").get(async (req, res) => {
+  let userInfo = await userData.get(req.session.user.userID);
+
+  return res.render("profile", {
+    title: "Profile",
+    firstName: userInfo.firstName,
+    lastName: userInfo.lastName,
+    email: userInfo.email,
+    gender: userInfo.gender,
+    dateOfBirth: userInfo.dateOfBirth,
+    contactNumber: userInfo.contactNumber,
+  });
+});
+
 export default router;
