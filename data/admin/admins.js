@@ -7,7 +7,7 @@ const create = async (
   lastName,
   email,
   gender,
-  dateOfBirth, // 01-01-1999 (> 13 years old)
+  dateOfBirth,
   contactNumber,
   password
 ) => {

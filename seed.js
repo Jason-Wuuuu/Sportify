@@ -79,7 +79,9 @@ for (let i = 1; i <= number_of_data; i++) {
       `sportPlace_0${i}`,
       `${(i + 5) * 3}`,
       `instructor_0${i}`,
-      `2023-05-${i + 10}`
+      `2023-05-${i + 10}`,
+      `0${i}:00`,
+      `0${i}:45`
     );
     // console.log(newClass);
   } catch (e) {

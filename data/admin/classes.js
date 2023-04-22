@@ -2,8 +2,16 @@ import { classes } from "../../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import validation from "./helpers.js";
 
-//
-const create = async (title, sport, sportPlace, capacity, instructor, time) => {
+const create = async (
+  title,
+  sport,
+  sportPlace,
+  capacity,
+  instructor,
+  date,
+  startTime,
+  endTime
+) => {
   // validation
 
   let newClass = {
@@ -12,7 +20,9 @@ const create = async (title, sport, sportPlace, capacity, instructor, time) => {
     sportPlace: sportPlace,
     capacity: capacity,
     instructor: instructor,
-    time: time,
+    date: date,
+    startTime: startTime,
+    endTime: endTime,
     rating: 0,
     students: [],
   };
@@ -60,7 +70,9 @@ const update = async (
   sportPlace,
   capacity,
   instructor,
-  time
+  date,
+  startTime,
+  endTime
 ) => {};
 
 //
