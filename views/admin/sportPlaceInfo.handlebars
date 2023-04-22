@@ -5,5 +5,21 @@
 <p>Description: {{description}}</p>
 <p>Capacity: {{capacity}}</p>
 <p>Price: {{price}}</p>
+<p>Rating: {{rating}}</p>
+<p>Number of Users: {{n}}</p>
+<br>
+<h3>List of Users:</h3>
+<dl>
+    <div id="userList">
+        {{#if n}}
+        {{#each users}}
+        <dt>ID: {{userID}}</dt>
+        <dd>Name: {{userFirstName}}, {{userLastName}}</dd>
+        {{/each}}
+        {{else}}
+        <p>There are no users for this sport place...</p>
+        {{/if}}
+    </div>
+</dl>
 
 <a href="/admin/sportPlaces">Back</a>

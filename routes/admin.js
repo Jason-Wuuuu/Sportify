@@ -377,6 +377,9 @@ router.route("/classes/:id").get(async (req, res) => {
       capacity: foundClass.capacity,
       instructor: foundClass.instructor,
       time: foundClass.time,
+      rating: foundClass.rating,
+      n: foundClass.students.length,
+      users: foundClass.students,
     });
   } catch (e) {
     res.status(404).json({ error: "Class not found" });
@@ -412,6 +415,9 @@ router.route("/sportPlaces/:id").get(async (req, res) => {
       description: sportPlace.description,
       capacity: sportPlace.capacity,
       price: sportPlace.price,
+      rating: sportPlace.rating,
+      n: sportPlace.users.length,
+      users: sportPlace.users,
     });
   } catch (e) {
     res.status(404).json({ error: "Sport Place not found" });

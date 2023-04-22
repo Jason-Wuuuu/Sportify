@@ -1,11 +1,25 @@
 <h1>{{title}}</h1>
 
-<div>
-    <p>Sport: {{sport}}</p>
-    <p>Sport Place: {{sportPlace}}</p>
-    <p>Capacity: {{capacity}}</p>
-    <p>Instructor: {{instructor}}</p>
-    <p>Time: {{time}}</p>
-</div>
+<p>Sport: {{sport}}</p>
+<p>Sport Place: {{sportPlace}}</p>
+<p>Capacity: {{capacity}}</p>
+<p>Instructor: {{instructor}}</p>
+<p>Time: {{time}}</p>
+<p>Rating: {{rating}}</p>
+<p>Number of Student: {{n}}</p>
+<br>
+<h3>List of Student:</h3>
+<dl>
+    <div id="userList">
+        {{#if n}}
+        {{#each users}}
+        <dt>ID: {{userID}}</dt>
+        <dd>Name: {{userFirstName}}, {{userLastName}}</dd>
+        {{/each}}
+        {{else}}
+        <p>There are no student for this class...</p>
+        {{/if}}
+    </div>
+</dl>
 
 <a href="/admin/classes">Back</a>
