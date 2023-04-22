@@ -1,0 +1,37 @@
+<h1>{{title}}</h1>
+
+<ul>
+    <li>UserID: {{userID}}</li>
+    <li>Description: {{description}}</li>
+    <li>Sport: {{sport}}</li>
+    <li>Sport Place: {{sportPlace}}</li>
+    <li>Capacity: {{capacity}}</li>
+    <li>Date: {{date}}</li>
+    <li>StartTime: {{startTime}}</li>
+    <li>EndTime: {{endTime}}</li>
+    <li>Number of Participants: {{n}}</li>
+</ul>
+
+{{#if approved}}
+<h3>This event has been approved!</h3>
+
+<h3>List of Participants:</h3>
+<dl>
+    <div id="userList">
+        {{#if n}}
+        {{#each participants}}
+        <dt>ID: {{participantID}}</dt>
+        <dd>Name: {{participantFirstName}}, {{participantLastName}}</dd>
+        {{/each}}
+        {{else}}
+        <p>There are no participants for this event...</p>
+        {{/if}}
+    </div>
+</dl>
+{{else}}
+<h3>This event hasn't been approved...</h3>
+<button type="submit">Approve</button>
+{{/if}}
+
+
+<a href="/admin/Events">Back</a>

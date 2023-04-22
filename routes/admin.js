@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as adminData from "../data/admin/admins.js";
 import * as userData from "../data/admin/users.js";
+import * as eventData from "../data/user/events.js";
 import * as classData from "../data/admin/classes.js";
 import * as sportData from "../data/admin/sports.js";
 import * as sportPlaceData from "../data/admin/sportPlaces.js";
@@ -363,6 +364,44 @@ router
       res.sendStatus(500);
     }
   });
+
+router.route("/events").get(async (req, res) => {
+  const eventList = await eventData.getAll();
+  const events = eventList.map((event) =>
+    Object({
+      eventID: event._id,
+      eventName: event.name,
+    })
+  );
+  return res.render("admin/events", { title: "Events", events: events });
+});
+
+router.route("/events/:id").get(async (req, res) => {
+  try {
+    req.params.id = validation.checkId(req.params.id, "ID URL Param");
+  } catch (e) {
+    return res.status(400).json({ error: e });
+  }
+  try {
+    let event = await eventData.get(req.params.id);
+    return res.render("admin/eventInfo", {
+      title: event.name,
+      userID: event.userID,
+      description: event.description,
+      sport: event.sport,
+      sportPlace: event.sportPlace,
+      capacity: event.capacity,
+      date: event.date,
+      startTime: event.startTime,
+      endTime: event.endTime,
+      approved: event.approved,
+      n: event.participants.length,
+      participants: event.participants,
+    });
+  } catch (e) {
+    res.status(404).json({ error: "Event not found" });
+  }
+});
 
 router.route("/classes/:id").get(async (req, res) => {
   try {
