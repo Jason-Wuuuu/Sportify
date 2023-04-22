@@ -9,10 +9,10 @@ import { dbConnection, closeConnection } from "./config/mongoConnection.js";
 const db = await dbConnection();
 await db.dropDatabase();
 
-const number_of_data = 10;
+const number_of_data = 9;
 
 // add valid data
-for (let i = 0; i < number_of_data; i++) {
+for (let i = 1; i <= number_of_data; i++) {
   try {
     let gender = "male";
     if (i % 2 == 0) gender = "female";
@@ -79,7 +79,7 @@ for (let i = 0; i < number_of_data; i++) {
       `sportPlace_0${i}`,
       `${(i + 5) * 3}`,
       `instructor_0${i}`,
-      `05-0${i + 10}-2023`
+      `2023-05-${i + 10}`
     );
     // console.log(newClass);
   } catch (e) {
