@@ -1,3 +1,4 @@
+import * as user from "./data/user/users.js";
 import * as admin from "./data/admin/admins.js";
 import * as sports from "./data/admin/sports.js";
 import * as classes from "./data/admin/classes.js";
@@ -8,20 +9,37 @@ import { dbConnection, closeConnection } from "./config/mongoConnection.js";
 const db = await dbConnection();
 await db.dropDatabase();
 
-const number_of_data = 10;
+const number_of_data = 9;
 
 // add valid data
-for (let i = 0; i < number_of_data; i++) {
+for (let i = 1; i <= number_of_data; i++) {
   try {
-    let gender = "Male";
-    if (i % 2 == 0) gender = "Female";
+    let gender = "male";
+    if (i % 2 == 0) gender = "female";
+    const newUser = await user.create(
+      `User_0${i}_FN`,
+      `User_0${i}_LN`,
+      `user_0${i}@stevens.edu`,
+      gender,
+      `1995-03-0${i}`,
+      `123456789${i}`,
+      `password${i}`
+    );
+    // console.log(newAdmin);
+  } catch (e) {
+    console.log(e);
+  }
+
+  try {
+    let gender = "male";
+    if (i % 2 == 0) gender = "female";
     const newAdmin = await admin.create(
       `Admin_0${i}_FN`,
       `Admin_0${i}_LN`,
       `admin_0${i}@stevens.edu`,
       gender,
-      `03-0${i}-1995`,
-      `123-456-789${i}`,
+      `1995-03-0${i}`,
+      `123456789${i}`,
       `password${i}`
     );
     // console.log(newAdmin);
@@ -61,7 +79,7 @@ for (let i = 0; i < number_of_data; i++) {
       `sportPlace_0${i}`,
       `${(i + 5) * 3}`,
       `instructor_0${i}`,
-      `05-0${i + 10}-2023`
+      `2023-05-${i + 10}`
     );
     // console.log(newClass);
   } catch (e) {
@@ -69,6 +87,7 @@ for (let i = 0; i < number_of_data; i++) {
   }
 }
 
+console.log(`${number_of_data} new valid users added.`);
 console.log(`${number_of_data} new valid admins added.`);
 console.log(`${number_of_data} new valid sports added.`);
 console.log(`${number_of_data} new valid sport places added.`);

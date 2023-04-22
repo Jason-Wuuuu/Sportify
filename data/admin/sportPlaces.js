@@ -11,6 +11,8 @@ const create = async (name, sport, address, description, capacity, price) => {
     description: description,
     capacity: capacity,
     price: price,
+    rating: 0,
+    users: [],
   };
 
   const sportPlaceCollection = await sportPlaces();
@@ -18,7 +20,9 @@ const create = async (name, sport, address, description, capacity, price) => {
     newSportPlace
   );
   const newId = newInsertInformation.insertedId;
-  return await get(newId.toString());
+  await get(newId.toString());
+
+  return { insertedSportPlace: true };
 };
 
 const getAll = async () => {

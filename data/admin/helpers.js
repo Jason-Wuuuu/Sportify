@@ -21,20 +21,78 @@ const validationMethods = {
     return strVal;
   },
 
-  checkDateOfBirth(dateOfBirth) {},
+  checkName(name, varName) {
+    name = this.checkString(name, varName);
 
-  checkAge(dateOfBirth) {},
+    const re_name = /[a-zA-Z ]{2,25}/g;
+    if (!name.match(re_name))
+      throw `Error: ${varName} should be at least 2 characters long with a max of 25 characters`;
 
-  checkEmail(email) {
-    this.checkString(email);
+    return name;
   },
 
-  checkGender(gender) {},
+  checkEmail(email, varName) {
+    email = this.checkString(email, varName);
 
-  checkContactNumber(contactNumber) {},
+    const re_email = /[\S]+@[\S]+\.[\S]+/g;
+    if (!email.match(re_email)) throw `Error: invalid ${varName}`;
 
-  checkPassword(password) {
-    this.checkString(password);
+    return email.toLowerCase();
+  },
+
+  checkDateOfBirth(dateOfBirth, varName) {
+    dateOfBirth = this.checkString(dateOfBirth, varName);
+
+    const dob = new Date(dateOfBirth);
+    if (!dob) throw `Error: Invalid ${varName}.`;
+
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; //January is 0
+    var yyyy = today.getFullYear() - 13; // user shouldn't be less than 13 year-old
+
+    if (dd < 10) dd = "0" + dd;
+    if (mm < 10) mm = "0" + mm;
+
+    const minDate = new Date("1900-01-01");
+    const maxDate = new Date(`${yyyy + "-" + mm + "-" + dd}`);
+
+    if (dob < minDate || dob > maxDate)
+      throw `Error: Invalid ${varName}. Make sure you're over 13 years old.`;
+
+    return dateOfBirth;
+  },
+
+  checkContactNumber(contactNumber, varName) {
+    contactNumber = this.checkString(contactNumber, varName);
+
+    contactNumber = contactNumber.replace(" ", "");
+    const re_contactNumber = /^[\d]{8,20}$/g;
+    if (!contactNumber.match(re_contactNumber))
+      throw `Error: invalid ${varName}`;
+    return contactNumber;
+  },
+
+  checkGender(gender, varName) {
+    gender = this.checkString(gender, varName);
+    gender = gender.toLowerCase();
+
+    const gender_domain = [
+      "male",
+      "female",
+      "transgender",
+      "non-binary",
+      "prefer not to respond",
+    ];
+
+    if (!gender_domain.includes(gender)) throw `Error: invalid ${varName}`;
+
+    return gender;
+  },
+
+  checkPassword(password, varName) {
+    password = this.checkString(password, varName);
+    return password;
   },
 };
 

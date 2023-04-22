@@ -12,14 +12,20 @@ const create = async (
   password
 ) => {
   // validation
-  firstName = validation.checkString(firstName, "firstName");
-  lastName = validation.checkString(lastName, "lastName");
-  email = validation.checkString(email, "email");
-  gender = validation.checkString(gender, "gender");
-  dateOfBirth = validation.checkString(dateOfBirth, "dateOfBirth");
-  contactNumber = validation.checkString(contactNumber, "contactNumber");
-  password = validation.checkString(password, "password");
+  firstName = validation.checkString(firstName, "First Name");
+  lastName = validation.checkString(lastName, "Last Name");
+  email = validation.checkString(email, "Email");
+  gender = validation.checkString(gender, "Gender");
+  dateOfBirth = validation.checkString(dateOfBirth, "Date Of Birth");
+  contactNumber = validation.checkString(contactNumber, "Contact Number");
+  password = validation.checkString(password, "Password");
 
+  // check if email has already been used
+  const adminCollection = await admins();
+  const admin = await adminCollection.findOne({ email: email });
+  if (admin) throw "Error: Email address already been used.";
+
+  // encrypt password
   password = await passwordMethods.encrypt(password);
 
   let newAdmin = {
@@ -27,12 +33,12 @@ const create = async (
     lastName: lastName,
     email: email,
     gender: gender,
-    dateOfBirth: dateOfBirth, // 01-01-1999 (> 13 years old)
+    dateOfBirth: dateOfBirth,
     contactNumber: contactNumber,
     password: password,
   };
 
-  const adminCollection = await admins();
+  // add valid admin to db
   const newInsertInformation = await adminCollection.insertOne(newAdmin);
   const newId = newInsertInformation.insertedId;
   await get(newId.toString());
@@ -72,15 +78,15 @@ const update = async (
   lastName,
   email,
   gender,
-  dateOfBirth, // 01-01-1999 (> 13 years old)
+  dateOfBirth,
   contactNumber,
   password
 ) => {};
 
 const check = async (email, password) => {
   // validation
-  email = validation.checkString(email, "Email Address");
-  password = validation.checkString(password, "Password");
+  email = validation.checkEmail(email, "Email Address");
+  password = validation.checkPassword(password, "Password");
 
   const adminCollection = await admins();
   const admin = await adminCollection.findOne({ email: email });

@@ -1,4 +1,6 @@
-const reserve = async (classID, userID) => {};
+const reserve = async (classID, userID) => {
+  // add user to the student field (an array) in class collection
+};
 
 const quit = async (classID, userID) => {};
 

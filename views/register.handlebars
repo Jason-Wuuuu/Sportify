@@ -6,7 +6,7 @@ registration handelbars
 
 <h1>{{title}}</h1>
 
-<form action="/admin/register" method="post" id="admin-registration-form">
+<form action="/register" method="post" id="user-registration-form">
 
     <label for="firstNameInput">First Name:</label>
     <input type="text" id="firstNameInput" name="firstNameInput" value="{{firstName}}" />
@@ -47,13 +47,10 @@ registration handelbars
     <input type="password" id="confirmPasswordInput" name="confirmPasswordInput" />
     <br>
 
-    <label for="inviteCodeInput">Invite Code:</label>
-    <input type="password" id="inviteCodeInput" name="inviteCodeInput" value="admin" />
-    <br>
-
     <input type="submit" value="Submit" />
 </form>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 
-<a href="/admin/login">Login</a>
+<a href="/login">Login</a>
+<a href="/">home</a>

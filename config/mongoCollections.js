@@ -20,12 +20,3 @@ export const sports = getCollectionFn("sports");
 export const sportPlaces = getCollectionFn("sportPlaces");
 export const events = getCollectionFn("events");
 export const classes = getCollectionFn("classes");
-
-// Ratings
-export const ratingForSportPlaces = getCollectionFn("ratingForSportPlaces");
-export const ratingForClasses = getCollectionFn("ratingForClasses");
-
-// Booking
-export const bookingForSportPlaces = getCollectionFn("bookingForSportPlaces");
-export const bookingForClasses = getCollectionFn("bookingForClasses");
-export const bookingForEvents = getCollectionFn("bookingForEvents");
