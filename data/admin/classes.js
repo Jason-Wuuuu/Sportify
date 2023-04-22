@@ -24,7 +24,9 @@ const create = async (
   const classCollection = await classes();
   const newInsertInformation = await classCollection.insertOne(newClass);
   const newId = newInsertInformation.insertedId;
-  return await get(newId.toString());
+  await get(newId.toString());
+
+  return { insertedClass: true };
 };
 
 const getAll = async () => {

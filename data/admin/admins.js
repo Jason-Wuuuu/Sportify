@@ -27,7 +27,7 @@ const create = async (
     lastName: lastName,
     email: email,
     gender: gender,
-    dateOfBirth: dateOfBirth, // 01-01-1999 (> 13 years old)
+    dateOfBirth: dateOfBirth,
     contactNumber: contactNumber,
     password: password,
   };
