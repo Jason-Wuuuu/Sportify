@@ -21,7 +21,9 @@ const validationMethods = {
     return strVal;
   },
 
-  checkDateOfBirth(dateOfBirth) {},
+  checkDateOfBirth(dateOfBirth) {
+    this.checkString(dateOfBirth);
+  },
 
   checkAge(dateOfBirth) {},
 
@@ -29,9 +31,13 @@ const validationMethods = {
     this.checkString(email);
   },
 
-  checkGender(gender) {},
+  checkGender(gender) {
+    this.checkString(gender);
+  },
 
-  checkContactNumber(contactNumber) {},
+  checkContactNumber(contactNumber) {
+    this.checkString(contactNumber);
+  },
 
   checkPassword(password) {
     this.checkString(password);

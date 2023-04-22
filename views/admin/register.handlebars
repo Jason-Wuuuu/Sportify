@@ -29,8 +29,8 @@ registration handelbars
     <br>
 
     <label for="genderInput">Gender:</label>
-    <select id="genderInput" , name="genderInput">
-        <option selected>-</option>
+    <select id="genderInput" name="genderInput">
+        <option value="">--Please choose an option--</option>
         <option value="male">Male</option>
         <option value="female">Female</option>
         <option value="trans">Transgender</option>
@@ -41,6 +41,14 @@ registration handelbars
 
     <label for="passwordInput">Password:</label>
     <input type="password" id="passwordInput" name="passwordInput" value="{{password}}" />
+    <br>
+
+    <label for="confirmPasswordInput">Confirm Password:</label>
+    <input type="password" id="confirmPasswordInput" name="confirmPasswordInput" />
+    <br>
+
+    <label for="inviteCodeInput">Invite Code:</label>
+    <input type="password" id="inviteCodeInput" name="inviteCodeInput" value="admin" />
     <br>
 
     <input type="submit" value="Submit" />

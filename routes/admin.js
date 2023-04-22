@@ -53,9 +53,9 @@ router
         firstName: adminInfo.firstNameInput,
         lastName: adminInfo.lastNameInput,
         email: adminInfo.emailInput,
-        dateOfBirth: adminInfo.dateOfBirth,
-        contactNumber: adminInfo.contactNumber,
-        gender: adminInfo.gender,
+        dateOfBirth: adminInfo.dateOfBirthInput,
+        contactNumber: adminInfo.contactNumberInput,
+        gender: adminInfo.genderInput,
         password: adminInfo.passwordInput,
       });
     }
@@ -97,8 +97,13 @@ router
         admin.passwordInput,
         "Password"
       );
-    } catch (error) {
-      return res.status(400).render("admin/login", { title: "Login" });
+    } catch (e) {
+      return res.status(400).render("admin/login", {
+        title: "Login",
+        hidden: "",
+        error: e,
+        emailAddress: admin.emailAddressInput,
+      });
     }
     try {
       const { emailAddressInput, passwordInput } = admin;
@@ -114,13 +119,12 @@ router
         title: "Login",
         hidden: "",
         error: e,
-        firstName: admin.firstName,
+        emailAddress: admin.emailAddressInput,
       });
     }
   });
 
 router.route("/logout").get(async (req, res) => {
-  //code here for GET
   req.session.destroy();
   return res.render("admin/logout", { title: "Logout" });
 });
@@ -128,7 +132,7 @@ router.route("/logout").get(async (req, res) => {
 router.route("/home").get(async (req, res) => {
   const admin = req.session.admin;
   return res.render("admin/home", {
-    title: "Home",
+    title: "Admin Panel",
     firstName: admin.firstName,
   });
 });
@@ -352,6 +356,13 @@ router.route("/sportPlaces/:id").get(async (req, res) => {
   } catch (e) {
     res.status(404).json({ error: "Sport Place not found" });
   }
+});
+
+router.route("/error").get(async (req, res) => {
+  return res.render("admin/error", {
+    title: "Error",
+    error: "You are not permitted to visit this page.",
+  });
 });
 
 export default router;
