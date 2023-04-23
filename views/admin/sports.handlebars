@@ -6,22 +6,31 @@ login form handlebar template
 
 <h1>{{title}}</h1>
 
-<h3>Add New Sport:</h3>
-<form action="/admin/sports" method="post" id="sport-form">
+
+<label for="add">Add New Sport:</label>
+<button type="button" id="add">Add</button>
+
+<form action="/admin/sports" method="post" id="add-form" {{hidden}}>
     <label for="nameInput">Name:</label>
     <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
     <br>
 
-    <input type="submit" value="Add" />
+    <input type="submit" value="Submit" />
 </form>
+
+<div id="error" class="error" {{hidden}}>{{error}}</div>
+
 
 <h3>List of Sports:</h3>
 <div id="sportList">
-    <ul>
-        {{#each sports}}
-        <li><a href="/admin/sports/{{sportID}}">{{sportName}}</a></li>
-        {{/each}}
-    </ul>
+    {{#each sports}}
+    <input type="checkbox" id="{{sportID}}" name="{{sportName}}" value="{{sportName}}">
+    <label for="{{sportID}}">
+        <a href="/admin/sports/{{sportID}}">{{sportName}}</a>
+    </label>
+    <br>
+    {{/each}}
 </div>
 
+<br>
 <a href="/admin/home">Home</a>

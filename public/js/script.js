@@ -254,6 +254,27 @@ if (document.URL.includes("/admin")) {
       }
     });
   }
+
+  // Add Buttons
+  if (
+    document.title === "Sports" ||
+    document.title === "Classes" ||
+    document.title === "Sport Places"
+  ) {
+    let add = document.getElementById("add");
+    add.addEventListener("click", (event) => {
+      let addForm = document.getElementById("add-form");
+      let errorDiv = document.getElementById("error");
+
+      if (addForm.hidden) {
+        addForm.hidden = false;
+        errorDiv.hidden = false;
+      } else {
+        addForm.hidden = true;
+        errorDiv.hidden = true;
+      }
+    });
+  }
 }
 //client side js for user
 else {

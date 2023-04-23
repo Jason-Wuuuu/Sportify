@@ -1,7 +1,16 @@
 <h1>{{title}}</h1>
 
-<h3>List of Events:</h3>
-<div id="classList">
+<h3>List of Unapproved Events:</h3>
+<div id="unapprovedEventList">
+    <ul>
+        {{#each unapprovedEvents}}
+        <li><a href="/admin/events/{{eventID}}">{{eventName}}</a></li>
+        {{/each}}
+    </ul>
+</div>
+
+<h3>List of All Events:</h3>
+<div id="eventList">
     <ul>
         {{#each events}}
         <li><a href="/admin/events/{{eventID}}">{{eventName}}</a></li>
