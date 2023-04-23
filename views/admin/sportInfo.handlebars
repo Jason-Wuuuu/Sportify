@@ -1,5 +1,18 @@
 <h1>{{title}}</h1>
 
-<p>{{name}}</p>
+<h3>Name: {{name}}</h3>
 
+<label for="edit">Edit Sport:</label>
+<button type="button" id="edit">Edit</button>
+
+<form action="/admin/sports/{{id}}" method="post" id="edit-form" {{hidden}}>
+    <label for="nameInput">Name:</label>
+    <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
+
+    <input type="submit" value="Save" />
+</form>
+
+<div id="error" class="error" {{hidden}}>{{error}}</div>
+
+<br>
 <a href="/admin/sports">Back</a>

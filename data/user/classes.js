@@ -10,6 +10,8 @@ const getClass = async (classID) => {};
 
 const getAllClasses = async () => {};
 
+const getAllStudents = async (classID) => {};
+
 const getClassesBySport = async (sportID) => {};
 
 const getClassesBySportPlace = async (sportPlaceID) => {};

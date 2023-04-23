@@ -6,13 +6,16 @@ login form handlebar template
 
 <h1>{{title}}</h1>
 
+<h3>Add New Sport:</h3>
 <form action="/admin/sports" method="post" id="sport-form">
     <label for="nameInput">Name:</label>
     <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
+    <br>
 
     <input type="submit" value="Submit" />
 </form>
 
+<h3>List of Sports:</h3>
 <div id="sportList">
     <ul>
         {{#each sports}}
@@ -21,4 +24,4 @@ login form handlebar template
     </ul>
 </div>
 
-<a href="/admin/home">home</a>
+<a href="/admin/home">Home</a>

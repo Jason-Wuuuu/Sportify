@@ -81,7 +81,41 @@ const update = async (
   dateOfBirth,
   contactNumber,
   password
-) => {};
+) => {
+  // validation
+  firstName = validation.checkString(firstName, "First Name");
+  lastName = validation.checkString(lastName, "Last Name");
+  email = validation.checkString(email, "Email");
+  gender = validation.checkString(gender, "Gender");
+  dateOfBirth = validation.checkString(dateOfBirth, "Date Of Birth");
+  contactNumber = validation.checkString(contactNumber, "Contact Number");
+  password = validation.checkString(password, "Password");
+
+  // encrypt password
+  password = await passwordMethods.encrypt(password);
+
+  const adminCollection = await admins();
+
+  const updatedInfo = await adminCollection.findOneAndUpdate(
+    { _id: new ObjectId(adminID) },
+    {
+      $set: {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        gender: gender,
+        dateOfBirth: dateOfBirth,
+        contactNumber: contactNumber,
+        password: password,
+      },
+    },
+    { returnDocument: "after" }
+  );
+  if (updatedInfo.lastErrorObject.n === 0) {
+    throw `Error: no admin exists with an id of ${adminID}.`;
+  }
+  return { updatedAdmin: true };
+};
 
 const check = async (email, password) => {
   // validation

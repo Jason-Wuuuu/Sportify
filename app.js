@@ -65,6 +65,7 @@ app.use("/admin/profile", (req, res, next) => {
   if (!req.session.admin) {
     return res.redirect("/admin/login");
   }
+  if (req.method === "POST") req.method = "PUT";
   next();
 });
 
@@ -75,6 +76,14 @@ app.use("/admin/classes", (req, res, next) => {
   next();
 });
 
+app.use("/admin/classes/:id", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  if (req.method === "POST") req.method = "PUT";
+  next();
+});
+
 app.use("/admin/sports", (req, res, next) => {
   if (!req.session.admin) {
     return res.redirect("/admin/login");
@@ -82,10 +91,26 @@ app.use("/admin/sports", (req, res, next) => {
   next();
 });
 
+app.use("/admin/sports/:id", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  if (req.method === "POST") req.method = "PUT";
+  next();
+});
+
 app.use("/admin/sportPlaces", (req, res, next) => {
   if (!req.session.admin) {
     return res.redirect("/admin/login");
   }
+  next();
+});
+
+app.use("/admin/sportPlaces/:id", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  if (req.method === "POST") req.method = "PUT";
   next();
 });
 

@@ -1,4 +1,5 @@
 import * as user from "./data/user/users.js";
+import * as events from "./data/user/events.js";
 import * as admin from "./data/admin/admins.js";
 import * as sports from "./data/admin/sports.js";
 import * as classes from "./data/admin/classes.js";
@@ -25,7 +26,6 @@ for (let i = 1; i <= number_of_data; i++) {
       `123456789${i}`,
       `password${i}`
     );
-    // console.log(newAdmin);
   } catch (e) {
     console.log(e);
   }
@@ -47,16 +47,12 @@ for (let i = 1; i <= number_of_data; i++) {
     console.log(e);
   }
 
-  let sportID = undefined;
   try {
     const newSport = await sports.create(`Sport_0${i}`);
-    sportID = newSport._id;
-    // console.log(newSport);
   } catch (e) {
     console.log(e);
   }
 
-  let sportPlaceID = undefined;
   try {
     const newSportPlace = await sportPlaces.create(
       `SportPlace_0${i}`,
@@ -66,8 +62,6 @@ for (let i = 1; i <= number_of_data; i++) {
       `${(i + 5) * 10}`,
       `${(i + 10) * 50}`
     );
-    sportPlaceID = newSportPlace._id;
-    // console.log(newSportPlace);
   } catch (e) {
     console.log(e);
   }
@@ -83,7 +77,22 @@ for (let i = 1; i <= number_of_data; i++) {
       `0${i}:00`,
       `0${i}:45`
     );
-    // console.log(newClass);
+  } catch (e) {
+    console.log(e);
+  }
+
+  try {
+    const newEvents = await events.create(
+      "64446957e281134798976647",
+      `Event_0${i}`,
+      `This is the description of Event_0${i}`,
+      `Sport_0${i}`,
+      `sportPlace_0${i}`,
+      `${(i + 5) * 3}`,
+      `2023-05-${i + 10}`,
+      `0${i}:00`,
+      `0${i}:45`
+    );
   } catch (e) {
     console.log(e);
   }
@@ -94,8 +103,7 @@ console.log(`${number_of_data} new valid admins added.`);
 console.log(`${number_of_data} new valid sports added.`);
 console.log(`${number_of_data} new valid sport places added.`);
 console.log(`${number_of_data} new valid classes added.`);
-
-// add invalid data
+console.log(`${number_of_data} new valid events added.`);
 
 await closeConnection();
 console.log("Done!");

@@ -6,6 +6,7 @@ login form handlebar template
 
 <h1>{{title}}</h1>
 
+<h3>Add New Class:</h3>
 <form action="/admin/classes" method="post" id="class-form">
     <label for="titleInput">Title:</label>
     <input type="text" id="titleInput" name="titleInput" value="{{classTitle}}" />
@@ -52,6 +53,8 @@ login form handlebar template
     <input type="submit" value="Submit" />
 </form>
 
+
+<h3>List of Classes:</h3>
 <div id="classList">
     <ul>
         {{#each classes}}
@@ -60,4 +63,4 @@ login form handlebar template
     </ul>
 </div>
 
-<a href="/admin/home">home</a>
+<a href="/admin/home">Home</a>

@@ -1,6 +1,7 @@
 import { Router } from "express";
+import * as userData from "../data/user/users.js";
+import * as eventData from "../data/user/events.js";
 import * as adminData from "../data/admin/admins.js";
-import * as userData from "../data/admin/users.js";
 import * as classData from "../data/admin/classes.js";
 import * as sportData from "../data/admin/sports.js";
 import * as sportPlaceData from "../data/admin/sportPlaces.js";
@@ -24,11 +25,11 @@ router
     }
     // validation for admin registration
     try {
-      adminInfo.firstNameInput = validation.checkString(
+      adminInfo.firstNameInput = validation.checkName(
         adminInfo.firstNameInput,
         "First Name"
       );
-      adminInfo.lastNameInput = validation.checkString(
+      adminInfo.lastNameInput = validation.checkName(
         adminInfo.lastNameInput,
         "Last Name"
       );
@@ -48,7 +49,7 @@ router
         adminInfo.genderInput,
         "Gender"
       );
-      adminInfo.passwordInput = validation.checkString(
+      adminInfo.passwordInput = validation.checkPassword(
         adminInfo.passwordInput,
         "Password"
       );
@@ -62,7 +63,6 @@ router
         email: adminInfo.emailInput,
         dateOfBirth: adminInfo.dateOfBirthInput,
         contactNumber: adminInfo.contactNumberInput,
-        gender: adminInfo.genderInput,
         password: adminInfo.passwordInput,
       });
     }
@@ -89,7 +89,6 @@ router
         email: adminInfo.emailInput,
         dateOfBirth: adminInfo.dateOfBirthInput,
         contactNumber: adminInfo.contactNumberInput,
-        gender: adminInfo.genderInput,
         password: adminInfo.passwordInput,
       });
     }
@@ -111,12 +110,12 @@ router
     }
     // input checking
     try {
-      admin.emailAddressInput = validation.checkString(
+      admin.emailAddressInput = validation.checkEmail(
         admin.emailAddressInput,
         "Email Address"
       );
 
-      admin.passwordInput = validation.checkString(
+      admin.passwordInput = validation.checkPassword(
         admin.passwordInput,
         "Password"
       );
@@ -168,42 +167,121 @@ router
 
       return res.render("admin/profile", {
         title: "Profile",
+        hidden: "hidden",
         firstName: adminInfo.firstName,
         lastName: adminInfo.lastName,
         email: adminInfo.email,
         gender: adminInfo.gender,
         dateOfBirth: adminInfo.dateOfBirth,
         contactNumber: adminInfo.contactNumber,
+        newFirstName: adminInfo.firstName,
+        newLastName: adminInfo.lastName,
+        newEmail: adminInfo.email,
+        newDateOfBirth: adminInfo.dateOfBirth,
+        newContactNumber: adminInfo.contactNumber,
       });
     } catch (e) {
+      console.log("hi");
       res.status(404).render("admin/error", {
         title: "Error",
-        error: "Admin not found",
+        error: e,
       });
     }
   })
   .put(async (req, res) => {
+    let adminInfo = req.body;
+    if (!adminInfo || Object.keys(adminInfo).length === 0) {
+      res.status(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+    // validation
     try {
+      adminInfo.firstNameInput = validation.checkName(
+        adminInfo.firstNameInput,
+        "First Name"
+      );
+      adminInfo.lastNameInput = validation.checkName(
+        adminInfo.lastNameInput,
+        "Last Name"
+      );
+      adminInfo.emailInput = validation.checkEmail(
+        adminInfo.emailInput,
+        "Email"
+      );
+      adminInfo.dateOfBirthInput = validation.checkDateOfBirth(
+        adminInfo.dateOfBirthInput,
+        "Date Of Birth"
+      );
+      adminInfo.contactNumberInput = validation.checkContactNumber(
+        adminInfo.contactNumberInput,
+        "Contact Number"
+      );
+      adminInfo.genderInput = validation.checkGender(
+        adminInfo.genderInput,
+        "Gender"
+      );
+      adminInfo.passwordInput = validation.checkPassword(
+        adminInfo.passwordInput,
+        "Password"
+      );
     } catch (e) {
-      res.status(500).json({ error: e });
+      let origAdminInfo = await adminData.get(req.session.admin.adminID);
+      return res.status(400).render("admin/profile", {
+        title: "Profile",
+        hidden: "",
+        error: e,
+        firstName: origAdminInfo.firstName,
+        lastName: origAdminInfo.lastName,
+        email: origAdminInfo.email,
+        gender: origAdminInfo.gender,
+        dateOfBirth: origAdminInfo.dateOfBirth,
+        contactNumber: origAdminInfo.contactNumber,
+        newFirstName: adminInfo.firstNameInput,
+        newLastName: adminInfo.lastNameInput,
+        newEmail: adminInfo.emailInput,
+        newDateOfBirth: adminInfo.dateOfBirthInput,
+        newContactNumber: adminInfo.contactNumberInput,
+      });
+    }
+    // update
+    try {
+      const adminID = req.session.admin.adminID;
+
+      const newAdmin = await adminData.update(
+        adminID,
+        adminInfo.firstNameInput,
+        adminInfo.lastNameInput,
+        adminInfo.emailInput,
+        adminInfo.genderInput,
+        adminInfo.dateOfBirthInput,
+        adminInfo.contactNumberInput,
+        adminInfo.passwordInput
+      );
+      if (!newAdmin.updatedAdmin) throw "Internal Server Error";
+      return res.redirect("profile");
+    } catch (e) {
+      let origAdminInfo = await adminData.get(req.session.admin.adminID);
+      return res.status(500).render("admin/profile", {
+        title: "Profile",
+        hidden: "",
+        error: e,
+        firstName: origAdminInfo.firstName,
+        lastName: origAdminInfo.lastName,
+        email: origAdminInfo.email,
+        gender: origAdminInfo.gender,
+        dateOfBirth: origAdminInfo.dateOfBirth,
+        contactNumber: origAdminInfo.contactNumber,
+        newFirstName: adminInfo.firstNameInput,
+        newLastName: adminInfo.lastNameInput,
+        newEmail: adminInfo.emailInput,
+        newDateOfBirth: adminInfo.dateOfBirthInput,
+        newContactNumber: adminInfo.contactNumberInput,
+      });
     }
   })
-  .delete(async (req, res) => {
-    try {
-      req.params.id = validation.checkId(req.params.id);
-    } catch (e) {
-      return res.status(400).json({ error: e });
-    }
-
-    try {
-      let deletedAdmin = await adminData.remove(req.params.id);
-      res.json(deletedAdmin);
-    } catch (e) {
-      let status = e[0] ? e[0] : 500;
-      let message = e[1] ? e[1] : "Internal Server Error";
-      res.status(500).send({ error: message });
-    }
-  });
+  .delete(async (req, res) => {});
 
 router.route("/users").get(async (req, res) => {
   const userList = await userData.getAll();
@@ -364,69 +442,150 @@ router
     }
   });
 
-router.route("/classes/:id").get(async (req, res) => {
+router.route("/events").get(async (req, res) => {
+  const eventList = await eventData.getAll();
+  const events = eventList.map((event) =>
+    Object({
+      eventID: event._id,
+      eventName: event.name,
+    })
+  );
+  return res.render("admin/events", { title: "Events", events: events });
+});
+
+router.route("/events/:id").get(async (req, res) => {
   try {
     req.params.id = validation.checkId(req.params.id, "ID URL Param");
   } catch (e) {
     return res.status(400).json({ error: e });
   }
   try {
-    let foundClass = await classData.get(req.params.id);
-    return res.render("admin/classInfo", {
-      title: foundClass.title,
-      sport: foundClass.sport,
-      sportPlace: foundClass.sportPlace,
-      capacity: foundClass.capacity,
-      instructor: foundClass.instructor,
-      date: foundClass.date,
-      startTime: foundClass.startTime,
-      endTime: foundClass.endTime,
-      rating: foundClass.rating,
-      n: foundClass.students.length,
-      users: foundClass.students,
+    let event = await eventData.get(req.params.id);
+    return res.render("admin/eventInfo", {
+      title: event.name,
+      userID: event.userID,
+      description: event.description,
+      sport: event.sport,
+      sportPlace: event.sportPlace,
+      capacity: event.capacity,
+      date: event.date,
+      startTime: event.startTime,
+      endTime: event.endTime,
+      approved: event.approved,
+      n: event.participants.length,
+      participants: event.participants,
     });
   } catch (e) {
-    res.status(404).json({ error: "Class not found" });
+    res.status(404).json({ error: "Event not found" });
   }
 });
 
-router.route("/sports/:id").get(async (req, res) => {
-  try {
-    req.params.id = validation.checkId(req.params.id, "ID URL Param");
-  } catch (e) {
-    return res.status(400).json({ error: e });
-  }
-  try {
+router
+  .route("/classes/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).json({ error: e });
+    }
+    try {
+      const sportList = await sportData.getAll();
+      let sports = [];
+      if (sportList) {
+        sports = sportList.map((sport) => sport.name);
+      }
+
+      const sportPlacetList = await sportPlaceData.getAll();
+      let sportPlaces = [];
+      if (sportPlacetList) {
+        sportPlaces = sportPlacetList.map((sportPlace) => sportPlace.name);
+      }
+
+      let foundClass = await classData.get(req.params.id);
+      return res.render("admin/classInfo", {
+        title: "Class Info",
+        hidden: "hidden",
+        id: foundClass._id,
+        sports: sports,
+        sportPlaces: sportPlaces,
+        name: foundClass.title,
+        sport: foundClass.sport,
+        sportPlace: foundClass.sportPlace,
+        capacity: foundClass.capacity,
+        instructor: foundClass.instructor,
+        date: foundClass.date,
+        startTime: foundClass.startTime,
+        endTime: foundClass.endTime,
+        rating: foundClass.rating,
+        n: foundClass.students.length,
+        users: foundClass.students,
+      });
+    } catch (e) {
+      res.status(404).json({ error: "Class not found" });
+    }
+  })
+  .put(async (req, res) => {
+    let classInfo = await classData.get(req.params.id);
+    return res.redirect(`${classInfo._id}`);
+  });
+
+router
+  .route("/sports/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).json({ error: e });
+    }
+    try {
+      let sport = await sportData.get(req.params.id);
+      return res.render("admin/sportInfo", {
+        title: "Sport Info",
+        hidden: "hidden",
+        id: sport._id,
+        name: sport.name,
+      });
+    } catch (e) {
+      res.status(404).json({ error: "Sport not found" });
+    }
+  })
+  .put(async (req, res) => {
     let sport = await sportData.get(req.params.id);
-    return res.render("admin/sportInfo", { title: sport.name });
-  } catch (e) {
-    res.status(404).json({ error: "Sport not found" });
-  }
-});
+    return res.redirect(`${sport._id}`);
+  });
 
-router.route("/sportPlaces/:id").get(async (req, res) => {
-  try {
-    req.params.id = validation.checkId(req.params.id, "ID URL Param");
-  } catch (e) {
-    return res.status(400).json({ error: e });
-  }
-  try {
+router
+  .route("/sportPlaces/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).json({ error: e });
+    }
+    try {
+      let sportPlace = await sportPlaceData.get(req.params.id);
+      return res.render("admin/sportPlaceInfo", {
+        title: "SportPlace Info",
+        hidden: "hidden",
+        id: sportPlace._id,
+        name: sportPlace.name,
+        sport: sportPlace.sport,
+        address: sportPlace.address,
+        description: sportPlace.description,
+        capacity: sportPlace.capacity,
+        price: sportPlace.price,
+        rating: sportPlace.rating,
+        n: sportPlace.users.length,
+        users: sportPlace.users,
+      });
+    } catch (e) {
+      res.status(404).json({ error: "Sport Place not found" });
+    }
+  })
+  .put(async (req, res) => {
     let sportPlace = await sportPlaceData.get(req.params.id);
-    return res.render("admin/sportPlaceInfo", {
-      title: sportPlace.name,
-      sport: sportPlace.sport,
-      address: sportPlace.address,
-      description: sportPlace.description,
-      capacity: sportPlace.capacity,
-      price: sportPlace.price,
-      rating: sportPlace.rating,
-      n: sportPlace.users.length,
-      users: sportPlace.users,
-    });
-  } catch (e) {
-    res.status(404).json({ error: "Sport Place not found" });
-  }
-});
+    return res.redirect(`${sportPlace._id}`);
+  });
 
 router.route("/error").get(async (req, res) => {
   return res.render("admin/error", {
