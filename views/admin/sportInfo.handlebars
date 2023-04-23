@@ -1,16 +1,22 @@
+<header>
+    <nav class="navbar">
+        <a href="/admin/sports">Back</a>
+    </nav>
+</header>
+
 <h1>{{name}}</h1>
 
 <label for="edit">Edit Sport:</label>
 <button type="button" id="edit">Edit</button>
 
-<form action="/admin/sports/{{id}}" method="post" id="edit-form" {{hidden}}>
-    <label for="nameInput">Name:</label>
-    <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
 
-    <input type="submit" value="Save" />
-</form>
-
+<div id="form" class="form" {{hidden}}>
+    <form action="/admin/sports/{{id}}" method="post" id="edit-form">
+        <label for="nameInput">Name:</label>
+        <br>
+        <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
+        <br>
+        <input type="submit" value="Save" />
+    </form>
+</div>
 <div id="error" class="error" {{hidden}}>{{error}}</div>
-
-<br>
-<a href="/admin/sports">Back</a>
