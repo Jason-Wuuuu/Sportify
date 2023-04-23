@@ -95,7 +95,6 @@ const update = async (
   password = await passwordMethods.encrypt(password);
 
   const adminCollection = await admins();
-
   const updatedInfo = await adminCollection.findOneAndUpdate(
     { _id: new ObjectId(adminID) },
     {
