@@ -104,7 +104,7 @@ if (document.URL.includes("/admin")) {
     errorDiv.innerHTML = err_msg;
   };
 
-  // Admin forms
+  // Registration forms
   if (document.title === "Register" || document.title === "Profile") {
     let registrationForm = document.getElementById("admin-registration-form");
     let adminEditForm = document.getElementById("admin-edit-form");
@@ -117,15 +117,16 @@ if (document.URL.includes("/admin")) {
     let genderInput = document.getElementById("genderInput");
     let passwordInput = document.getElementById("passwordInput");
     let confirmPasswordInput = document.getElementById("confirmPasswordInput");
-    let inviteCodeInput = document.getElementById("inviteCodeInput");
 
-    // set range for date
+    // get valid range for date
     const { min, max } = get_valid_date_range();
     dateOfBirthInput.setAttribute("min", min);
     dateOfBirthInput.setAttribute("max", max);
 
     if (registrationForm) {
       console.log("admin registration form");
+      let inviteCodeInput = document.getElementById("inviteCodeInput");
+
       registrationForm.addEventListener("submit", (event) => {
         let firstName = firstNameInput.value;
         let lastName = lastNameInput.value;

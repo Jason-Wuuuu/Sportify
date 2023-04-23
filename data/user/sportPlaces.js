@@ -1,3 +1,6 @@
+import { sportPlaces } from "../../config/mongoCollections.js";
+import { ObjectId } from "mongodb";
+
 const reserve = async (sportPlaceID, userID) => {
   // add user to the users field (an array) in sportPlace collection
 };
