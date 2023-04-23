@@ -480,31 +480,54 @@ router.route("/events/:id").get(async (req, res) => {
   }
 });
 
-router.route("/classes/:id").get(async (req, res) => {
-  try {
-    req.params.id = validation.checkId(req.params.id, "ID URL Param");
-  } catch (e) {
-    return res.status(400).json({ error: e });
-  }
-  try {
-    let foundClass = await classData.get(req.params.id);
-    return res.render("admin/classInfo", {
-      title: foundClass.title,
-      sport: foundClass.sport,
-      sportPlace: foundClass.sportPlace,
-      capacity: foundClass.capacity,
-      instructor: foundClass.instructor,
-      date: foundClass.date,
-      startTime: foundClass.startTime,
-      endTime: foundClass.endTime,
-      rating: foundClass.rating,
-      n: foundClass.students.length,
-      users: foundClass.students,
-    });
-  } catch (e) {
-    res.status(404).json({ error: "Class not found" });
-  }
-});
+router
+  .route("/classes/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).json({ error: e });
+    }
+    try {
+      const sportList = await sportData.getAll();
+      let sports = [];
+      if (sportList) {
+        sports = sportList.map((sport) => sport.name);
+      }
+
+      const sportPlacetList = await sportPlaceData.getAll();
+      let sportPlaces = [];
+      if (sportPlacetList) {
+        sportPlaces = sportPlacetList.map((sportPlace) => sportPlace.name);
+      }
+
+      let foundClass = await classData.get(req.params.id);
+      return res.render("admin/classInfo", {
+        title: "Class Info",
+        hidden: "hidden",
+        id: foundClass._id,
+        sports: sports,
+        sportPlaces: sportPlaces,
+        name: foundClass.title,
+        sport: foundClass.sport,
+        sportPlace: foundClass.sportPlace,
+        capacity: foundClass.capacity,
+        instructor: foundClass.instructor,
+        date: foundClass.date,
+        startTime: foundClass.startTime,
+        endTime: foundClass.endTime,
+        rating: foundClass.rating,
+        n: foundClass.students.length,
+        users: foundClass.students,
+      });
+    } catch (e) {
+      res.status(404).json({ error: "Class not found" });
+    }
+  })
+  .put(async (req, res) => {
+    let classInfo = await classData.get(req.params.id);
+    return res.redirect(`${classInfo._id}`);
+  });
 
 router
   .route("/sports/:id")
@@ -531,29 +554,38 @@ router
     return res.redirect(`${sport._id}`);
   });
 
-router.route("/sportPlaces/:id").get(async (req, res) => {
-  try {
-    req.params.id = validation.checkId(req.params.id, "ID URL Param");
-  } catch (e) {
-    return res.status(400).json({ error: e });
-  }
-  try {
+router
+  .route("/sportPlaces/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).json({ error: e });
+    }
+    try {
+      let sportPlace = await sportPlaceData.get(req.params.id);
+      return res.render("admin/sportPlaceInfo", {
+        title: "SportPlace Info",
+        hidden: "hidden",
+        id: sportPlace._id,
+        name: sportPlace.name,
+        sport: sportPlace.sport,
+        address: sportPlace.address,
+        description: sportPlace.description,
+        capacity: sportPlace.capacity,
+        price: sportPlace.price,
+        rating: sportPlace.rating,
+        n: sportPlace.users.length,
+        users: sportPlace.users,
+      });
+    } catch (e) {
+      res.status(404).json({ error: "Sport Place not found" });
+    }
+  })
+  .put(async (req, res) => {
     let sportPlace = await sportPlaceData.get(req.params.id);
-    return res.render("admin/sportPlaceInfo", {
-      title: sportPlace.name,
-      sport: sportPlace.sport,
-      address: sportPlace.address,
-      description: sportPlace.description,
-      capacity: sportPlace.capacity,
-      price: sportPlace.price,
-      rating: sportPlace.rating,
-      n: sportPlace.users.length,
-      users: sportPlace.users,
-    });
-  } catch (e) {
-    res.status(404).json({ error: "Sport Place not found" });
-  }
-});
+    return res.redirect(`${sportPlace._id}`);
+  });
 
 router.route("/error").get(async (req, res) => {
   return res.render("admin/error", {
