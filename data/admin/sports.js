@@ -39,7 +39,7 @@ const remove = async (sportID) => {
   if (deletionInfo.lastErrorObject.n === 0)
     throw [404, `Error: Could not delete user with id of ${sportID}`];
 
-  return { ...deletionInfo.value, deleted: true };
+  return { deleted: true };
 };
 
 const update = async (sportID, name) => {
