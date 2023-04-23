@@ -242,14 +242,14 @@ if (document.URL.includes("/admin")) {
   ) {
     let edit = document.getElementById("edit");
     edit.addEventListener("click", (event) => {
-      let editForm = document.getElementById("edit-form");
+      let formDiv = document.getElementById("form");
       let errorDiv = document.getElementById("error");
 
-      if (editForm.hidden) {
-        editForm.hidden = false;
+      if (formDiv.hidden) {
+        formDiv.hidden = false;
         errorDiv.hidden = false;
       } else {
-        editForm.hidden = true;
+        formDiv.hidden = true;
         errorDiv.hidden = true;
       }
     });
@@ -263,14 +263,14 @@ if (document.URL.includes("/admin")) {
   ) {
     let add = document.getElementById("add");
     add.addEventListener("click", (event) => {
-      let addForm = document.getElementById("add-form");
+      let formDiv = document.getElementById("form");
       let errorDiv = document.getElementById("error");
 
-      if (addForm.hidden) {
-        addForm.hidden = false;
+      if (formDiv.hidden) {
+        formDiv.hidden = false;
         errorDiv.hidden = false;
       } else {
-        addForm.hidden = true;
+        formDiv.hidden = true;
         errorDiv.hidden = true;
       }
     });

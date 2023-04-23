@@ -10,12 +10,129 @@ import validation from "../data/admin/helpers.js";
 
 const router = Router();
 
-// http://localhost:3000/admin/
-router.route("/home").get(async (req, res) => {
-  return res.render("admin/home", {
-    title: "Admin Panel",
-  });
-});
+// http://localhost:3000/admin/profile
+router
+  .route("/profile")
+  .get(async (req, res) => {
+    try {
+      let adminInfo = await adminData.get(req.session.admin.adminID);
+
+      return res.render("admin/profile", {
+        title: "Profile",
+        hidden: "hidden",
+        firstName: adminInfo.firstName,
+        lastName: adminInfo.lastName,
+        email: adminInfo.email,
+        gender: adminInfo.gender,
+        dateOfBirth: adminInfo.dateOfBirth,
+        contactNumber: adminInfo.contactNumber,
+        newFirstName: adminInfo.firstName,
+        newLastName: adminInfo.lastName,
+        newEmail: adminInfo.email,
+        newDateOfBirth: adminInfo.dateOfBirth,
+        newContactNumber: adminInfo.contactNumber,
+      });
+    } catch (e) {
+      res.status(404).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  })
+  .put(async (req, res) => {
+    let adminInfo = req.body;
+    if (!adminInfo || Object.keys(adminInfo).length === 0) {
+      res.status(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+    // validation
+    try {
+      adminInfo.firstNameInput = validation.checkName(
+        adminInfo.firstNameInput,
+        "First Name"
+      );
+      adminInfo.lastNameInput = validation.checkName(
+        adminInfo.lastNameInput,
+        "Last Name"
+      );
+      adminInfo.emailInput = validation.checkEmail(
+        adminInfo.emailInput,
+        "Email"
+      );
+      adminInfo.dateOfBirthInput = validation.checkDateOfBirth(
+        adminInfo.dateOfBirthInput,
+        "Date Of Birth"
+      );
+      adminInfo.contactNumberInput = validation.checkContactNumber(
+        adminInfo.contactNumberInput,
+        "Contact Number"
+      );
+      adminInfo.genderInput = validation.checkGender(
+        adminInfo.genderInput,
+        "Gender"
+      );
+      adminInfo.passwordInput = validation.checkPassword(
+        adminInfo.passwordInput,
+        "Password"
+      );
+    } catch (e) {
+      let origAdminInfo = await adminData.get(req.session.admin.adminID);
+      return res.status(400).render("admin/profile", {
+        title: "Profile",
+        hidden: "",
+        error: e,
+        firstName: origAdminInfo.firstName,
+        lastName: origAdminInfo.lastName,
+        email: origAdminInfo.email,
+        gender: origAdminInfo.gender,
+        dateOfBirth: origAdminInfo.dateOfBirth,
+        contactNumber: origAdminInfo.contactNumber,
+        newFirstName: adminInfo.firstNameInput,
+        newLastName: adminInfo.lastNameInput,
+        newEmail: adminInfo.emailInput,
+        newDateOfBirth: adminInfo.dateOfBirthInput,
+        newContactNumber: adminInfo.contactNumberInput,
+      });
+    }
+    // update
+    try {
+      const adminID = req.session.admin.adminID;
+
+      const newAdmin = await adminData.update(
+        adminID,
+        adminInfo.firstNameInput,
+        adminInfo.lastNameInput,
+        adminInfo.emailInput,
+        adminInfo.genderInput,
+        adminInfo.dateOfBirthInput,
+        adminInfo.contactNumberInput,
+        adminInfo.passwordInput
+      );
+      if (!newAdmin.updatedAdmin) throw "Internal Server Error";
+      return res.redirect("profile");
+    } catch (e) {
+      let origAdminInfo = await adminData.get(req.session.admin.adminID);
+      return res.status(500).render("admin/profile", {
+        title: "Profile",
+        hidden: "",
+        error: e,
+        firstName: origAdminInfo.firstName,
+        lastName: origAdminInfo.lastName,
+        email: origAdminInfo.email,
+        gender: origAdminInfo.gender,
+        dateOfBirth: origAdminInfo.dateOfBirth,
+        contactNumber: origAdminInfo.contactNumber,
+        newFirstName: adminInfo.firstNameInput,
+        newLastName: adminInfo.lastNameInput,
+        newEmail: adminInfo.emailInput,
+        newDateOfBirth: adminInfo.dateOfBirthInput,
+        newContactNumber: adminInfo.contactNumberInput,
+      });
+    }
+  })
+  .delete(async (req, res) => {});
 
 router
   .route("/register")
@@ -142,7 +259,7 @@ router
       );
 
       req.session.admin = validAdmin;
-      return res.redirect("home");
+      return res.redirect("profile");
     } catch (e) {
       return res.status(400).render("admin/login", {
         title: "Login",
@@ -157,129 +274,6 @@ router.route("/logout").get(async (req, res) => {
   req.session.destroy();
   return res.render("admin/logout", { title: "Logout" });
 });
-
-router
-  .route("/profile")
-  .get(async (req, res) => {
-    try {
-      let adminInfo = await adminData.get(req.session.admin.adminID);
-
-      return res.render("admin/profile", {
-        title: "Profile",
-        hidden: "hidden",
-        firstName: adminInfo.firstName,
-        lastName: adminInfo.lastName,
-        email: adminInfo.email,
-        gender: adminInfo.gender,
-        dateOfBirth: adminInfo.dateOfBirth,
-        contactNumber: adminInfo.contactNumber,
-        newFirstName: adminInfo.firstName,
-        newLastName: adminInfo.lastName,
-        newEmail: adminInfo.email,
-        newDateOfBirth: adminInfo.dateOfBirth,
-        newContactNumber: adminInfo.contactNumber,
-      });
-    } catch (e) {
-      res.status(404).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-  })
-  .put(async (req, res) => {
-    let adminInfo = req.body;
-    if (!adminInfo || Object.keys(adminInfo).length === 0) {
-      res.status(400).render("admin/error", {
-        title: "Error",
-        error: "There are no fields in the request body",
-      });
-    }
-    // validation
-    try {
-      adminInfo.firstNameInput = validation.checkName(
-        adminInfo.firstNameInput,
-        "First Name"
-      );
-      adminInfo.lastNameInput = validation.checkName(
-        adminInfo.lastNameInput,
-        "Last Name"
-      );
-      adminInfo.emailInput = validation.checkEmail(
-        adminInfo.emailInput,
-        "Email"
-      );
-      adminInfo.dateOfBirthInput = validation.checkDateOfBirth(
-        adminInfo.dateOfBirthInput,
-        "Date Of Birth"
-      );
-      adminInfo.contactNumberInput = validation.checkContactNumber(
-        adminInfo.contactNumberInput,
-        "Contact Number"
-      );
-      adminInfo.genderInput = validation.checkGender(
-        adminInfo.genderInput,
-        "Gender"
-      );
-      adminInfo.passwordInput = validation.checkPassword(
-        adminInfo.passwordInput,
-        "Password"
-      );
-    } catch (e) {
-      let origAdminInfo = await adminData.get(req.session.admin.adminID);
-      return res.status(400).render("admin/profile", {
-        title: "Profile",
-        hidden: "",
-        error: e,
-        firstName: origAdminInfo.firstName,
-        lastName: origAdminInfo.lastName,
-        email: origAdminInfo.email,
-        gender: origAdminInfo.gender,
-        dateOfBirth: origAdminInfo.dateOfBirth,
-        contactNumber: origAdminInfo.contactNumber,
-        newFirstName: adminInfo.firstNameInput,
-        newLastName: adminInfo.lastNameInput,
-        newEmail: adminInfo.emailInput,
-        newDateOfBirth: adminInfo.dateOfBirthInput,
-        newContactNumber: adminInfo.contactNumberInput,
-      });
-    }
-    // update
-    try {
-      const adminID = req.session.admin.adminID;
-
-      const newAdmin = await adminData.update(
-        adminID,
-        adminInfo.firstNameInput,
-        adminInfo.lastNameInput,
-        adminInfo.emailInput,
-        adminInfo.genderInput,
-        adminInfo.dateOfBirthInput,
-        adminInfo.contactNumberInput,
-        adminInfo.passwordInput
-      );
-      if (!newAdmin.updatedAdmin) throw "Internal Server Error";
-      return res.redirect("profile");
-    } catch (e) {
-      let origAdminInfo = await adminData.get(req.session.admin.adminID);
-      return res.status(500).render("admin/profile", {
-        title: "Profile",
-        hidden: "",
-        error: e,
-        firstName: origAdminInfo.firstName,
-        lastName: origAdminInfo.lastName,
-        email: origAdminInfo.email,
-        gender: origAdminInfo.gender,
-        dateOfBirth: origAdminInfo.dateOfBirth,
-        contactNumber: origAdminInfo.contactNumber,
-        newFirstName: adminInfo.firstNameInput,
-        newLastName: adminInfo.lastNameInput,
-        newEmail: adminInfo.emailInput,
-        newDateOfBirth: adminInfo.dateOfBirthInput,
-        newContactNumber: adminInfo.contactNumberInput,
-      });
-    }
-  })
-  .delete(async (req, res) => {});
 
 router.route("/users").get(async (req, res) => {
   const userList = await userData.getAll();
@@ -541,7 +535,11 @@ router
         users: foundClass.students,
       });
     } catch (e) {
-      res.status(404).json({ error: "Class not found" });
+      return res.status(404).render("admin/error", {
+        title: "Error",
+        error: `${e}`,
+        back: "classes",
+      });
     }
   })
   .put(async (req, res) => {
@@ -592,7 +590,11 @@ router
         name: sport.name,
       });
     } catch (e) {
-      res.status(404).json({ error: "Sport not found" });
+      return res.status(404).render("admin/error", {
+        title: "Error",
+        error: `${e}`,
+        back: "sports",
+      });
     }
   })
   .put(async (req, res) => {
@@ -643,7 +645,11 @@ router
         users: sportPlace.users,
       });
     } catch (e) {
-      res.status(404).json({ error: "Sport Place not found" });
+      return res.status(404).render("admin/error", {
+        title: "Error",
+        error: `${e}`,
+        back: "sportPlaces",
+      });
     }
   })
   .put(async (req, res) => {
@@ -702,7 +708,11 @@ router
         participants: event.participants,
       });
     } catch (e) {
-      res.status(404).json({ error: "Event not found" });
+      return res.status(404).render("admin/error", {
+        title: "Error",
+        error: `${e}`,
+        back: "events",
+      });
     }
   })
   .put(async (req, res) => {
@@ -714,10 +724,12 @@ router
     } catch (e) {}
   });
 
-router.route("/error").get(async (req, res) => {
-  return res.render("admin/error", {
+// all other urls
+router.route("*").get(async (req, res) => {
+  return res.status(404).render("admin/error", {
     title: "Error",
-    error: "You are not permitted to visit this page.",
+    error: `Error: "/admin${req.url}" is not a valid url`,
+    back: "profile",
   });
 });
 

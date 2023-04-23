@@ -1,0 +1,69 @@
+/* You will create a CSS stylesheet in /public/css/lab10.css; this file should have at least 10 rulesets.  You will need to utilize all 10 rulesets on each of the pages (not every page has to use all 10 rulesets each but all 10 rulesets must be utilized by the various pages in your application).  So you can have some rulesets for one page, some for another page but there needs to be at least 10 total rulesets that are used between all the pages.  */
+
+body {
+    color: whitesmoke;
+    background-color: #343d46;
+
+    font-family: Monospace, sans-serif;
+}
+
+nav {
+    font-weight: bold;
+    display: block;
+    text-align: center;
+    border-bottom: solid;
+    padding: 10px;
+}
+
+nav>a {
+    text-decoration: none;
+    margin: 20px;
+}
+
+.form {
+    padding: 10px;
+    margin: 5px;
+}
+
+a {
+    color: lightblue;
+}
+
+a:hover {
+    font-weight: bolder;
+    color: lightsalmon;
+}
+
+label {
+    font-weight: bold;
+}
+
+input,
+select,
+textarea {
+    margin-bottom: 10px;
+}
+
+button,
+input[type=submit] {
+    font-weight: bold;
+    color: #343d46;
+    background-color: whitesmoke;
+}
+
+button:hover,
+input[type=submit]:hover {
+    color: whitesmoke;
+    background-color: #343d46;
+}
+
+.error {
+    color: lightcoral;
+
+    font-size: larger;
+    font-weight: bold;
+
+    margin: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
