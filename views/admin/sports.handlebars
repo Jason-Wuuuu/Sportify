@@ -1,8 +1,14 @@
-{{!--
-
-login form handlebar template
-
---}}
+<header>
+    <nav class="navbar">
+        <a href="/admin/profile">Profile</a>
+        <a href="/admin/sports">Sports</a>
+        <a href="/admin/sportPlaces">SportPlaces</a>
+        <a href="/admin/classes">Classes</a>
+        <a href="/admin/events">Events</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/logout">Logout</a>
+    </nav>
+</header>
 
 <h1>{{title}}</h1>
 
@@ -10,14 +16,15 @@ login form handlebar template
 <label for="add">Add New Sport:</label>
 <button type="button" id="add">Add</button>
 
-<form action="/admin/sports" method="post" id="add-form" {{hidden}}>
-    <label for="nameInput">Name:</label>
-    <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
-    <br>
-
-    <input type="submit" value="Submit" />
-</form>
-
+<div id="form" class="form" {{hidden}}>
+    <form action="/admin/sports" method="post" id="add-form">
+        <label for="nameInput">Name:</label>
+        <br>
+        <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
+        <br>
+        <input type="submit" value="Submit" />
+    </form>
+</div>
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 
 
@@ -31,6 +38,3 @@ login form handlebar template
     <br>
     {{/each}}
 </div>
-
-<br>
-<a href="/admin/home">Home</a>

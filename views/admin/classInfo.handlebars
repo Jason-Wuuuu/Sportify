@@ -1,3 +1,9 @@
+<header>
+    <nav class="navbar">
+        <a href="/admin/classes">Back</a>
+    </nav>
+</header>
+
 <h1>{{name}}</h1>
 
 <ul>
@@ -15,52 +21,53 @@
 <label for="edit">Edit Class:</label>
 <button type="button" id="edit">Edit</button>
 
-<form action="/admin/classes/{{id}}" method="post" id="edit-form" {{hidden}}>
-    <label for="titleInput">Title:</label>
-    <input type="text" id="titleInput" name="titleInput" value="{{classTitle}}" />
-    <br>
+<div id="form" class="form" {{hidden}}>
+    <form action="/admin/classes/{{id}}" method="post" id="edit-form">
+        <label for="titleInput">Title:</label><br>
+        <input type="text" id="titleInput" name="titleInput" value="{{classTitle}}" />
+        <br>
 
-    <label for="sportInput">Sport:</label>
-    <select id="sportInput" , name="sportInput">
-        <option selected>-</option>
-        {{#each sports}}
-        <option value="{{this}}">{{this}}</option>
-        {{/each}}
-    </select>
-    <br>
+        <label for="sportInput">Sport:</label><br>
+        <select id="sportInput" , name="sportInput">
+            <option selected>-</option>
+            {{#each sports}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
+        </select>
+        <br>
 
-    <label for="sportPlaceInput">Sport Places:</label>
-    <select id="sportPlaceInput" , name="sportPlaceInput">
-        <option selected>-</option>
-        {{#each sportPlaces}}
-        <option value="{{this}}">{{this}}</option>
-        {{/each}}
-    </select>
-    <br>
+        <label for="sportPlaceInput">Sport Places:</label><br>
+        <select id="sportPlaceInput" , name="sportPlaceInput">
+            <option selected>-</option>
+            {{#each sportPlaces}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
+        </select>
+        <br>
 
-    <label for="capacityInput">Capacity:</label>
-    <input type="number" id="capacityInput" name="capacityInput" value="{{capacity}}" />
-    <br>
+        <label for="capacityInput">Capacity:</label><br>
+        <input type="number" id="capacityInput" name="capacityInput" value="{{capacity}}" />
+        <br>
 
-    <label for="instructorInput">Instructor:</label>
-    <input type="text" id="instructorInput" name="instructorInput" value="{{instructor}}" />
-    <br>
+        <label for="instructorInput">Instructor:</label><br>
+        <input type="text" id="instructorInput" name="instructorInput" value="{{instructor}}" />
+        <br>
 
-    <label for="dateInput">Date:</label>
-    <input type="date" id="dateInput" name="dateInput" value="{{date}}" />
-    <br>
+        <label for="dateInput">Date:</label><br>
+        <input type="date" id="dateInput" name="dateInput" value="{{date}}" />
+        <br>
 
-    <label for="startTimeInput">Start Time:</label>
-    <input type="time" id="startTimeInput" name="startTimeInput" value="{{startTime}}" />
-    <br>
+        <label for="startTimeInput">Start Time:</label><br>
+        <input type="time" id="startTimeInput" name="startTimeInput" value="{{startTime}}" />
+        <br>
 
-    <label for="endTimeInput">End Time:</label>
-    <input type="time" id="endTimeInput" name="endTimeInput" value="{{endTime}}" />
-    <br>
+        <label for="endTimeInput">End Time:</label><br>
+        <input type="time" id="endTimeInput" name="endTimeInput" value="{{endTime}}" />
+        <br>
 
-    <input type="submit" value="Save" />
-</form>
-
+        <input type="submit" value="Save" />
+    </form>
+</div>
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 
 <h3>List of Student:</h3>
@@ -76,5 +83,3 @@
         {{/if}}
     </div>
 </dl>
-
-<a href="/admin/classes">Back</a>

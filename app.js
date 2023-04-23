@@ -37,26 +37,19 @@ app.all("/admin", (req, res, next) => {
   if (!req.session.admin) {
     return res.redirect("/admin/login");
   }
-  return res.redirect("/admin/home");
+  return res.redirect("/admin/profile");
 });
 
 app.use("/admin/login", (req, res, next) => {
   if (req.session.admin) {
-    return res.redirect("/admin/home");
+    return res.redirect("/admin/profile");
   }
   next();
 });
 
 app.use("/admin/register", (req, res, next) => {
   if (req.session.admin) {
-    return res.redirect("/admin/home");
-  }
-  next();
-});
-
-app.use("/admin/home", (req, res, next) => {
-  if (!req.session.admin) {
-    return res.redirect("/admin/login");
+    return res.redirect("/admin/profile");
   }
   next();
 });

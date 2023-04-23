@@ -1,8 +1,14 @@
-{{!--
-
-login form handlebar template
-
---}}
+<header>
+    <nav class="navbar">
+        <a href="/admin/profile">Profile</a>
+        <a href="/admin/sports">Sports</a>
+        <a href="/admin/sportPlaces">SportPlaces</a>
+        <a href="/admin/classes">Classes</a>
+        <a href="/admin/events">Events</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/logout">Logout</a>
+    </nav>
+</header>
 
 <h1>{{title}}</h1>
 
@@ -10,40 +16,47 @@ login form handlebar template
 <label for="add">Add New Sport Place:</label>
 <button type="button" id="add">Add</button>
 
-<form action="/admin/sportPlaces" method="post" id="add-form" {{hidden}}>
-    <label for="nameInput">Name:</label>
-    <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
-    <br>
+<div id="form" class="form" {{hidden}}>
+    <form action="/admin/sportPlaces" method="post" id="add-form">
+        <label for="nameInput">Name:</label>
+        <br>
+        <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
+        <br>
 
-    <label for="sportInput">Sport:</label>
-    <select id="sportInput" , name="sportInput">
-        <option selected>-</option>
-        {{#each sports}}
-        <option value="{{this}}">{{this}}</option>
-        {{/each}}
-    </select>
-    <br>
+        <label for="sportInput">Sport:</label>
+        <br>
+        <select id="sportInput" , name="sportInput">
+            <option selected>-</option>
+            {{#each sports}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
+        </select>
+        <br>
 
-    <label for="addressInput">Address:</label>
-    <input type="text" id="addressInput" name="addressInput" value="{{address}}" />
-    <br>
+        <label for="addressInput">Address:</label>
+        <br>
+        <input type="text" id="addressInput" name="addressInput" value="{{address}}" />
+        <br>
 
-    <label for="descriptionInput">Description:</label>
-    <textarea type=id="descriptionInput" name="descriptionInput" value="{{description}}"></textarea>
-    <br>
+        <label for="descriptionInput">Description:</label>
+        <br>
+        <textarea type=id="descriptionInput" name="descriptionInput" value="{{description}}"></textarea>
+        <br>
 
-    <label for="capacityInput">Capacity:</label>
-    <input type="number" id="capacityInput" name="capacityInput" value="{{capacity}}" />
-    <br>
+        <label for="capacityInput">Capacity:</label>
+        <br>
+        <input type="number" id="capacityInput" name="capacityInput" value="{{capacity}}" />
+        <br>
 
-    <label for="priceInput">Price:</label>
-    <input type="number" id="priceInput" name="priceInput" value="{{price}}" />
-    <br>
+        <label for="priceInput">Price:</label>
+        <br>
+        <input type="number" id="priceInput" name="priceInput" value="{{price}}" />
+        <br>
 
-    <input type="submit" value="Submit" />
+        <input type="submit" value="Submit" />
 
-</form>
-
+    </form>
+</div>
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 
 

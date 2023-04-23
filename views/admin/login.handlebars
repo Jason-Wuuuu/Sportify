@@ -4,18 +4,26 @@ login form handlebar template
 
 --}}
 
+<header>
+    <nav class="navbar">
+        <a href="/admin/register">Register</a>
+    </nav>
+</header>
+
 <h1>{{title}}</h1>
 
 <form action="/admin/login" method="post" id="admin-login-form">
     <label for="emailAddressInput">Email:</label>
+    <br>
     <input type="email" id="emailAddressInput" name="emailAddressInput" value="{{emailAddress}}" />
+    <br>
 
     <label for="passwordInput">Password:</label>
+    <br>
     <input type="password" id="passwordInput" name="passwordInput" value="{{password}}" />
+    <br>
 
     <input type="submit" value="Submit" />
 </form>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
-
-<a href="/admin/register">Register</a>

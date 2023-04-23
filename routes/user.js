@@ -8,13 +8,13 @@ router.route("/").get(async (req, res) => {
   const userInfo = req.session.user;
   if (userInfo) {
     return res.render("homepage", {
-      title: "Homepage",
+      title: "Sportify",
       authenticated: true,
       firstName: userInfo.firstName,
     });
   } else {
     return res.render("homepage", {
-      title: "Homepage",
+      title: "Sportify",
       authenticated: false,
     });
   }
