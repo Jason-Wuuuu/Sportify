@@ -232,31 +232,16 @@ if (document.URL.includes("/admin")) {
     }
   }
 
-  // profile
-  if (document.title === "Profile") {
+  // Edit Buttons
+  if (
+    document.title === "Profile" ||
+    document.title === "Sport Info" ||
+    document.title === "Class Info" ||
+    document.title === "SportPlace Info"
+  ) {
     let edit = document.getElementById("edit");
     edit.addEventListener("click", (event) => {
-      let editForm = document.getElementById("admin-edit-form");
-      let errorDiv = document.getElementById("error");
-
-      if (editForm.hidden) {
-        editForm.hidden = false;
-        errorDiv.hidden = false;
-      } else {
-        editForm.hidden = true;
-        errorDiv.hidden = true;
-      }
-    });
-  }
-
-  // Sport Info
-  if (document.title === "Sport Info") {
-    let sportEditForm = document.getElementById("sport-edit-form");
-    sportEditForm.addEventListener("submit", (event) => {});
-
-    let edit = document.getElementById("edit");
-    edit.addEventListener("click", (event) => {
-      let editForm = document.getElementById("sport-edit-form");
+      let editForm = document.getElementById("edit-form");
       let errorDiv = document.getElementById("error");
 
       if (editForm.hidden) {
