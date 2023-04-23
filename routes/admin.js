@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as userData from "../data/user/users.js";
 import * as eventData from "../data/user/events.js";
+import * as eventDataAdmin from "../data/admin/events.js";
 import * as adminData from "../data/admin/admins.js";
 import * as classData from "../data/admin/classes.js";
 import * as sportData from "../data/admin/sports.js";
@@ -152,10 +153,11 @@ router.route("/logout").get(async (req, res) => {
 });
 
 router.route("/home").get(async (req, res) => {
-  const admin = req.session.admin;
+  let adminInfo = await adminData.get(req.session.admin.adminID);
+
   return res.render("admin/home", {
     title: "Admin Panel",
-    firstName: admin.firstName,
+    firstName: adminInfo.firstName,
   });
 });
 
@@ -181,7 +183,6 @@ router
         newContactNumber: adminInfo.contactNumber,
       });
     } catch (e) {
-      console.log("hi");
       res.status(404).render("admin/error", {
         title: "Error",
         error: e,
@@ -453,33 +454,6 @@ router.route("/events").get(async (req, res) => {
   return res.render("admin/events", { title: "Events", events: events });
 });
 
-router.route("/events/:id").get(async (req, res) => {
-  try {
-    req.params.id = validation.checkId(req.params.id, "ID URL Param");
-  } catch (e) {
-    return res.status(400).json({ error: e });
-  }
-  try {
-    let event = await eventData.get(req.params.id);
-    return res.render("admin/eventInfo", {
-      title: event.name,
-      userID: event.userID,
-      description: event.description,
-      sport: event.sport,
-      sportPlace: event.sportPlace,
-      capacity: event.capacity,
-      date: event.date,
-      startTime: event.startTime,
-      endTime: event.endTime,
-      approved: event.approved,
-      n: event.participants.length,
-      participants: event.participants,
-    });
-  } catch (e) {
-    res.status(404).json({ error: "Event not found" });
-  }
-});
-
 router
   .route("/classes/:id")
   .get(async (req, res) => {
@@ -550,8 +524,21 @@ router
     }
   })
   .put(async (req, res) => {
-    let sport = await sportData.get(req.params.id);
-    return res.redirect(`${sport._id}`);
+    let sportInfo = req.body;
+    if (!sportInfo || Object.keys(sportInfo).length === 0) {
+      res.status(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+    // validation
+
+    try {
+      const sportID = req.params.id;
+      const newSport = await sportData.update(sportID, sportInfo.nameInput);
+      if (!newSport.updatedSport) throw "Internal Server Error";
+      return res.redirect(`${sportID}`);
+    } catch (e) {}
   });
 
 router
@@ -585,6 +572,45 @@ router
   .put(async (req, res) => {
     let sportPlace = await sportPlaceData.get(req.params.id);
     return res.redirect(`${sportPlace._id}`);
+  });
+
+router
+  .route("/events/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).json({ error: e });
+    }
+    try {
+      let event = await eventData.get(req.params.id);
+      return res.render("admin/eventInfo", {
+        title: "Event Info",
+        id: event._id,
+        name: event.name,
+        userID: event.userID,
+        description: event.description,
+        sport: event.sport,
+        sportPlace: event.sportPlace,
+        capacity: event.capacity,
+        date: event.date,
+        startTime: event.startTime,
+        endTime: event.endTime,
+        approved: event.approved,
+        n: event.participants.length,
+        participants: event.participants,
+      });
+    } catch (e) {
+      res.status(404).json({ error: "Event not found" });
+    }
+  })
+  .put(async (req, res) => {
+    try {
+      const eventID = req.params.id;
+      const event = await eventDataAdmin.approve(eventID);
+      if (!event.approved) throw "Internal Server Error";
+      return res.redirect(`${eventID}`);
+    } catch (e) {}
   });
 
 router.route("/error").get(async (req, res) => {

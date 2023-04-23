@@ -56,7 +56,7 @@ const update = async (sportID, name) => {
     { returnDocument: "after" }
   );
   if (updateInfo.lastErrorObject.n === 0)
-    throw `Error: Update failed, could not find a user with id of ${sportID}`;
+    throw `Error: Update failed, could not find a sport with id of ${sportID}`;
 
   return { updatedSport: true };
 };

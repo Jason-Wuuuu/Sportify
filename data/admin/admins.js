@@ -133,9 +133,6 @@ const check = async (email, password) => {
 
   const adminInfo = {
     adminID: admin._id,
-    firstName: admin.firstName,
-    lastName: admin.lastName,
-    email: admin.email,
   };
 
   return adminInfo;
