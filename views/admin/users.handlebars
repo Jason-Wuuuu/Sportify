@@ -12,7 +12,7 @@ login form handlebar template
 <div id="userList">
     <ul>
         {{#each users}}
-        <li>[{{userID}}]: {{userFirstName}} {{userLastName}}</li>
+        <li><a href="/admin/users/{{userID}}">{{userFirstName}} {{userLastName}}</a></li>
         {{/each}}
     </ul>
 </div>

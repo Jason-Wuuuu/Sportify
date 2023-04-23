@@ -7,7 +7,15 @@ const remove = async (eventID) => {};
 //
 const getAllUsers = async () => {};
 
-const getUnapprovedEvents = async () => {};
+const getUnapprovedEvents = async () => {
+  const eventCollection = await events();
+  const unapprovedEventList = await eventCollection
+    .find({
+      approved: false,
+    })
+    .toArray();
+  return unapprovedEventList;
+};
 
 const approve = async (eventID) => {
   eventID = validation.checkId(eventID);
@@ -27,4 +35,4 @@ const approve = async (eventID) => {
   return eventUpdateInfo;
 };
 
-export { approve };
+export { approve, getUnapprovedEvents };

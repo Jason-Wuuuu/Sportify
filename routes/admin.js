@@ -325,6 +325,7 @@ router
 
     return res.render("admin/classes", {
       title: "Classes",
+      hidden: "hidden",
       sports: sports,
       sportPlaces: sportPlaces,
       classes: classes,
@@ -371,7 +372,11 @@ router
         sportName: sport.name,
       })
     );
-    return res.render("admin/sports", { title: "Sports", sports: sports });
+    return res.render("admin/sports", {
+      title: "Sports",
+      hidden: "hidden",
+      sports: sports,
+    });
   })
   .post(async (req, res) => {
     let sportInfo = req.body;
@@ -391,6 +396,16 @@ router
     } catch (e) {
       res.sendStatus(500);
     }
+  })
+  .delete(async (req, res) => {
+    const sportList = await sportData.getAll();
+    const sports = sportList.map((sport) =>
+      Object({
+        sportID: sport._id,
+        sportName: sport.name,
+      })
+    );
+    return res.redirect("sports");
   });
 
 router
@@ -409,6 +424,7 @@ router
 
     return res.render("admin/sportPlaces", {
       title: "Sport Places",
+      hidden: "hidden",
       sports: sports,
       sportPlaces: sportPlaces,
     });
@@ -448,7 +464,40 @@ router.route("/events").get(async (req, res) => {
       eventName: event.name,
     })
   );
-  return res.render("admin/events", { title: "Events", events: events });
+
+  const unapprovedEventList = await eventDataAdmin.getUnapprovedEvents();
+  const unapprovedEvents = unapprovedEventList.map((event) =>
+    Object({
+      eventID: event._id,
+      eventName: event.name,
+    })
+  );
+
+  return res.render("admin/events", {
+    title: "Events",
+    unapprovedEvents: unapprovedEvents,
+    events: events,
+  });
+});
+
+router.route("/users/:id").get(async (req, res) => {
+  try {
+    req.params.id = validation.checkId(req.params.id, "ID URL Param");
+  } catch (e) {
+    return res.status(400).json({ error: e });
+  }
+
+  let userInfo = await userData.get(req.params.id);
+
+  return res.render("admin/userInfo", {
+    title: "User Info",
+    firstName: userInfo.firstName,
+    lastName: userInfo.lastName,
+    email: userInfo.email,
+    gender: userInfo.gender,
+    dateOfBirth: userInfo.dateOfBirth,
+    contactNumber: userInfo.contactNumber,
+  });
 });
 
 router

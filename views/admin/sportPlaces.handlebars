@@ -6,8 +6,11 @@ login form handlebar template
 
 <h1>{{title}}</h1>
 
-<h3>Add New Sport Place:</h3>
-<form action="/admin/sportPlaces" method="post" id="sportPlace-form">
+
+<label for="add">Add New Sport Place:</label>
+<button type="button" id="add">Add</button>
+
+<form action="/admin/sportPlaces" method="post" id="add-form" {{hidden}}>
     <label for="nameInput">Name:</label>
     <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
     <br>
@@ -37,9 +40,11 @@ login form handlebar template
     <input type="number" id="priceInput" name="priceInput" value="{{price}}" />
     <br>
 
-    <input type="submit" value="Add" />
+    <input type="submit" value="Submit" />
 
 </form>
+
+<div id="error" class="error" {{hidden}}>{{error}}</div>
 
 
 <h3>List of Sport Places:</h3>
