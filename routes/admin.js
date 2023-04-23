@@ -11,6 +11,12 @@ import validation from "../data/admin/helpers.js";
 const router = Router();
 
 // http://localhost:3000/admin/
+router.route("/home").get(async (req, res) => {
+  return res.render("admin/home", {
+    title: "Admin Panel",
+  });
+});
+
 router
   .route("/register")
   .get(async (req, res) => {
@@ -150,15 +156,6 @@ router
 router.route("/logout").get(async (req, res) => {
   req.session.destroy();
   return res.render("admin/logout", { title: "Logout" });
-});
-
-router.route("/home").get(async (req, res) => {
-  let adminInfo = await adminData.get(req.session.admin.adminID);
-
-  return res.render("admin/home", {
-    title: "Admin Panel",
-    firstName: adminInfo.firstName,
-  });
 });
 
 router

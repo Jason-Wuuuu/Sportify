@@ -1,3 +1,6 @@
+import { classes } from "../../config/mongoCollections.js";
+import { ObjectId } from "mongodb";
+
 const reserve = async (classID, userID) => {
   // add user to the student field (an array) in class collection
 };
