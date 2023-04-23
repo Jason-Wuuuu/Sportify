@@ -104,9 +104,11 @@ if (document.URL.includes("/admin")) {
     errorDiv.innerHTML = err_msg;
   };
 
-  // register-form
-  if (document.title === "Register") {
+  // Admin forms
+  if (document.title === "Register" || document.title === "Profile") {
     let registrationForm = document.getElementById("admin-registration-form");
+    let adminEditForm = document.getElementById("admin-edit-form");
+
     let firstNameInput = document.getElementById("firstNameInput");
     let lastNameInput = document.getElementById("lastNameInput");
     let emailInput = document.getElementById("emailInput");
@@ -123,6 +125,7 @@ if (document.URL.includes("/admin")) {
     dateOfBirthInput.setAttribute("max", max);
 
     if (registrationForm) {
+      console.log("admin registration form");
       registrationForm.addEventListener("submit", (event) => {
         let firstName = firstNameInput.value;
         let lastName = lastNameInput.value;
@@ -164,6 +167,47 @@ if (document.URL.includes("/admin")) {
         }
       });
     }
+
+    if (adminEditForm) {
+      console.log("admin edit form");
+      adminEditForm.addEventListener("submit", (event) => {
+        let firstName = firstNameInput.value;
+        let lastName = lastNameInput.value;
+        let email = emailInput.value;
+        let dateOfBirth = dateOfBirthInput.value;
+        let contactNumber = contactNumberInput.value;
+        let gender = genderInput.value;
+        let password = passwordInput.value;
+        let confirmPassword = confirmPasswordInput.value;
+
+        try {
+          firstName = checkName(firstName, "First Name");
+          lastName = checkName(lastName, "Last Name");
+          email = checkEmail(email, "Email");
+          dateOfBirth = checkDateOfBirth(dateOfBirth, "Date Of Birth");
+          contactNumber = checkContactNumber(contactNumber, "Contact Number");
+          gender = checkGender(gender, "Gender");
+          password = checkPassword(password, "Password");
+          confirmPassword = checkPassword(confirmPassword, "Confirm Password");
+
+          if (password !== confirmPassword)
+            throw "Error: Confirm password and password does not match.";
+        } catch (e) {
+          event.preventDefault();
+
+          if (firstName) firstNameInput.value = firstName;
+          if (lastName) lastNameInput.value = lastName;
+          if (email) emailInput.value = email;
+          if (gender) genderInput.value = gender;
+          if (dateOfBirth) dateOfBirthInput.value = dateOfBirth;
+          if (contactNumber) contactNumberInput.value = contactNumber;
+          if (password) passwordInput.value = password;
+          confirmPasswordInput.value = "";
+
+          show_error(e);
+        }
+      });
+    }
   }
 
   // login-form
@@ -193,11 +237,34 @@ if (document.URL.includes("/admin")) {
     let edit = document.getElementById("edit");
     edit.addEventListener("click", (event) => {
       let editForm = document.getElementById("admin-edit-form");
+      let errorDiv = document.getElementById("error");
 
       if (editForm.hidden) {
         editForm.hidden = false;
+        errorDiv.hidden = false;
       } else {
         editForm.hidden = true;
+        errorDiv.hidden = true;
+      }
+    });
+  }
+
+  // Sport Info
+  if (document.title === "Sport Info") {
+    let sportEditForm = document.getElementById("sport-edit-form");
+    sportEditForm.addEventListener("submit", (event) => {});
+
+    let edit = document.getElementById("edit");
+    edit.addEventListener("click", (event) => {
+      let editForm = document.getElementById("sport-edit-form");
+      let errorDiv = document.getElementById("error");
+
+      if (editForm.hidden) {
+        editForm.hidden = false;
+        errorDiv.hidden = false;
+      } else {
+        editForm.hidden = true;
+        errorDiv.hidden = true;
       }
     });
   }

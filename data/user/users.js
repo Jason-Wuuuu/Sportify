@@ -53,6 +53,12 @@ const get = async (userID) => {
   return user;
 };
 
+const getAll = async () => {
+  const userCollection = await users();
+  const userList = await userCollection.find({}).toArray();
+  return userList;
+};
+
 const update = async (
   userID,
   firstName,
@@ -90,4 +96,4 @@ const check = async (email, password) => {
   return userInfo;
 };
 
-export { create, get, update, check };
+export { create, get, getAll, update, check };
