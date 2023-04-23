@@ -1,4 +1,4 @@
-<h1>{{title}}</h1>
+<h1>{{name}}</h1>
 
 <ul>
     <li>UserID: {{userID}}</li>
@@ -29,9 +29,10 @@
     </div>
 </dl>
 {{else}}
-<h3>This event hasn't been approved...</h3>
-<button type="submit">Approve</button>
+<form action="/admin/events/{{id}}" method="post">
+    <input type="submit" id="approve" name="approve" value="Approve" />
+</form>
 {{/if}}
 
-
+<br>
 <a href="/admin/Events">Back</a>
