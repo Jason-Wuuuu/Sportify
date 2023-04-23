@@ -73,7 +73,41 @@ const update = async (
   date,
   startTime,
   endTime
-) => {};
+) => {
+  // validation
+  classID = validation.checkId(classID);
+  title = validation.checkString(title, "title");
+  sport = validation.checkString(sport, "sport");
+  sportPlace = validation.checkString(sportPlace, "sportPlace");
+  capacity = validation.checkString(capacity, "capacity");
+  instructor = validation.checkString(instructor, "instructor");
+  date = validation.checkString(date, "date");
+  startTime = validation.checkString(startTime, "startTime");
+  endTime = validation.checkString(endTime, "endTime");
+
+  const classUpdateInfo = {
+    title: title,
+    sport: sport,
+    sportPlace: sportPlace,
+    capacity: capacity,
+    instructor: instructor,
+    date: date,
+    startTime: startTime,
+    endTime: endTime,
+  };
+
+  const classCollection = await classes();
+  const updatedInfo = await classCollection.findOneAndUpdate(
+    { _id: new ObjectId(classID) },
+    { $set: classUpdateInfo },
+    { returnDocument: "after" }
+  );
+
+  if (updatedInfo.lastErrorObject.n === 0) {
+    throw `Error: no class exists with an id of ${classID}.`;
+  }
+  return { updatedClass: true };
+};
 
 //
 

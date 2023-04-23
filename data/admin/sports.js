@@ -49,6 +49,7 @@ const update = async (sportID, name) => {
   const sportUpdateInfo = {
     name: name,
   };
+
   const sportCollection = await sports();
   const updateInfo = await sportCollection.findOneAndUpdate(
     { _id: new ObjectId(sportID) },

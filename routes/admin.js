@@ -496,8 +496,34 @@ router
     }
   })
   .put(async (req, res) => {
-    let classInfo = await classData.get(req.params.id);
-    return res.redirect(`${classInfo._id}`);
+    let classInfo = req.body;
+    if (!classInfo || Object.keys(classInfo).length === 0) {
+      res.status(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+
+    // validation
+
+    // update
+    try {
+      const classID = req.params.id;
+
+      const newClass = await classData.update(
+        classID,
+        classInfo.titleInput,
+        classInfo.sportInput,
+        classInfo.sportPlaceInput,
+        classInfo.capacityInput,
+        classInfo.instructorInput,
+        classInfo.dateInput,
+        classInfo.startTimeInput,
+        classInfo.endTimeInput
+      );
+      if (!newClass.updatedClass) throw "Internal Server Error";
+      return res.redirect(`${classID}`);
+    } catch (e) {}
   });
 
 router
@@ -530,6 +556,7 @@ router
     }
     // validation
 
+    // update
     try {
       const sportID = req.params.id;
       const newSport = await sportData.update(sportID, sportInfo.nameInput);
@@ -547,11 +574,15 @@ router
       return res.status(400).json({ error: e });
     }
     try {
+      const sportList = await sportData.getAll();
+      const sports = sportList.map((sport) => sport.name);
+
       let sportPlace = await sportPlaceData.get(req.params.id);
       return res.render("admin/sportPlaceInfo", {
         title: "SportPlace Info",
         hidden: "hidden",
         id: sportPlace._id,
+        sports: sports,
         name: sportPlace.name,
         sport: sportPlace.sport,
         address: sportPlace.address,
@@ -567,8 +598,32 @@ router
     }
   })
   .put(async (req, res) => {
-    let sportPlace = await sportPlaceData.get(req.params.id);
-    return res.redirect(`${sportPlace._id}`);
+    let sportPlaceInfo = req.body;
+    if (!sportPlaceInfo || Object.keys(sportPlaceInfo).length === 0) {
+      res.status(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+
+    // validation
+
+    // update
+    try {
+      const sportPlaceID = req.params.id;
+
+      const newSportPlace = await sportPlaceData.update(
+        sportPlaceID,
+        sportPlaceInfo.nameInput,
+        sportPlaceInfo.sportInput,
+        sportPlaceInfo.addressInput,
+        sportPlaceInfo.descriptionInput,
+        sportPlaceInfo.capacityInput,
+        sportPlaceInfo.priceInput
+      );
+      if (!newSportPlace.updatedSportPlace) throw "Internal Server Error";
+      return res.redirect(`${sportPlaceID}`);
+    } catch (e) {}
   });
 
 router

@@ -55,12 +55,43 @@ const remove = async (sportPlaceID) => {
 
 const update = async (
   sportPlaceID,
+  name,
   sport,
   address,
   description,
   capacity,
   price
-) => {};
+) => {
+  // validation
+  sportPlaceID = validation.checkId(sportPlaceID);
+  name = validation.checkString(name, "name");
+  sport = validation.checkString(sport, "sport");
+  address = validation.checkString(address, "address");
+  description = validation.checkString(description, "description");
+  capacity = validation.checkString(capacity, "capacity");
+  price = validation.checkString(price, "price");
+
+  const sportPlaceInfo = {
+    name: name,
+    sport: sport,
+    address: address,
+    description: description,
+    capacity: capacity,
+    price: price,
+  };
+
+  const sportPlaceCollection = await sportPlaces();
+  const updatedInfo = await sportPlaceCollection.findOneAndUpdate(
+    { _id: new ObjectId(sportPlaceID) },
+    { $set: sportPlaceInfo },
+    { returnDocument: "after" }
+  );
+
+  if (updatedInfo.lastErrorObject.n === 0) {
+    throw `Error: no sport place exists with an id of ${sportPlaceID}.`;
+  }
+  return { updatedSportPlace: true };
+};
 
 // const getAllUsers = async (sportPlaceID) => {};
 
