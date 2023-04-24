@@ -5,6 +5,8 @@ body {
     background-color: #343d46;
 
     font-family: Monospace, sans-serif;
+    margin-left: 10%;
+    margin-right: 10%;
 }
 
 nav {
@@ -35,6 +37,7 @@ a:hover {
 }
 
 label {
+    margin-top: 10px;
     font-weight: bold;
 }
 
@@ -49,12 +52,30 @@ input[type=submit] {
     font-weight: bold;
     color: #343d46;
     background-color: whitesmoke;
+
+    text-align: center;
+    font-size: 16px;
+
+    border-radius: 12px;
+}
+
+input[type=submit] {
+    margin-top: 10px;
+}
+
+#approve {
+    font-size: 24px;
+    width: 100%;
 }
 
 button:hover,
 input[type=submit]:hover {
     color: whitesmoke;
     background-color: #343d46;
+}
+
+li {
+    margin-top: 10px;
 }
 
 .error {
