@@ -5,10 +5,11 @@ body {
     background-color: #343d46;
 
     font-family: Monospace, sans-serif;
+    margin-left: 10%;
+    margin-right: 10%;
 }
 
 nav {
-    font-weight: bold;
     display: block;
     text-align: center;
     border-bottom: solid;
@@ -16,6 +17,7 @@ nav {
 }
 
 nav>a {
+    font-size: large;
     text-decoration: none;
     margin: 20px;
 }
@@ -35,13 +37,23 @@ a:hover {
 }
 
 label {
+    margin-top: 10px;
     font-weight: bold;
 }
+
 
 input,
 select,
 textarea {
+    font-size: 14px;
+    font-weight: bold;
     margin-bottom: 10px;
+    padding: 5px;
+}
+
+textarea {
+    width: 250px;
+    height: 100px;
 }
 
 button,
@@ -49,12 +61,30 @@ input[type=submit] {
     font-weight: bold;
     color: #343d46;
     background-color: whitesmoke;
+
+    text-align: center;
+    font-size: 15px;
+
+    border-radius: 8px;
+}
+
+input[type=submit] {
+    margin-top: 10px;
 }
 
 button:hover,
 input[type=submit]:hover {
     color: whitesmoke;
     background-color: #343d46;
+}
+
+#approve {
+    font-size: 24px;
+    width: 100%;
+}
+
+li {
+    margin-top: 10px;
 }
 
 .error {
