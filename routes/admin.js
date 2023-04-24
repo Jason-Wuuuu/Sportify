@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as userData from "../data/user/users.js";
+import * as userDataAdmin from "../data/admin/users.js";
 import * as eventData from "../data/user/events.js";
 import * as eventDataAdmin from "../data/admin/events.js";
 import * as adminData from "../data/admin/admins.js";
@@ -474,25 +475,39 @@ router.route("/events").get(async (req, res) => {
   });
 });
 
-router.route("/users/:id").get(async (req, res) => {
-  try {
-    req.params.id = validation.checkId(req.params.id, "ID URL Param");
-  } catch (e) {
-    return res.status(400).json({ error: e });
-  }
+router
+  .route("/users/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).json({ error: e });
+    }
 
-  let userInfo = await userData.get(req.params.id);
+    let userInfo = await userData.get(req.params.id);
 
-  return res.render("admin/userInfo", {
-    title: "User Info",
-    firstName: userInfo.firstName,
-    lastName: userInfo.lastName,
-    email: userInfo.email,
-    gender: userInfo.gender,
-    dateOfBirth: userInfo.dateOfBirth,
-    contactNumber: userInfo.contactNumber,
+    return res.render("admin/userInfo", {
+      title: "User Info",
+      id: userInfo._id,
+      firstName: userInfo.firstName,
+      lastName: userInfo.lastName,
+      email: userInfo.email,
+      gender: userInfo.gender,
+      dateOfBirth: userInfo.dateOfBirth,
+      contactNumber: userInfo.contactNumber,
+    });
+  })
+  .delete(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).json({ error: e });
+    }
+    let deleteInfo = await userDataAdmin.remove(req.params.id);
+    if (deleteInfo.deleted) {
+      return res.redirect("admin/users");
+    }
   });
-});
 
 router
   .route("/classes/:id")

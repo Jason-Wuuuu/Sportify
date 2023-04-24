@@ -10,7 +10,6 @@ body {
 }
 
 nav {
-    font-weight: bold;
     display: block;
     text-align: center;
     border-bottom: solid;
@@ -18,6 +17,7 @@ nav {
 }
 
 nav>a {
+    font-size: large;
     text-decoration: none;
     margin: 20px;
 }
@@ -63,24 +63,24 @@ input[type=submit] {
     background-color: whitesmoke;
 
     text-align: center;
-    font-size: 16px;
+    font-size: 15px;
 
-    border-radius: 12px;
+    border-radius: 8px;
 }
 
 input[type=submit] {
     margin-top: 10px;
 }
 
-#approve {
-    font-size: 24px;
-    width: 100%;
-}
-
 button:hover,
 input[type=submit]:hover {
     color: whitesmoke;
     background-color: #343d46;
+}
+
+#approve {
+    font-size: 24px;
+    width: 100%;
 }
 
 li {
