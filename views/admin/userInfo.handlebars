@@ -14,3 +14,7 @@
     <li>Date Of Birth: {{dateOfBirth}}</li>
     <li>Contact Number: {{contactNumber}}</li>
 </ul>
+
+<form action="/admin/users/{{id}}" method="post">
+    <input type="submit" id="remove" name="remove" value="Remove" />
+</form>
