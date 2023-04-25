@@ -26,7 +26,7 @@
 <label for="edit">Edit Profile:</label>
 <button type="button" id="edit">Edit</button>
 
-
+<div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
     <form action="/admin/profile" method="post" id="edit-form">
 
@@ -52,12 +52,13 @@
 
         <label for="genderInput">Gender:</label><br>
         <select id="genderInput" name="genderInput">
+            {{#if newGender}}
+            <option value="{{newGender}}">{{newGender}}</option>
+            {{/if}}
             <option value="">-</option>
-            <option value="male">male</option>
-            <option value="female">female</option>
-            <option value="transgender">transgender</option>
-            <option value="non-binary">non-binary</option>
-            <option value="prefer not to respond">prefer not to respond</option>
+            {{#each genderOptions}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
         </select>
         <br>
 
@@ -72,4 +73,3 @@
         <input type="submit" value="Save" />
     </form>
 </div>
-<div id="error" class="error" {{hidden}}>{{error}}</div>

@@ -4,6 +4,15 @@ import validation from "./helpers.js";
 
 //
 const create = async (name, sport, address, description, capacity, price) => {
+  // validation
+  name = validation.checkString(name, "Name");
+  sport = validation.checkString(sport, "Sport");
+  address = validation.checkString(address, "Address");
+  description = validation.checkString(description, "Description");
+  capacity = validation.checkString(capacity, "Capacity");
+  price = validation.checkString(price, "Price");
+
+  // add valid sport place to db
   let newSportPlace = {
     name: name,
     sport: sport,

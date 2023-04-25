@@ -16,6 +16,7 @@
 <label for="add">Add New Sport Place:</label>
 <button type="button" id="add">Add</button>
 
+<div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
     <form action="/admin/sportPlaces" method="post" id="add-form">
         <label for="nameInput">Name:</label>
@@ -26,6 +27,9 @@
         <label for="sportInput">Sport:</label>
         <br>
         <select id="sportInput" , name="sportInput">
+            {{#if sport}}
+            <option value="{{sport}}">{{sport}}</option>
+            {{/if}}
             <option value="">-</option>
             {{#each sports}}
             <option value="{{this}}">{{this}}</option>
@@ -40,7 +44,7 @@
 
         <label for="descriptionInput">Description:</label>
         <br>
-        <textarea type=id="descriptionInput" name="descriptionInput" value="{{description}}"></textarea>
+        <textarea type=id="descriptionInput" name="descriptionInput" value="{{description}}">{{description}}</textarea>
         <br>
 
         <label for="capacityInput">Capacity:</label>
@@ -57,7 +61,6 @@
 
     </form>
 </div>
-<div id="error" class="error" {{hidden}}>{{error}}</div>
 
 
 <h3>List of Sport Places:</h3>

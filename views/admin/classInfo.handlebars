@@ -21,6 +21,7 @@
 <label for="edit">Edit Class:</label>
 <button type="button" id="edit">Edit</button>
 
+<div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
     <form action="/admin/classes/{{id}}" method="post" id="edit-form">
         <label for="titleInput">Title:</label><br>
@@ -29,6 +30,9 @@
 
         <label for="sportInput">Sport:</label><br>
         <select id="sportInput" , name="sportInput">
+            {{#if newSport}}
+            <option value="{{newSport}}">{{newSport}}</option>
+            {{/if}}
             <option value="">-</option>
             {{#each sports}}
             <option value="{{this}}">{{this}}</option>
@@ -38,6 +42,9 @@
 
         <label for="sportPlaceInput">Sport Places:</label><br>
         <select id="sportPlaceInput" , name="sportPlaceInput">
+            {{#if newSportPlace}}
+            <option value="{{newSportPlace}}">{{newSportPlace}}</option>
+            {{/if}}
             <option value="">-</option>
             {{#each sportPlaces}}
             <option value="{{this}}">{{this}}</option>
@@ -46,29 +53,28 @@
         <br>
 
         <label for="capacityInput">Capacity:</label><br>
-        <input type="number" id="capacityInput" name="capacityInput" value="{{capacity}}" />
+        <input type="number" id="capacityInput" name="capacityInput" value="{{newCapacity}}" />
         <br>
 
         <label for="instructorInput">Instructor:</label><br>
-        <input type="text" id="instructorInput" name="instructorInput" value="{{instructor}}" />
+        <input type="text" id="instructorInput" name="instructorInput" value="{{newInstructor}}" />
         <br>
 
         <label for="dateInput">Date:</label><br>
-        <input type="date" id="dateInput" name="dateInput" value="{{date}}" />
+        <input type="date" id="dateInput" name="dateInput" value="{{newDate}}" />
         <br>
 
         <label for="startTimeInput">Start Time:</label><br>
-        <input type="time" id="startTimeInput" name="startTimeInput" value="{{startTime}}" />
+        <input type="time" id="startTimeInput" name="startTimeInput" value="{{newStartTime}}" />
         <br>
 
         <label for="endTimeInput">End Time:</label><br>
-        <input type="time" id="endTimeInput" name="endTimeInput" value="{{endTime}}" />
+        <input type="time" id="endTimeInput" name="endTimeInput" value="{{newEndTime}}" />
         <br>
 
         <input type="submit" value="Save" />
     </form>
 </div>
-<div id="error" class="error" {{hidden}}>{{error}}</div>
 
 <h3>List of Student:</h3>
 <dl>
