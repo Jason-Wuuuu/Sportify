@@ -9,14 +9,13 @@
 <label for="edit">Edit Sport:</label>
 <button type="button" id="edit">Edit</button>
 
-
+<div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
     <form action="/admin/sports/{{id}}" method="post" id="edit-form">
         <label for="nameInput">Name:</label>
         <br>
-        <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
+        <input type="text" id="nameInput" name="nameInput" value="{{newName}}" />
         <br>
         <input type="submit" value="Save" />
     </form>
 </div>
-<div id="error" class="error" {{hidden}}>{{error}}</div>

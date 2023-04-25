@@ -15,6 +15,7 @@
 <label for="add">Add New Class:</label>
 <button type="button" id="add">Add</button>
 
+<div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
     <form action="/admin/classes" method="post" id="add-form">
         <label for="titleInput">Title:</label>
@@ -25,7 +26,10 @@
         <label for="sportInput">Sport:</label>
         <br>
         <select id="sportInput" , name="sportInput">
-            <option selected>-</option>
+            {{#if sport}}
+            <option value="{{sport}}">{{sport}}</option>
+            {{/if}}
+            <option value="">-</option>
             {{#each sports}}
             <option value="{{this}}">{{this}}</option>
             {{/each}}
@@ -35,6 +39,9 @@
         <label for="sportPlaceInput">Sport Places:</label>
         <br>
         <select id="sportPlaceInput" , name="sportPlaceInput">
+            {{#if sportPlace}}
+            <option value="{{sportPlace}}">{{sportPlace}}</option>
+            {{/if}}
             <option value="">-</option>
             {{#each sportPlaces}}
             <option value="{{this}}">{{this}}</option>
@@ -70,7 +77,6 @@
         <input type="submit" value="Submit" />
     </form>
 </div>
-<div id="error" class="error" {{hidden}}>{{error}}</div>
 
 <h3>List of Classes:</h3>
 <div id="classList">
