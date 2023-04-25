@@ -107,7 +107,7 @@ if (document.URL.includes("/admin")) {
   // Registration forms
   if (document.title === "Register" || document.title === "Profile") {
     let registrationForm = document.getElementById("admin-registration-form");
-    let adminEditForm = document.getElementById("admin-edit-form");
+    let adminEditForm = document.getElementById("edit-form");
 
     let firstNameInput = document.getElementById("firstNameInput");
     let lastNameInput = document.getElementById("lastNameInput");
@@ -137,7 +137,7 @@ if (document.URL.includes("/admin")) {
         let password = passwordInput.value;
         let confirmPassword = confirmPasswordInput.value;
         let inviteCode = inviteCodeInput.value;
-
+        // validation
         try {
           firstName = checkName(firstName, "First Name");
           lastName = checkName(lastName, "Last Name");
@@ -180,7 +180,7 @@ if (document.URL.includes("/admin")) {
         let gender = genderInput.value;
         let password = passwordInput.value;
         let confirmPassword = confirmPasswordInput.value;
-
+        // validation
         try {
           firstName = checkName(firstName, "First Name");
           lastName = checkName(lastName, "Last Name");
@@ -275,6 +275,8 @@ if (document.URL.includes("/admin")) {
       }
     });
   }
+
+  //
 }
 //client side js for user
 else {

@@ -28,6 +28,7 @@ const create = async (
   // encrypt password
   password = await passwordMethods.encrypt(password);
 
+  // add valid admin to db
   let newAdmin = {
     firstName: firstName,
     lastName: lastName,
@@ -38,7 +39,6 @@ const create = async (
     password: password,
   };
 
-  // add valid admin to db
   const newInsertInformation = await adminCollection.insertOne(newAdmin);
   const newId = newInsertInformation.insertedId;
   await get(newId.toString());

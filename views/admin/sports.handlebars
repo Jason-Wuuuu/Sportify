@@ -16,6 +16,7 @@
 <label for="add">Add New Sport:</label>
 <button type="button" id="add">Add</button>
 
+<div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
     <form action="/admin/sports" method="post" id="add-form">
         <label for="nameInput">Name:</label>
@@ -25,7 +26,6 @@
         <input type="submit" value="Submit" />
     </form>
 </div>
-<div id="error" class="error" {{hidden}}>{{error}}</div>
 
 
 <h3>List of Sports:</h3>

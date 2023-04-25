@@ -46,10 +46,10 @@ const validationMethods = {
     const dob = new Date(dateOfBirth);
     if (!dob) throw `Error: Invalid ${varName}.`;
 
-    var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth() + 1; //January is 0
-    var yyyy = today.getFullYear() - 13; // user shouldn't be less than 13 year-old
+    const today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth() + 1; //January is 0
+    let yyyy = today.getFullYear() - 13; // user shouldn't be less than 13 year-old
 
     if (dd < 10) dd = "0" + dd;
     if (mm < 10) mm = "0" + mm;
@@ -93,6 +93,40 @@ const validationMethods = {
   checkPassword(password, varName) {
     password = this.checkString(password, varName);
     return password;
+  },
+
+  checkDate(date, varName) {
+    date = this.checkString(date, varName);
+
+    const d = new Date(date);
+    if (!d) throw `Error: Invalid ${varName}.`;
+
+    const today = new Date();
+    if (d < today) throw `Error: Invalid Date.`;
+
+    return date;
+  },
+
+  checkTime(time, varName) {
+    time = this.checkString(time, varName);
+
+    const hr_min = time.split(":");
+    if (!hr_min || hr_min.length !== 2) throw `Error: Invalid ${varName}`;
+
+    const hr = Number.parseInt(hr_min[0]);
+    const min = Number.parseInt(hr_min[1]);
+    if (isNaN(hr) || hr < 0 || hr > 24)
+      throw `Error: Invalid hr for ${varName}`;
+    if (isNaN(min) || min < 0 || min > 59)
+      throw `Error: Invalid min for ${varName}`;
+
+    return time;
+  },
+
+  checkTimeRange(start, end) {
+    const s = new Date(start);
+    const e = new Date(end);
+    if (e < s) throw `Error: Invalid Time Range`;
   },
 };
 

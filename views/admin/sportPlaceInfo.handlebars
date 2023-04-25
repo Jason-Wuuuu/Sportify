@@ -19,14 +19,18 @@
 <label for="edit">Edit Class:</label>
 <button type="button" id="edit">Edit</button>
 
+<div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
     <form action="/admin/sportPlaces/{{id}}" method="post" id="edit-form">
         <label for="nameInput">Name:</label><br>
-        <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
+        <input type="text" id="nameInput" name="nameInput" value="{{newName}}" />
         <br>
 
         <label for="sportInput">Sport:</label><br>
         <select id="sportInput" , name="sportInput">
+            {{#if newSport}}
+            <option value="{{sport}}">{{sport}}</option>
+            {{/if}}
             <option value="">-</option>
             {{#each sports}}
             <option value="{{this}}">{{this}}</option>
@@ -35,26 +39,26 @@
         <br>
 
         <label for="addressInput">Address:</label><br>
-        <input type="text" id="addressInput" name="addressInput" value="{{address}}" />
+        <input type="text" id="addressInput" name="addressInput" value="{{newAddress}}" />
         <br>
 
         <label for="descriptionInput">Description:</label><br>
-        <textarea type=id="descriptionInput" name="descriptionInput" value="{{description}}"></textarea>
+        <textarea type=id="descriptionInput" name="descriptionInput"
+            value="{{newDescription}}">{{newDescription}}</textarea>
         <br>
 
         <label for="capacityInput">Capacity:</label><br>
-        <input type="number" id="capacityInput" name="capacityInput" value="{{capacity}}" />
+        <input type="number" id="capacityInput" name="capacityInput" value="{{newCapacity}}" />
         <br>
 
         <label for="priceInput">Price:</label><br>
-        <input type="number" id="priceInput" name="priceInput" value="{{price}}" />
+        <input type="number" id="priceInput" name="priceInput" value="{{newPrice}}" />
         <br>
 
         <input type="submit" value="Save" />
 
     </form>
 </div>
-<div id="error" class="error" {{hidden}}>{{error}}</div>
 
 <h3>List of Users:</h3>
 <dl>

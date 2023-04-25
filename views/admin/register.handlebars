@@ -30,12 +30,13 @@
 
     <label for="genderInput">Gender:</label><br>
     <select id="genderInput" name="genderInput">
+        {{#if gender}}
+        <option value="{{gender}}">{{gender}}</option>
+        {{/if}}
         <option value="">-</option>
-        <option value="male">male</option>
-        <option value="female">female</option>
-        <option value="transgender">transgender</option>
-        <option value="non-binary">non-binary</option>
-        <option value="prefer not to respond">prefer not to respond</option>
+        {{#each genderOptions}}
+        <option value="{{this}}">{{this}}</option>
+        {{/each}}
     </select>
     <br>
 
