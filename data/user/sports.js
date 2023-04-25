@@ -33,3 +33,37 @@ const get = async (sportID) => {
   if (!sport) throw "Error: Sport not found";
   return sport;
 };
+
+const remove = async (sportID) => {
+  sportID = validation.checkId(sportID);
+  const sportCollection = await sports();
+  const deletionInfo = await sportCollection.findOneAndDelete({
+    _id: new ObjectId(sportID),
+  });
+  if (deletionInfo.lastErrorObject.n === 0)
+    throw [404, `Error: Could not delete user with id of ${sportID}`];
+
+  return { deleted: true };
+};
+
+const update = async (sportID, name) => {
+  sportID = validation.checkId(sportID);
+  name = validation.checkString(name, "name");
+
+  const sportUpdateInfo = {
+    name: name,
+  };
+
+  const sportCollection = await sports();
+  const updateInfo = await sportCollection.findOneAndUpdate(
+    { _id: new ObjectId(sportID) },
+    { $set: sportUpdateInfo },
+    { returnDocument: "after" }
+  );
+  if (updateInfo.lastErrorObject.n === 0)
+    throw `Error: Update failed, could not find a sport with id of ${sportID}`;
+
+  return { updatedSport: true };
+};
+
+export { create, getAll, get, remove, update };
