@@ -1,21 +1,28 @@
 import { Router } from "express";
 import * as userData from "../data/user/users.js";
+import * as sportsData from "../data/user/sports.js";
 import { helperMethodsForUsers } from "../data/user/helpers.js";
 
 const router = Router();
 
 router.route("/").get(async (req, res) => {
   const userInfo = req.session.user;
+  const sportsInfo = await sportsData.getAll();
+  if (!sportsInfo) {
+    sportsInfo = [];
+  }
   if (userInfo) {
     return res.render("homepage", {
       title: "Sportify",
       authenticated: true,
       firstName: userInfo.firstName,
+      sports: sportsInfo,
     });
   } else {
     return res.render("homepage", {
       title: "Sportify",
       authenticated: false,
+      sports: sportsInfo,
     });
   }
 });

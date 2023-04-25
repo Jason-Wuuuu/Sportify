@@ -1,99 +1,128 @@
 /* You will create a CSS stylesheet in /public/css/lab10.css; this file should have at least 10 rulesets.  You will need to utilize all 10 rulesets on each of the pages (not every page has to use all 10 rulesets each but all 10 rulesets must be utilized by the various pages in your application).  So you can have some rulesets for one page, some for another page but there needs to be at least 10 total rulesets that are used between all the pages.  */
 
 body {
-    color: whitesmoke;
-    background-color: #343d46;
+  color: whitesmoke;
+  background-color: #343d46;
 
-    font-family: Monospace, sans-serif;
-    margin-left: 10%;
-    margin-right: 10%;
+  font-family: Monospace, sans-serif;
+  margin-left: 10%;
+  margin-right: 10%;
 }
 
 nav {
-    display: block;
-    text-align: center;
-    border-bottom: solid;
-    padding: 10px;
+  display: block;
+  text-align: center;
+  border-bottom: solid;
+  padding: 10px;
 }
 
-nav>a {
-    font-size: large;
-    text-decoration: none;
-    margin: 20px;
+nav > a {
+  font-size: large;
+  text-decoration: none;
+  margin: 20px;
 }
 
 .form {
-    padding: 10px;
-    margin: 5px;
+  padding: 10px;
+  margin: 5px;
 }
 
 a {
-    color: lightblue;
+  color: lightblue;
 }
 
 a:hover {
-    font-weight: bolder;
-    color: lightsalmon;
+  font-weight: bolder;
+  color: lightsalmon;
 }
 
 label {
-    margin-top: 10px;
-    font-weight: bold;
+  margin-top: 10px;
+  font-weight: bold;
 }
-
 
 input,
 select,
 textarea {
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    padding: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding: 5px;
 }
 
 textarea {
-    width: 250px;
-    height: 100px;
+  width: 250px;
+  height: 100px;
 }
 
 button,
-input[type=submit] {
-    font-weight: bold;
-    color: #343d46;
-    background-color: whitesmoke;
+input[type="submit"] {
+  font-weight: bold;
+  color: #343d46;
+  background-color: whitesmoke;
 
-    text-align: center;
-    font-size: 15px;
+  text-align: center;
+  font-size: 15px;
 
-    border-radius: 8px;
+  border-radius: 8px;
 }
 
-input[type=submit] {
-    margin-top: 10px;
+input[type="submit"] {
+  margin-top: 10px;
 }
 
 button:hover,
-input[type=submit]:hover {
-    color: whitesmoke;
-    background-color: #343d46;
+input[type="submit"]:hover {
+  color: whitesmoke;
+  background-color: #343d46;
 }
 
 #approve {
-    font-size: 24px;
-    width: 100%;
+  font-size: 24px;
+  width: 100%;
 }
 
 li {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 .error {
-    color: lightcoral;
+  color: lightcoral;
 
-    font-size: larger;
-    font-weight: bold;
+  font-size: larger;
+  font-weight: bold;
 
-    margin: 10px;
-    margin-left: auto;
-    margin-right: auto;
+  margin: 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  border-radius: 5px;
+  padding: 5px;
+  background-color: rgb(255, 255, 255);
+  color: black;
+  text-align: center;
+}
+
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+img {
+  border-radius: 5px 5px 0 0;
+  width: 100%;
+  height: 275px;
+}
+
+.container {
+  padding: 2px 16px;
+  background: #afafaf;
+}
+.cards {
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
 }
