@@ -1,9 +1,9 @@
 import { sports } from "../../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
-import validation from "./helpers.js";
+import * as validation from "./helpers.js";
 
 const create = async (name) => {
-  name = validation.checkString(name, "name");
+  name = validation.helperMethodsForSports.checkString(name, "name");
 
   let newSport = {
     name: name,

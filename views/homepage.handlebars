@@ -2,31 +2,29 @@
 
 {{#if authenticated}}
 
-<h2>Welcome Back! {{firstName}}</h2>
+  <h2>Welcome Back! {{firstName}}</h2>
 
-<a href="/profile">Profile</a>
+  <a href="/profile">Profile</a>
 
-<a href="/logout">Logout</a>
+  <a href="/logout">Logout</a>
 
 {{else}}
 
-<a href="/register">Register</a>
+  <a href="/register">Register</a>
 
-<a href="/login">Login</a>
+  <a href="/login">Login</a>
 
 {{/if}}
 
-<h3>Sports:</h3>
 <div>
-    <p>some sports ... </p>
-</div>
-
-<h3>Sport Places:</h3>
-<div>
-    <p>some sport places ... </p>
-</div>
-
-<h3>Classes:</h3>
-<div>
-    <p>some classes ... </p>
+  <div class="cards">
+    {{#each sports}}
+      <div class="card">
+        <img src={{this.thumbnail}} alt="{{name}} Image" style="width:100%" />
+        <div class="container">
+          <h4><b>{{this.name}}</b></h4>
+        </div>
+      </div>
+    {{/each}}
+  </div>
 </div>

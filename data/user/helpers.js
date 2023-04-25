@@ -1,4 +1,14 @@
 import bcrypt from "bcrypt";
+const helperMethodsForSports = {
+  checkString(strVal, varName) {
+    if (!strVal) throw `Error: You must supply a ${varName}!`;
+    if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
+    strVal = strVal.trim();
+    if (strVal.length === 0)
+      throw `Error: ${varName} cannot be an empty string or string with just spaces`;
+    return strVal;
+  },
+};
 
 const helperMethodsForClasses = {};
 
@@ -125,4 +135,5 @@ export {
   helperMethodsForClasses,
   helperMethodsForEvents,
   helperMethodsForSportPlaceIDs,
+  helperMethodsForSports,
 };
