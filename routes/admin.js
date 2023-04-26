@@ -372,13 +372,13 @@ router
         classInfo.titleInput,
         "Title"
       );
-      classInfo.sportInput = validation.checkString(
-        classInfo.sportInput,
-        "Sport"
+      classInfo.sportIDInput = validation.checkId(
+        classInfo.sportIDInput,
+        "SportID"
       );
-      classInfo.sportPlaceInput = validation.checkString(
-        classInfo.sportPlaceInput,
-        "Sport Place"
+      classInfo.sportPlaceIDInput = validation.checkId(
+        classInfo.sportPlaceIDInput,
+        "Sport PlaceID"
       );
       classInfo.capacityInput = validation.checkCapacity(
         classInfo.capacityInput,
@@ -441,8 +441,8 @@ router
     try {
       const newClass = await classData.create(
         classInfo.titleInput,
-        classInfo.sportInput,
-        classInfo.sportPlaceInput,
+        classInfo.sportIDInput,
+        classInfo.sportPlaceIDInput,
         classInfo.capacityInput,
         classInfo.instructorInput,
         classInfo.priceInput,
@@ -925,8 +925,8 @@ router
       const sports = await getSportOptions(classInfo.sport);
       const sportPlaces = await getSportPlaceOptions(classInfo.sportPlace);
 
-      const sportInfo = await sportData.get(sportPlace.sportID);
-      const sportPlaceInfo = await sportPlaceData.get(sportPlace.sportID);
+      const sportInfo = await sportData.get(classInfo.sportID);
+      const sportPlaceInfo = await sportPlaceData.get(classInfo.sportPlaceID);
 
       return res.render("admin/classInfo", {
         title: "Class Info",
@@ -935,8 +935,8 @@ router
         sports: sports,
         sportPlaces: sportPlaces,
         name: classInfo.title,
-        sport: classInfo.sport,
-        sportPlace: classInfo.sportPlace,
+        sport: sportInfo.name,
+        sportPlace: sportPlaceInfo.name,
         capacity: classInfo.capacity,
         instructor: classInfo.instructor,
         price: classInfo.price,
@@ -948,8 +948,8 @@ router
         n: classInfo.students.length,
         users: classInfo.students,
         classTitle: classInfo.title,
-        newSport: classInfo.sport,
-        newSportPlace: classInfo.sportPlace,
+        newSport: sportInfo.name,
+        newSportPlace: sportPlaceInfo.name,
         newCapacity: classInfo.capacity,
         newInstructor: classInfo.instructor,
         newPrice: classInfo.price,
@@ -985,13 +985,13 @@ router
         classInfo.titleInput,
         "Title"
       );
-      classInfo.sportInput = validation.checkString(
-        classInfo.sportInput,
-        "Sport"
+      classInfo.sportIDInput = validation.checkString(
+        classInfo.sportIDInput,
+        "SportID"
       );
-      classInfo.sportPlaceInput = validation.checkString(
-        classInfo.sportPlaceInput,
-        "Sport Place"
+      classInfo.sportPlaceIDInput = validation.checkString(
+        classInfo.sportPlaceIDInput,
+        "Sport PlaceID"
       );
       classInfo.capacityInput = validation.checkCapacity(
         classInfo.capacityInput,
@@ -1063,8 +1063,8 @@ router
       const newClass = await classData.update(
         classID,
         classInfo.titleInput,
-        classInfo.sportInput,
-        classInfo.sportPlaceInput,
+        classInfo.sportIDInput,
+        classInfo.sportPlaceIDInput,
         classInfo.capacityInput,
         classInfo.instructorInput,
         classInfo.priceInput,
