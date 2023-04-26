@@ -427,8 +427,6 @@ router
         sportPlaces: sportPlaces,
         classes: classes,
         classTitle: classInfo.titleInput,
-        sport: classInfo.sportInput,
-        sportPlace: classInfo.sportPlaceInput,
         capacity: classInfo.capacityInput,
         instructor: classInfo.instructorInput,
         price: classInfo.price,
@@ -591,7 +589,6 @@ router
         sports: sports,
         sportPlaces: sportPlaces,
         name: sportPlaceInfo.nameInput,
-        sportID: sportPlaceInfo.sportIDInput,
         address: sportPlaceInfo.addressInput,
         description: sportPlaceInfo.descriptionInput,
         capacity: sportPlaceInfo.capacityInput,
@@ -948,8 +945,6 @@ router
         n: classInfo.students.length,
         users: classInfo.students,
         classTitle: classInfo.title,
-        newSport: sportInfo.name,
-        newSportPlace: sportPlaceInfo.name,
         newCapacity: classInfo.capacity,
         newInstructor: classInfo.instructor,
         newPrice: classInfo.price,
@@ -985,11 +980,11 @@ router
         classInfo.titleInput,
         "Title"
       );
-      classInfo.sportIDInput = validation.checkString(
+      classInfo.sportIDInput = validation.checkId(
         classInfo.sportIDInput,
         "SportID"
       );
-      classInfo.sportPlaceIDInput = validation.checkString(
+      classInfo.sportPlaceIDInput = validation.checkId(
         classInfo.sportPlaceIDInput,
         "Sport PlaceID"
       );
@@ -1046,8 +1041,6 @@ router
         n: origClassInfo.students.length,
         users: origClassInfo.students,
         classTitle: origClassInfo.title,
-        newSport: classInfo.sportInput,
-        newSportPlace: classInfo.sportPlaceInput,
         newCapacity: classInfo.capacityInput,
         newInstructor: classInfo.instructorInput,
         newPrice: classInfo.priceInput,
@@ -1182,7 +1175,6 @@ router
         n: sportPlace.users.length,
         users: sportPlace.users,
         newName: sportPlace.name,
-        newSport: sportInfo.name,
         newAddress: sportPlace.address,
         newDescription: sportPlace.description,
         newCapacity: sportPlace.capacity,
@@ -1216,7 +1208,7 @@ router
         sportPlaceInfo.nameInput,
         "Name"
       );
-      sportPlaceInfo.sportIDInput = validation.checkString(
+      sportPlaceInfo.sportIDInput = validation.checkId(
         sportPlaceInfo.sportIDInput,
         "SportID"
       );
@@ -1258,7 +1250,6 @@ router
         n: origSportPlace.users.length,
         users: origSportPlace.users,
         newName: sportPlaceInfo.nameInput,
-        newSport: sportPlaceInfo.sportInput,
         newAddress: sportPlaceInfo.addressInput,
         newDescription: sportPlaceInfo.descriptionInput,
         newCapacity: sportPlaceInfo.capacityInput,
