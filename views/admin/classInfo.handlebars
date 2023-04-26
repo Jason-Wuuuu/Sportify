@@ -19,11 +19,11 @@
 </ul>
 
 <label for="edit">Edit Class:</label>
-<button type="button" id="edit">Edit</button>
+<button type="button" id="expand">Edit</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
-    <form action="/admin/classes/{{id}}" method="post" id="edit-form">
+    <form action="/admin/classes/{{id}}" method="post" id="class-form">
         <label for="titleInput">Title:</label><br>
         <input type="text" id="titleInput" name="titleInput" value="{{classTitle}}" />
         <br>

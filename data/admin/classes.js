@@ -13,6 +13,15 @@ const create = async (
   endTime
 ) => {
   // validation
+  title = validation.checkString(title, "Title");
+  sport = validation.checkString(sport, "Sport");
+  sportPlace = validation.checkString(sportPlace, "Sport Place");
+  capacity = validation.checkNumber(capacity, "Capacity");
+  instructor = validation.checkName(instructor, "Instructor");
+  date = validation.checkDate(date, "Date");
+  startTime = validation.checkTime(startTime, "Start Time");
+  endTime = validation.checkTime(endTime, "End Time");
+  validation.checkTimeRange(startTime, endTime);
 
   let newClass = {
     title: title,
@@ -76,14 +85,15 @@ const update = async (
 ) => {
   // validation
   classID = validation.checkId(classID);
-  title = validation.checkString(title, "title");
-  sport = validation.checkString(sport, "sport");
-  sportPlace = validation.checkString(sportPlace, "sportPlace");
-  capacity = validation.checkString(capacity, "capacity");
-  instructor = validation.checkString(instructor, "instructor");
-  date = validation.checkString(date, "date");
-  startTime = validation.checkString(startTime, "startTime");
-  endTime = validation.checkString(endTime, "endTime");
+  title = validation.checkString(title, "Title");
+  sport = validation.checkString(sport, "Sport");
+  sportPlace = validation.checkString(sportPlace, "Sport Place");
+  capacity = validation.checkNumber(capacity, "Capacity");
+  instructor = validation.checkName(instructor, "Instructor");
+  date = validation.checkDate(date, "Date");
+  startTime = validation.checkTime(startTime, "Start Time");
+  endTime = validation.checkTime(endTime, "End Time");
+  validation.checkTimeRange(startTime, endTime);
 
   const classUpdateInfo = {
     title: title,

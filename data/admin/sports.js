@@ -4,6 +4,9 @@ import validation from "./helpers.js";
 
 //
 const create = async (name) => {
+  // validation
+  name = validation.checkString(name, "name");
+
   let newSport = {
     name: name,
   };
@@ -43,6 +46,7 @@ const remove = async (sportID) => {
 };
 
 const update = async (sportID, name) => {
+  // validation
   sportID = validation.checkId(sportID);
   name = validation.checkString(name, "name");
 

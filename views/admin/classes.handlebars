@@ -13,11 +13,11 @@
 <h1>{{title}}</h1>
 
 <label for="add">Add New Class:</label>
-<button type="button" id="add">Add</button>
+<button type="button" id="expand">Add</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
-    <form action="/admin/classes" method="post" id="add-form">
+    <form action="/admin/classes" method="post" id="class-form">
         <label for="titleInput">Title:</label>
         <br>
         <input type="text" id="titleInput" name="titleInput" value="{{classTitle}}" />

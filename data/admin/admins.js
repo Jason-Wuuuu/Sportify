@@ -14,11 +14,14 @@ const create = async (
   // validation
   firstName = validation.checkString(firstName, "First Name");
   lastName = validation.checkString(lastName, "Last Name");
-  email = validation.checkString(email, "Email");
-  gender = validation.checkString(gender, "Gender");
-  dateOfBirth = validation.checkString(dateOfBirth, "Date Of Birth");
-  contactNumber = validation.checkString(contactNumber, "Contact Number");
-  password = validation.checkString(password, "Password");
+  email = validation.checkEmail(email, "Email");
+  gender = validation.checkGender(gender, "Gender");
+  dateOfBirth = validation.checkDateOfBirth(dateOfBirth, "Date Of Birth");
+  contactNumber = validation.checkContactNumber(
+    contactNumber,
+    "Contact Number"
+  );
+  password = validation.checkPassword(password, "Password");
 
   // check if email has already been used
   const adminCollection = await admins();
@@ -83,13 +86,17 @@ const update = async (
   password
 ) => {
   // validation
+  adminID = validation.checkId(adminID);
   firstName = validation.checkString(firstName, "First Name");
   lastName = validation.checkString(lastName, "Last Name");
-  email = validation.checkString(email, "Email");
-  gender = validation.checkString(gender, "Gender");
-  dateOfBirth = validation.checkString(dateOfBirth, "Date Of Birth");
-  contactNumber = validation.checkString(contactNumber, "Contact Number");
-  password = validation.checkString(password, "Password");
+  email = validation.checkEmail(email, "Email");
+  gender = validation.checkGender(gender, "Gender");
+  dateOfBirth = validation.checkDateOfBirth(dateOfBirth, "Date Of Birth");
+  contactNumber = validation.checkContactNumber(
+    contactNumber,
+    "Contact Number"
+  );
+  password = validation.checkPassword(password, "Password");
 
   // encrypt password
   password = await passwordMethods.encrypt(password);

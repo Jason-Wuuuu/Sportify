@@ -14,11 +14,11 @@
 
 
 <label for="add">Add New Sport:</label>
-<button type="button" id="add">Add</button>
+<button type="button" id="expand">Add</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
-    <form action="/admin/sports" method="post" id="add-form">
+    <form action="/admin/sports" method="post" id="sport-form">
         <label for="nameInput">Name:</label>
         <br>
         <input type="text" id="nameInput" name="nameInput" value="{{name}}" />

@@ -21,6 +21,19 @@ const validationMethods = {
     return strVal;
   },
 
+  checkNumber(numVal, varName) {
+    if (!numVal) throw `Error: You must supply a ${varName}!`;
+    if (typeof numVal !== "number") {
+      try {
+        numVal = Number.parseInt(numVal);
+      } catch (e) {
+        throw `Error: Unable to convert ${varName} to number`;
+      }
+    }
+    if (isNaN(numVal)) throw `Error: ${varName} is not a number.`;
+    return numVal;
+  },
+
   checkName(name, varName) {
     name = this.checkString(name, varName);
 
@@ -124,8 +137,8 @@ const validationMethods = {
   },
 
   checkTimeRange(start, end) {
-    const s = new Date(start);
-    const e = new Date(end);
+    const s = new Date(`2000-01-01 ${start}`);
+    const e = new Date(`2000-01-01 ${end}`);
     if (e < s) throw `Error: Invalid Time Range`;
   },
 };
