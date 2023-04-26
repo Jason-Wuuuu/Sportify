@@ -175,8 +175,7 @@ router
         error: e,
       });
     }
-  })
-  .delete(async (req, res) => {});
+  });
 
 router
   .route("/register")
@@ -314,11 +313,6 @@ router
     }
   });
 
-router.route("/logout").get(async (req, res) => {
-  req.session.destroy();
-  return res.render("admin/logout", { title: "Logout" });
-});
-
 router.route("/users").get(async (req, res) => {
   const userList = await userData.getAll();
   const users = userList.map((user) =>
@@ -381,13 +375,17 @@ router
         classInfo.sportPlaceInput,
         "Sport Place"
       );
-      classInfo.capacityInput = validation.checkNumber(
+      classInfo.capacityInput = validation.checkCapacity(
         classInfo.capacityInput,
         "Capacity"
       );
       classInfo.instructorInput = validation.checkName(
         classInfo.instructorInput,
         "Instructor"
+      );
+      classInfo.priceInput = validation.checkPrice(
+        classInfo.priceInput,
+        "Price"
       );
       classInfo.dateInput = validation.checkDate(classInfo.dateInput, "Date");
       classInfo.startTimeInput = validation.checkTime(
@@ -428,6 +426,7 @@ router
         sportPlace: classInfo.sportPlaceInput,
         capacity: classInfo.capacityInput,
         instructor: classInfo.instructorInput,
+        price: classInfo.price,
         date: classInfo.dateInput,
         startTime: classInfo.startTimeInput,
         endTime: classInfo.endTimeInput,
@@ -441,6 +440,7 @@ router
         classInfo.sportPlaceInput,
         classInfo.capacityInput,
         classInfo.instructorInput,
+        classInfo.priceInput,
         classInfo.dateInput,
         classInfo.startTimeInput,
         classInfo.endTimeInput
@@ -511,8 +511,7 @@ router
         error: e,
       });
     }
-  })
-  .delete(async (req, res) => {});
+  });
 
 router
   .route("/sportPlaces")
@@ -561,11 +560,11 @@ router
         sportPlaceInfo.descriptionInput,
         "Description"
       );
-      sportPlaceInfo.capacityInput = validation.checkNumber(
+      sportPlaceInfo.capacityInput = validation.checkCapacity(
         sportPlaceInfo.capacityInput,
         "Capacity"
       );
-      sportPlaceInfo.priceInput = validation.checkNumber(
+      sportPlaceInfo.priceInput = validation.checkPrice(
         sportPlaceInfo.priceInput,
         "Price"
       );
@@ -580,7 +579,7 @@ router
         })
       );
 
-      return res.render("admin/sportPlaces", {
+      return res.status(400).render("admin/sportPlaces", {
         title: "Sport Places",
         hidden: "",
         error: e,
@@ -638,8 +637,32 @@ router.route("/events").get(async (req, res) => {
   });
 });
 
+router.route("/users/:id").get(async (req, res) => {
+  try {
+    req.params.id = validation.checkId(req.params.id, "ID URL Param");
+  } catch (e) {
+    return res.status(400).render("admin/error", {
+      title: "Error",
+      error: e,
+    });
+  }
+
+  let userInfo = await userData.get(req.params.id);
+
+  return res.render("admin/userInfo", {
+    title: "User Info",
+    id: userInfo._id,
+    firstName: userInfo.firstName,
+    lastName: userInfo.lastName,
+    email: userInfo.email,
+    gender: userInfo.gender,
+    dateOfBirth: userInfo.dateOfBirth,
+    contactNumber: userInfo.contactNumber,
+  });
+});
+
 router
-  .route("/users/:id")
+  .route("/users/remove/:id")
   .get(async (req, res) => {
     try {
       req.params.id = validation.checkId(req.params.id, "ID URL Param");
@@ -649,18 +672,12 @@ router
         error: e,
       });
     }
-
     let userInfo = await userData.get(req.params.id);
-
-    return res.render("admin/userInfo", {
-      title: "User Info",
-      id: userInfo._id,
-      firstName: userInfo.firstName,
-      lastName: userInfo.lastName,
-      email: userInfo.email,
-      gender: userInfo.gender,
-      dateOfBirth: userInfo.dateOfBirth,
-      contactNumber: userInfo.contactNumber,
+    return res.render("admin/remove", {
+      title: "Remove",
+      back: `users/${userInfo._id}`,
+      data: userInfo._id,
+      db: "users",
     });
   })
   .delete(async (req, res) => {
@@ -705,6 +722,7 @@ router
         sportPlace: classInfo.sportPlace,
         capacity: classInfo.capacity,
         instructor: classInfo.instructor,
+        price: classInfo.price,
         date: classInfo.date,
         startTime: classInfo.startTime,
         endTime: classInfo.endTime,
@@ -716,6 +734,7 @@ router
         newSportPlace: classInfo.sportPlace,
         newCapacity: classInfo.capacity,
         newInstructor: classInfo.instructor,
+        newPrice: classInfo.price,
         newDate: classInfo.date,
         newStartTime: classInfo.startTime,
         newEndTime: classInfo.endTime,
@@ -755,13 +774,17 @@ router
         classInfo.sportPlaceInput,
         "Sport Place"
       );
-      classInfo.capacityInput = validation.checkNumber(
+      classInfo.capacityInput = validation.checkCapacity(
         classInfo.capacityInput,
         "Capacity"
       );
       classInfo.instructorInput = validation.checkName(
         classInfo.instructorInput,
         "Instructor"
+      );
+      classInfo.priceInput = validation.checkPrice(
+        classInfo.priceInput,
+        "Price"
       );
       classInfo.dateInput = validation.checkDate(classInfo.dateInput, "Date");
       classInfo.startTimeInput = validation.checkTime(
@@ -805,6 +828,7 @@ router
         sportPlace: origClassInfo.sportPlace,
         capacity: origClassInfo.capacity,
         instructor: origClassInfo.instructor,
+        price: classInfo.price,
         date: origClassInfo.date,
         startTime: origClassInfo.startTime,
         endTime: origClassInfo.endTime,
@@ -816,6 +840,7 @@ router
         newSportPlace: classInfo.sportPlaceInput,
         newCapacity: classInfo.capacityInput,
         newInstructor: classInfo.instructorInput,
+        newPrice: classInfo.priceInput,
         newDate: classInfo.dateInput,
         newStartTime: classInfo.startTimeInput,
         newEndTime: classInfo.endTimeInput,
@@ -831,6 +856,7 @@ router
         classInfo.sportPlaceInput,
         classInfo.capacityInput,
         classInfo.instructorInput,
+        classInfo.priceInput,
         classInfo.dateInput,
         classInfo.startTimeInput,
         classInfo.endTimeInput
@@ -838,6 +864,40 @@ router
       if (!newClass.updatedClass) throw "Internal Server Error";
       return res.redirect(`${classID}`);
     } catch (e) {}
+  });
+
+router
+  .route("/classes/remove/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    let classInfo = await classData.get(req.params.id);
+    return res.render("admin/remove", {
+      title: "Remove",
+      back: `classes/${classInfo._id}`,
+      data: classInfo._id,
+      db: "classes",
+    });
+  })
+  .delete(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    let deleteInfo = await classData.remove(req.params.id);
+    if (deleteInfo.deleted) {
+      return res.redirect("/admin/classes");
+    }
   });
 
 router
@@ -899,6 +959,40 @@ router
       if (!newSport.updatedSport) throw "Internal Server Error";
       return res.redirect(`${sportID}`);
     } catch (e) {}
+  });
+
+router
+  .route("/sports/remove/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    let sportInfo = await sportData.get(req.params.id);
+    return res.render("admin/remove", {
+      title: "Remove",
+      back: `sports/${sportInfo._id}`,
+      data: sportInfo._id,
+      db: "sports",
+    });
+  })
+  .delete(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    let deleteInfo = await sportData.remove(req.params.id);
+    if (deleteInfo.deleted) {
+      return res.redirect("/admin/sports");
+    }
   });
 
 router
@@ -972,11 +1066,11 @@ router
         sportPlaceInfo.descriptionInput,
         "Description"
       );
-      sportPlaceInfo.capacityInput = validation.checkNumber(
+      sportPlaceInfo.capacityInput = validation.checkCapacity(
         sportPlaceInfo.capacityInput,
         "Capacity"
       );
-      sportPlaceInfo.priceInput = validation.checkNumber(
+      sportPlaceInfo.priceInput = validation.checkPrice(
         sportPlaceInfo.priceInput,
         "Price"
       );
@@ -1028,6 +1122,40 @@ router
   });
 
 router
+  .route("/sportPlaces/remove/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    let sportPlaceInfo = await sportPlaceData.get(req.params.id);
+    return res.render("admin/remove", {
+      title: "Remove",
+      back: `sportPlaces/${sportPlaceInfo._id}`,
+      data: sportPlaceInfo._id,
+      db: "sportPlaces",
+    });
+  })
+  .delete(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    let deleteInfo = await sportPlaceData.remove(req.params.id);
+    if (deleteInfo.deleted) {
+      return res.redirect("/admin/sportPlaces");
+    }
+  });
+
+router
   .route("/events/:id")
   .get(async (req, res) => {
     try {
@@ -1072,7 +1200,46 @@ router
     } catch (e) {}
   });
 
-// all other urls
+router
+  .route("/events/remove/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    let eventInfo = await eventData.get(req.params.id);
+    return res.render("admin/remove", {
+      title: "Remove",
+      back: `events/${eventInfo._id}`,
+      data: eventInfo._id,
+      db: "events",
+    });
+  })
+  .delete(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    let deleteInfo = await eventDataAdmin.remove(req.params.id);
+    if (deleteInfo.deleted) {
+      return res.redirect("/admin/events");
+    }
+  });
+
+router.route("/logout").get(async (req, res) => {
+  req.session.destroy();
+  return res.render("admin/logout", { title: "Logout" });
+});
+
+// all other admin urls
 router.route("*").get(async (req, res) => {
   return res.status(404).render("admin/error", {
     title: "Error",

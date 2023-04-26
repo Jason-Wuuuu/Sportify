@@ -9,7 +9,7 @@ const create = async (name, sport, address, description, capacity, price) => {
   sport = validation.checkString(sport, "Sport");
   address = validation.checkString(address, "Address");
   description = validation.checkString(description, "Description");
-  capacity = validation.checkNumber(capacity, "Capacity");
+  capacity = validation.checkCapacity(capacity, "Capacity");
   price = validation.checkNumber(price, "Price");
 
   // add valid sport place to db
@@ -57,9 +57,9 @@ const remove = async (sportPlaceID) => {
     _id: new ObjectId(sportPlaceID),
   });
   if (deletionInfo.lastErrorObject.n === 0)
-    throw [404, `Error: Could not delete user with id of ${sportPlaceID}`];
+    throw `Error: Could not delete sport place with id of ${sportPlaceID}`;
 
-  return { ...deletionInfo.value, deleted: true };
+  return { deleted: true };
 };
 
 const update = async (
@@ -77,7 +77,7 @@ const update = async (
   sport = validation.checkString(sport, "Sport");
   address = validation.checkString(address, "Address");
   description = validation.checkString(description, "Description");
-  capacity = validation.checkNumber(capacity, "Capacity");
+  capacity = validation.checkCapacity(capacity, "Capacity");
   price = validation.checkNumber(price, "Price");
 
   const sportPlaceInfo = {

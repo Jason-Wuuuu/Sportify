@@ -8,6 +8,7 @@ const create = async (
   sportPlace,
   capacity,
   instructor,
+  price,
   date,
   startTime,
   endTime
@@ -16,8 +17,9 @@ const create = async (
   title = validation.checkString(title, "Title");
   sport = validation.checkString(sport, "Sport");
   sportPlace = validation.checkString(sportPlace, "Sport Place");
-  capacity = validation.checkNumber(capacity, "Capacity");
+  capacity = validation.checkCapacity(capacity, "Capacity");
   instructor = validation.checkName(instructor, "Instructor");
+  price = validation.checkPrice(price, "Price");
   date = validation.checkDate(date, "Date");
   startTime = validation.checkTime(startTime, "Start Time");
   endTime = validation.checkTime(endTime, "End Time");
@@ -29,6 +31,7 @@ const create = async (
     sportPlace: sportPlace,
     capacity: capacity,
     instructor: instructor,
+    price: price,
     date: date,
     startTime: startTime,
     endTime: endTime,
@@ -67,9 +70,9 @@ const remove = async (classID) => {
     _id: new ObjectId(classID),
   });
   if (deletionInfo.lastErrorObject.n === 0)
-    throw [404, `Error: Could not delete user with id of ${classID}`];
+    throw `Error: Could not delete class with id of ${classID}`;
 
-  return { ...deletionInfo.value, deleted: true };
+  return { deleted: true };
 };
 
 const update = async (
@@ -79,6 +82,7 @@ const update = async (
   sportPlace,
   capacity,
   instructor,
+  price,
   date,
   startTime,
   endTime
@@ -88,8 +92,9 @@ const update = async (
   title = validation.checkString(title, "Title");
   sport = validation.checkString(sport, "Sport");
   sportPlace = validation.checkString(sportPlace, "Sport Place");
-  capacity = validation.checkNumber(capacity, "Capacity");
+  capacity = validation.checkCapacity(capacity, "Capacity");
   instructor = validation.checkName(instructor, "Instructor");
+  price = validation.checkPrice(price, "Price");
   date = validation.checkDate(date, "Date");
   startTime = validation.checkTime(startTime, "Start Time");
   endTime = validation.checkTime(endTime, "End Time");
@@ -101,6 +106,7 @@ const update = async (
     sportPlace: sportPlace,
     capacity: capacity,
     instructor: instructor,
+    price: price,
     date: date,
     startTime: startTime,
     endTime: endTime,

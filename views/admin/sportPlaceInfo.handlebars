@@ -16,7 +16,7 @@
     <li>Number of Users: {{n}}</li>
 </ul>
 
-<label for="edit">Edit Class:</label>
+<label for="edit">Edit Sport Place:</label>
 <button type="button" id="expand">Edit</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
@@ -58,6 +58,11 @@
 
     </form>
 </div>
+
+<form action="/admin/sportPlaces/remove/{{id}}" method="get">
+    <label for="remove">Remove Sport Place:</label>
+    <button type="submit" id="remove">Remove</button>
+</form>
 
 <h3>List of Users:</h3>
 <dl>
