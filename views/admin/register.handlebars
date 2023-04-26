@@ -6,6 +6,7 @@
 
 <h1>{{title}}</h1>
 
+<div id="error" class="error" {{hidden}}>{{error}}</div>
 <form action="/admin/register" method="post" id="admin-info-form">
 
     <label for="firstNameInput">First Name:</label><br>
@@ -44,6 +45,14 @@
     <input type="password" id="passwordInput" name="passwordInput" value="{{password}}" />
     <br>
 
+    <label for="password-hint" class="hint">Password Hint:</label><br>
+    <ul id="password-hint">
+        <li class="hint">Should be a minimum of 8 characters long</li>
+        <li class="hint">Should contain at least one uppercase character</li>
+        <li class="hint">Should contain at least one lowercase character</li>
+        <li class="hint">Should contain at least one special character</li>
+    </ul>
+
     <label for="confirmPasswordInput">Confirm Password:</label><br>
     <input type="password" id="confirmPasswordInput" name="confirmPasswordInput" />
     <br>
@@ -54,5 +63,3 @@
 
     <input type="submit" value="Submit" />
 </form>
-
-<div id="error" class="error" {{hidden}}>{{error}}</div>

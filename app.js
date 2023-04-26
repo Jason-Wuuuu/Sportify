@@ -69,18 +69,18 @@ app.use("/admin/users", (req, res, next) => {
   next();
 });
 
-app.use("/admin/users/:id", (req, res, next) => {
-  if (!req.session.admin) {
-    return res.redirect("/admin/login");
-  }
-  next();
-});
-
 app.use("/admin/users/remove/:id", (req, res, next) => {
   if (!req.session.admin) {
     return res.redirect("/admin/login");
   }
   if (req.method === "POST") req.method = "DELETE";
+  next();
+});
+
+app.use("/admin/users/:id", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
   next();
 });
 
