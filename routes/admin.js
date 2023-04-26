@@ -32,7 +32,9 @@ const getSportOptions = async (selected) => {
   const sportList = await sportData.getAll();
   let sports = [];
   if (sportList) {
-    sports = sportList.map((sport) => sport.name);
+    sports = sportList.map((sport) =>
+      Object({ sportID: sport._id, name: sport.name })
+    );
   }
   if (selected) {
     const index = sports.indexOf(selected);
@@ -46,7 +48,9 @@ const getSportPlaceOptions = async (selected) => {
   const sportPlacetList = await sportPlaceData.getAll();
   let sportPlaces = [];
   if (sportPlacetList) {
-    sportPlaces = sportPlacetList.map((sportPlace) => sportPlace.name);
+    sportPlaces = sportPlacetList.map((sportPlace) =>
+      Object({ sportPlaceID: sportPlace._id, name: sportPlace.name })
+    );
   }
   if (selected) {
     const index = sportPlaces.indexOf(selected);
@@ -549,9 +553,9 @@ router
         sportPlaceInfo.nameInput,
         "Name"
       );
-      sportPlaceInfo.sportInput = validation.checkString(
-        sportPlaceInfo.sportInput,
-        "Sport"
+      sportPlaceInfo.sportIDInput = validation.checkId(
+        sportPlaceInfo.sportIDInput,
+        "sportID"
       );
       sportPlaceInfo.addressInput = validation.checkString(
         sportPlaceInfo.addressInput,
@@ -587,7 +591,7 @@ router
         sports: sports,
         sportPlaces: sportPlaces,
         name: sportPlaceInfo.nameInput,
-        sport: sportPlaceInfo.sportInput,
+        sportID: sportPlaceInfo.sportIDInput,
         address: sportPlaceInfo.addressInput,
         description: sportPlaceInfo.descriptionInput,
         capacity: sportPlaceInfo.capacityInput,
@@ -598,7 +602,7 @@ router
     try {
       const newSportPlace = await sportPlaceData.create(
         sportPlaceInfo.nameInput,
-        sportPlaceInfo.sportInput,
+        sportPlaceInfo.sportIDInput,
         sportPlaceInfo.addressInput,
         sportPlaceInfo.descriptionInput,
         sportPlaceInfo.capacityInput,
@@ -920,6 +924,10 @@ router
       let classInfo = await classData.get(req.params.id);
       const sports = await getSportOptions(classInfo.sport);
       const sportPlaces = await getSportPlaceOptions(classInfo.sportPlace);
+
+      const sportInfo = await sportData.get(sportPlace.sportID);
+      const sportPlaceInfo = await sportPlaceData.get(sportPlace.sportID);
+
       return res.render("admin/classInfo", {
         title: "Class Info",
         hidden: "hidden",
@@ -1155,6 +1163,8 @@ router
     }
     try {
       let sportPlace = await sportPlaceData.get(req.params.id);
+
+      const sportInfo = await sportData.get(sportPlace.sportID);
       const sports = await getSportOptions(sportPlace.sport);
       return res.render("admin/sportPlaceInfo", {
         title: "SportPlace Info",
@@ -1162,7 +1172,7 @@ router
         id: sportPlace._id,
         sports: sports,
         name: sportPlace.name,
-        sport: sportPlace.sport,
+        sport: sportInfo.name,
         address: sportPlace.address,
         description: sportPlace.description,
         capacity: sportPlace.capacity,
@@ -1172,7 +1182,7 @@ router
         n: sportPlace.users.length,
         users: sportPlace.users,
         newName: sportPlace.name,
-        newSport: sportPlace.sport,
+        newSport: sportInfo.name,
         newAddress: sportPlace.address,
         newDescription: sportPlace.description,
         newCapacity: sportPlace.capacity,
@@ -1206,9 +1216,9 @@ router
         sportPlaceInfo.nameInput,
         "Name"
       );
-      sportPlaceInfo.sportInput = validation.checkString(
-        sportPlaceInfo.sportInput,
-        "Sport"
+      sportPlaceInfo.sportIDInput = validation.checkString(
+        sportPlaceInfo.sportIDInput,
+        "SportID"
       );
       sportPlaceInfo.addressInput = validation.checkString(
         sportPlaceInfo.addressInput,
@@ -1262,7 +1272,7 @@ router
       const newSportPlace = await sportPlaceData.update(
         sportPlaceID,
         sportPlaceInfo.nameInput,
-        sportPlaceInfo.sportInput,
+        sportPlaceInfo.sportIDInput,
         sportPlaceInfo.addressInput,
         sportPlaceInfo.descriptionInput,
         sportPlaceInfo.capacityInput,

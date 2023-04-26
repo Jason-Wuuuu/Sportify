@@ -15,9 +15,9 @@ const create = async (name) => {
   const sportCollection = await sports();
   const newInsertInformation = await sportCollection.insertOne(newSport);
   const newId = newInsertInformation.insertedId;
-  await get(newId.toString());
+  const sport = await get(newId.toString());
 
-  return { insertedSport: true };
+  return { sportID: sport._id.toString(), insertedSport: true };
 };
 
 const getAll = async () => {

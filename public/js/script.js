@@ -318,7 +318,7 @@ if (document.URL.includes("/admin")) {
   if (sportPlaceInfo) {
     // get elements
     let nameInput = document.getElementById("nameInput");
-    let sportInput = document.getElementById("sportInput");
+    let sportIDInput = document.getElementById("sportIDInput");
     let addressInput = document.getElementById("addressInput");
     let descriptionInput = document.getElementById("descriptionInput");
     let capacityInput = document.getElementById("capacityInput");
@@ -328,7 +328,7 @@ if (document.URL.includes("/admin")) {
     sportPlaceInfo.addEventListener("submit", (event) => {
       // get values
       let name = nameInput.value;
-      let sport = sportInput.value;
+      let sportID = sportIDInput.value;
       let address = addressInput.value;
       let description = descriptionInput.value;
       let capacity = capacityInput.value;
@@ -337,7 +337,7 @@ if (document.URL.includes("/admin")) {
       //validation
       try {
         name = checkString(name, "Name");
-        sport = checkString(sport, "Sport");
+        sportID = checkString(sportID, "SportID");
         address = checkString(address, "Address");
         description = checkString(description, "Description");
         capacity = checkCapacity(capacity, "Capacity");
@@ -345,7 +345,6 @@ if (document.URL.includes("/admin")) {
       } catch (e) {
         event.preventDefault();
         if (name) nameInput.value = name;
-        if (sport) sportInput.value = sport;
         if (address) addressInput.value = address;
         if (description) descriptionInput.value = description;
         if (capacity) capacityInput.value = capacity;
