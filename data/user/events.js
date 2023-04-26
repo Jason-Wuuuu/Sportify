@@ -1,5 +1,7 @@
 import { events } from "../../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
+import * as validation from "./helpers.js";
+import * as userData from "./users.js";
 
 const create = async (
   userID,
@@ -79,7 +81,32 @@ const getAllParticipants = async (eventID) => {};
 
 const getEventsByUser = async (userID) => {};
 
-const getEventsBySport = async (sportID) => {};
+const getEventsBySport = async (sport) => {
+  sport = validation.helperMethodsForEvents.checkString(sport, "Sport");
+
+  const eventCollection = await events();
+  const event = await eventCollection
+    .find({
+      sport: sport,
+    })
+    .toArray();
+  if (!event) throw "Error: Event not found";
+  if (event.length != 0) {
+    for (let item of event) {
+      try {
+        let user = await userData.get(item.userID);
+        item.username = user.firstName + " " + user.lastName;
+        item._id = item._id.toString();
+        item.available =
+          item.participants.length < item.capacity ? true : false;
+      } catch (e) {
+        item.username = "Unknown User";
+        item._id = item._id.toString();
+      }
+    }
+  }
+  return event;
+};
 
 const getEventsByType = async (type) => {};
 
@@ -91,5 +118,5 @@ const getAvailableEvents = async () => {}; // events that the capacity is not fu
 
 // sorting ?
 
-export { create, get, getAll };
+export { create, get, getAll, getEventsBySport };
 //testing my local branch repo connection to github repo via test commit

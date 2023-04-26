@@ -1,0 +1,47 @@
+<header>
+  <nav class="navbar">
+    <a href="/" class="logo">Sportify</a>
+
+    <a href="/events/{{sport}}">Events</a>
+    <a href="*">Classes</a>
+    <a href="*">Places</a>
+
+    <a href="/profile">Profile</a>
+    <a href="/logout">Logout</a>
+
+  </nav>
+</header>
+
+<h2>Latest Events For : {{sport}}</h2>
+
+{{#each events}}
+  <div class="blog-card">
+    <div class="meta">
+      <div class="photo" style="background-image: url({{this.image}})"></div>
+      <ul class="details">
+        <li class="author">Event By : {{this.username}}</li>
+        <li class="date">Date : {{this.date}}</li>
+        <li class="location">Location : {{this.sportPlace}}</li>
+        <li class="time"> Time : {{this.startTime}} to {{this.endTime}}</li>
+      </ul>
+    </div>
+    <div class="description">
+      <h1>{{this.name}}</h1>
+      <p>{{this.description}}</p>
+      <p class="read-more">
+        {{#if this.available}}
+          <a href="#">
+            RSVP Event! [
+            {{this.participants.length}}/{{this.capacity}}]
+          </a>
+        {{else}}
+          <a style="color: red;">Event Full! 😢 [
+            {{this.participants.length}}/{{this.capacity}}]
+          </a>
+        {{/if}}
+      </p>
+    </div>
+  </div>
+{{else}}
+  <p>Sorry!<br /> No events found for {{sport}}.</p>
+{{/each}}

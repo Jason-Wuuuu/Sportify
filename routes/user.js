@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as userData from "../data/user/users.js";
+import * as eventsData from "../data/user/events.js";
 import * as sportsData from "../data/user/sports.js";
 import { helperMethodsForUsers } from "../data/user/helpers.js";
 
@@ -151,6 +152,12 @@ router.route("/profile").get(async (req, res) => {
     dateOfBirth: userInfo.dateOfBirth,
     contactNumber: userInfo.contactNumber,
   });
+});
+
+router.route("/events/:sports").get(async (req, res) => {
+  let sport = req.params.sports;
+  let eventList = await eventsData.getEventsBySport(sport);
+  return res.render("events", { sport: sport, events: eventList });
 });
 
 export default router;
