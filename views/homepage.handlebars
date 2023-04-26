@@ -1,28 +1,40 @@
-<h1>{{title}}</h1>
+<header>
+  <nav class="navbar">
+    <a href="/" class="logo">Sportify</a>
+    {{#if authenticated}}
+
+      <a href="/profile">Profile</a>
+
+      <a href="/logout">Logout</a>
+
+    {{else}}
+
+      <a href="/register">Register</a>
+
+      <a href="/login">Login</a>
+
+    {{/if}}
+  </nav>
+</header>
 
 {{#if authenticated}}
-
   <h2>Welcome Back! {{firstName}}</h2>
-
-  <a href="/profile">Profile</a>
-
-  <a href="/logout">Logout</a>
-
-{{else}}
-
-  <a href="/register">Register</a>
-
-  <a href="/login">Login</a>
-
 {{/if}}
 
-<div>
+<div id="cardsdiv">
   <div class="cards">
     {{#each sports}}
       <div class="card">
-        <img src={{this.thumbnail}} alt="{{name}} Image" style="width:100%" />
+        <img
+          src={{this.thumbnail}}
+          alt="{{this.name}} Image"
+          style="width:100%"
+        />
         <div class="container">
-          <h4><b>{{this.name}}</b></h4>
+          <h4><a
+              class="cardlink"
+              href="/events/{{this.name}}"
+            >{{this.name}}</a></h4>
         </div>
       </div>
     {{/each}}
