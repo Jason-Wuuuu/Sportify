@@ -14,6 +14,7 @@ const number_of_data = 9;
 
 // add valid data
 for (let i = 1; i <= number_of_data; i++) {
+  let userID = undefined;
   try {
     let gender = "male";
     if (i % 2 == 0) gender = "female";
@@ -26,6 +27,7 @@ for (let i = 1; i <= number_of_data; i++) {
       `123456789${i}`,
       `Password.${i}`
     );
+    userID = newUser.userID;
   } catch (e) {
     console.log(e);
   }
@@ -88,7 +90,7 @@ for (let i = 1; i <= number_of_data; i++) {
 
   try {
     const newEvents = await events.create(
-      "64446957e281134798976647",
+      userID,
       `Event_0${i}`,
       `This is the description of Event_0${i}`,
       `Sport_0${i}`,
