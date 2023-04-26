@@ -47,21 +47,25 @@ for (let i = 1; i <= number_of_data; i++) {
     console.log(e);
   }
 
+  let sportID = undefined;
   try {
     const newSport = await sports.create(`Sport_0${i}`);
+    sportID = newSport.sportID;
   } catch (e) {
     console.log(e);
   }
 
+  let sportPlaceID = undefined;
   try {
     const newSportPlace = await sportPlaces.create(
       `SportPlace_0${i}`,
-      `Sport_0${i}`,
+      sportID,
       `address_for_SportPlace_0${i}`,
       `This is the description of SportPlace_0${i}`,
       `${(i + 5) * 10}`,
       `${(i + 10) * 50}`
     );
+    sportPlaceID = newSportPlace.sportPlaceID;
   } catch (e) {
     console.log(e);
   }
@@ -69,8 +73,8 @@ for (let i = 1; i <= number_of_data; i++) {
   try {
     const newClass = await classes.create(
       `Class_0${i}`,
-      `Sport_0${i}`,
-      `sportPlace_0${i}`,
+      sportID,
+      sportPlaceID,
       `${(i + 5) * 3}`,
       `instructor_0${i}`,
       `${(i + 10) * 50}`,

@@ -4,8 +4,8 @@ import validation from "./helpers.js";
 
 const create = async (
   title,
-  sport,
-  sportPlace,
+  sportID,
+  sportPlaceID,
   capacity,
   instructor,
   price,
@@ -15,8 +15,8 @@ const create = async (
 ) => {
   // validation
   title = validation.checkString(title, "Title");
-  sport = validation.checkString(sport, "Sport");
-  sportPlace = validation.checkString(sportPlace, "Sport Place");
+  sportID = validation.checkId(sportID, "SportID");
+  sportPlaceID = validation.checkId(sportPlaceID, "Sport PlaceID");
   capacity = validation.checkCapacity(capacity, "Capacity");
   instructor = validation.checkName(instructor, "Instructor");
   price = validation.checkPrice(price, "Price");
@@ -27,8 +27,8 @@ const create = async (
 
   let newClass = {
     title: title,
-    sport: sport,
-    sportPlace: sportPlace,
+    sportID: sportID,
+    sportPlaceID: sportPlaceID,
     capacity: capacity,
     instructor: instructor,
     price: price,
@@ -79,8 +79,8 @@ const remove = async (classID) => {
 const update = async (
   classID,
   title,
-  sport,
-  sportPlace,
+  sportID,
+  sportPlaceID,
   capacity,
   instructor,
   price,
@@ -92,8 +92,8 @@ const update = async (
   // validation
   classID = validation.checkId(classID);
   title = validation.checkString(title, "Title");
-  sport = validation.checkString(sport, "Sport");
-  sportPlace = validation.checkString(sportPlace, "Sport Place");
+  sportID = validation.checkString(sportID, "SportID");
+  sportPlaceID = validation.checkString(sportPlaceID, "Sport PlaceID");
   capacity = validation.checkCapacity(capacity, "Capacity");
   instructor = validation.checkName(instructor, "Instructor");
   price = validation.checkPrice(price, "Price");
@@ -104,8 +104,8 @@ const update = async (
 
   const classUpdateInfo = {
     title: title,
-    sport: sport,
-    sportPlace: sportPlace,
+    sportID: sportID,
+    sportPlaceID: sportPlaceID,
     capacity: capacity,
     instructor: instructor,
     price: price,

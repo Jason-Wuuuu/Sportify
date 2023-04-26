@@ -51,12 +51,9 @@
 
         <label for="sportPlaceInput">Sport Places:</label><br>
         <select id="sportPlaceInput" , name="sportPlaceInput">
-            {{#if newSportPlace}}
-            <option value="{{newSportPlace}}">{{newSportPlace}}</option>
-            {{/if}}
             <option value="">-</option>
             {{#each sportPlaces}}
-            <option value="{{this}}">{{this}}</option>
+            <option value="{{sportPlaceID}}">{{name}}</option>
             {{/each}}
         </select>
         <br>
