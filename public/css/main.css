@@ -16,7 +16,7 @@ nav {
   padding: 10px;
 }
 
-nav > a {
+nav>a {
   font-size: large;
   text-decoration: none;
   margin: 20px;
@@ -39,6 +39,11 @@ a:hover {
 label {
   margin-top: 10px;
   font-weight: bold;
+}
+
+label.hint {
+  font-size: 14px;
+  color: lightsteelblue;
 }
 
 input,
@@ -65,9 +70,6 @@ input[type="submit"] {
   font-size: 15px;
 
   border-radius: 8px;
-}
-
-input[type="submit"] {
   margin-top: 10px;
 }
 
@@ -77,14 +79,34 @@ input[type="submit"]:hover {
   background-color: #343d46;
 }
 
-#approve {
+#approve,
+#confirm {
+  padding: 5px;
   font-size: 24px;
   width: 100%;
+}
+
+li.hint {
+  font-size: 12px;
+  color: lightsteelblue;
 }
 
 li {
   margin-top: 10px;
 }
+
+img.thumbnail {
+  height: auto;
+  width: auto;
+
+  max-width: 400px;
+  max-height: 400px;
+
+  object-fit: cover;
+
+  border-radius: 5%;
+}
+
 
 .error {
   color: lightcoral;
@@ -96,6 +118,7 @@ li {
   margin-left: auto;
   margin-right: auto;
 }
+
 .card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   transition: 0.3s;
@@ -116,10 +139,13 @@ img {
   height: 275px;
 }
 
+
+
 .container {
   padding: 2px 16px;
   background: #afafaf;
 }
+
 .cards {
   margin: 0 auto;
   display: grid;

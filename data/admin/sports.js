@@ -4,8 +4,12 @@ import validation from "./helpers.js";
 
 //
 const create = async (name) => {
+  // validation
+  name = validation.checkString(name, "name");
+
   let newSport = {
     name: name,
+    thumbnail: "",
   };
 
   const sportCollection = await sports();
@@ -37,17 +41,19 @@ const remove = async (sportID) => {
     _id: new ObjectId(sportID),
   });
   if (deletionInfo.lastErrorObject.n === 0)
-    throw [404, `Error: Could not delete user with id of ${sportID}`];
+    throw `Error: Could not delete sport with id of ${sportID}`;
 
   return { deleted: true };
 };
 
-const update = async (sportID, name) => {
+const update = async (sportID, name, thumbnail) => {
+  // validation
   sportID = validation.checkId(sportID);
   name = validation.checkString(name, "name");
 
   const sportUpdateInfo = {
     name: name,
+    thumbnail: thumbnail,
   };
 
   const sportCollection = await sports();

@@ -14,11 +14,11 @@
 
 
 <label for="add">Add New Sport Place:</label>
-<button type="button" id="add">Add</button>
+<button type="button" id="expand">Add</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
-    <form action="/admin/sportPlaces" method="post" id="add-form">
+    <form action="/admin/sportPlaces" method="post" id="sportPlace-form">
         <label for="nameInput">Name:</label>
         <br>
         <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
@@ -44,17 +44,17 @@
 
         <label for="descriptionInput">Description:</label>
         <br>
-        <textarea type=id="descriptionInput" name="descriptionInput" value="{{description}}">{{description}}</textarea>
+        <textarea id="descriptionInput" name="descriptionInput" value="{{description}}">{{description}}</textarea>
         <br>
 
         <label for="capacityInput">Capacity:</label>
         <br>
-        <input type="number" id="capacityInput" name="capacityInput" value="{{capacity}}" />
+        <input type="number" id="capacityInput" name="capacityInput" value="{{capacity}}" min="1" />
         <br>
 
         <label for="priceInput">Price:</label>
         <br>
-        <input type="number" id="priceInput" name="priceInput" value="{{price}}" />
+        <input type="number" id="priceInput" name="priceInput" value="{{price}}" min="0" />
         <br>
 
         <input type="submit" value="Submit" />

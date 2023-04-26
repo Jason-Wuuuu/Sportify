@@ -15,6 +15,7 @@
     <li>Contact Number: {{contactNumber}}</li>
 </ul>
 
-<form action="/admin/users/{{id}}" method="post">
-    <input type="submit" id="remove" name="remove" value="Remove" />
+<form action="/admin/users/remove/{{id}}" method="get">
+    <label for="remove">Remove User:</label>
+    <button type="submit" id="remove">Remove</button>
 </form>

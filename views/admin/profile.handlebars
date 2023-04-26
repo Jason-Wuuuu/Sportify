@@ -24,11 +24,11 @@
 </ul>
 
 <label for="edit">Edit Profile:</label>
-<button type="button" id="edit">Edit</button>
+<button type="button" id="expand">Edit</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
-    <form action="/admin/profile" method="post" id="edit-form">
+    <form action="/admin/profile" method="post" id="admin-info-form">
 
         <label for="firstNameInput">First Name:</label><br>
         <input type="text" id="firstNameInput" name="firstNameInput" value="{{newFirstName}}" />
@@ -65,6 +65,14 @@
         <label for="passwordInput">New Password:</label><br>
         <input type="password" id="passwordInput" name="passwordInput" />
         <br>
+
+        <label for="password-hint" class="hint">Password Hint:</label><br>
+        <ul id="password-hint">
+            <li class="hint">Should be a minimum of 8 characters long</li>
+            <li class="hint">Should contain at least one uppercase character</li>
+            <li class="hint">Should contain at least one lowercase character</li>
+            <li class="hint">Should contain at least one special character</li>
+        </ul>
 
         <label for="confirmPasswordInput">Confirm Password:</label><br>
         <input type="password" id="confirmPasswordInput" name="confirmPasswordInput" />

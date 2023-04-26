@@ -6,16 +6,36 @@
 
 <h1>{{name}}</h1>
 
+<div>
+    {{#if thumbnail}}
+    <img class="thumbnail" src="{{thumbnail}}">
+    {{else}}
+    <img class="thumbnail" src="/public/images/No_Image_Available.jpg">
+    {{/if}}
+</div>
+
 <label for="edit">Edit Sport:</label>
-<button type="button" id="edit">Edit</button>
+<button type="button" id="expand">Edit</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
-    <form action="/admin/sports/{{id}}" method="post" id="edit-form">
+    <form action="/admin/sports/{{id}}" method="post" id="sport-form">
         <label for="nameInput">Name:</label>
         <br>
         <input type="text" id="nameInput" name="nameInput" value="{{newName}}" />
         <br>
+
+        <label for="thumbnailInput">Thumbnail URL:</label>
+        <br>
+        <input type="url" id="thumbnailInput" name="thumbnailInput" value="{{newThumbnail}}" />
+        <br>
+
         <input type="submit" value="Save" />
     </form>
 </div>
+
+
+<form action="/admin/sports/remove/{{id}}" method="get">
+    <label for="remove">Remove Sport:</label>
+    <button type="submit" id="remove">Remove</button>
+</form>

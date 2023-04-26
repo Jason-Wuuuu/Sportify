@@ -1,0 +1,13 @@
+<header>
+    <nav class="navbar">
+        <a href="/admin/{{db}}/{{data}}">Back</a>
+    </nav>
+</header>
+
+<h1>Please Confirm:</h1>
+
+<h3>Are you sure you want to remove "ID:{{data}}" from {{db}}?</h3>
+
+<form action="/admin/{{db}}/remove/{{data}}" method="post">
+    <button type="submit" id="confirm">Confirm</button>
+</form>

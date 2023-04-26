@@ -13,11 +13,11 @@
 <h1>{{title}}</h1>
 
 <label for="add">Add New Class:</label>
-<button type="button" id="add">Add</button>
+<button type="button" id="expand">Add</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
-    <form action="/admin/classes" method="post" id="add-form">
+    <form action="/admin/classes" method="post" id="class-form">
         <label for="titleInput">Title:</label>
         <br>
         <input type="text" id="titleInput" name="titleInput" value="{{classTitle}}" />
@@ -51,12 +51,16 @@
 
         <label for="capacityInput">Capacity:</label>
         <br>
-        <input type="number" id="capacityInput" name="capacityInput" value="{{capacity}}" />
+        <input type="number" id="capacityInput" name="capacityInput" value="{{capacity}}" min="1" />
         <br>
 
         <label for="instructorInput">Instructor:</label>
         <br>
         <input type="text" id="instructorInput" name="instructorInput" value="{{instructor}}" />
+        <br>
+
+        <label for="priceInput">Price:</label><br>
+        <input type="number" id="priceInput" name="priceInput" value="{{Price}}" min="0" />
         <br>
 
         <label for="dateInput">Date:</label>

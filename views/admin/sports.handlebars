@@ -14,11 +14,11 @@
 
 
 <label for="add">Add New Sport:</label>
-<button type="button" id="add">Add</button>
+<button type="button" id="expand">Add</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
-    <form action="/admin/sports" method="post" id="add-form">
+    <form action="/admin/sports" method="post" id="sport-form">
         <label for="nameInput">Name:</label>
         <br>
         <input type="text" id="nameInput" name="nameInput" value="{{name}}" />
@@ -30,11 +30,9 @@
 
 <h3>List of Sports:</h3>
 <div id="sportList">
-    {{#each sports}}
-    <input type="checkbox" id="{{sportID}}" name="{{sportName}}" value="{{sportName}}">
-    <label for="{{sportID}}">
-        <a href="/admin/sports/{{sportID}}">{{sportName}}</a>
-    </label>
-    <br>
-    {{/each}}
+    <ul>
+        {{#each sports}}
+        <li><a href="/admin/sports/{{sportID}}">{{sportName}}</a></li>
+        {{/each}}
+    </ul>
 </div>

@@ -9,8 +9,8 @@ const create = async (name, sport, address, description, capacity, price) => {
   sport = validation.checkString(sport, "Sport");
   address = validation.checkString(address, "Address");
   description = validation.checkString(description, "Description");
-  capacity = validation.checkString(capacity, "Capacity");
-  price = validation.checkString(price, "Price");
+  capacity = validation.checkCapacity(capacity, "Capacity");
+  price = validation.checkNumber(price, "Price");
 
   // add valid sport place to db
   let newSportPlace = {
@@ -20,6 +20,7 @@ const create = async (name, sport, address, description, capacity, price) => {
     description: description,
     capacity: capacity,
     price: price,
+    thumbnail: "",
     rating: 0,
     users: [],
   };
@@ -57,9 +58,9 @@ const remove = async (sportPlaceID) => {
     _id: new ObjectId(sportPlaceID),
   });
   if (deletionInfo.lastErrorObject.n === 0)
-    throw [404, `Error: Could not delete user with id of ${sportPlaceID}`];
+    throw `Error: Could not delete sport place with id of ${sportPlaceID}`;
 
-  return { ...deletionInfo.value, deleted: true };
+  return { deleted: true };
 };
 
 const update = async (
@@ -69,16 +70,17 @@ const update = async (
   address,
   description,
   capacity,
-  price
+  price,
+  thumbnail
 ) => {
   // validation
   sportPlaceID = validation.checkId(sportPlaceID);
-  name = validation.checkString(name, "name");
-  sport = validation.checkString(sport, "sport");
-  address = validation.checkString(address, "address");
-  description = validation.checkString(description, "description");
-  capacity = validation.checkString(capacity, "capacity");
-  price = validation.checkString(price, "price");
+  name = validation.checkString(name, "Name");
+  sport = validation.checkString(sport, "Sport");
+  address = validation.checkString(address, "Address");
+  description = validation.checkString(description, "Description");
+  capacity = validation.checkCapacity(capacity, "Capacity");
+  price = validation.checkNumber(price, "Price");
 
   const sportPlaceInfo = {
     name: name,
@@ -87,6 +89,7 @@ const update = async (
     description: description,
     capacity: capacity,
     price: price,
+    thumbnail: thumbnail,
   };
 
   const sportPlaceCollection = await sportPlaces();

@@ -24,7 +24,7 @@ for (let i = 1; i <= number_of_data; i++) {
       gender,
       `1995-03-0${i}`,
       `123456789${i}`,
-      `password${i}`
+      `Password.${i}`
     );
   } catch (e) {
     console.log(e);
@@ -40,7 +40,7 @@ for (let i = 1; i <= number_of_data; i++) {
       gender,
       `1995-03-0${i}`,
       `123456789${i}`,
-      `password${i}`
+      `Password.${i}`
     );
     // console.log(newAdmin);
   } catch (e) {
@@ -73,6 +73,7 @@ for (let i = 1; i <= number_of_data; i++) {
       `sportPlace_0${i}`,
       `${(i + 5) * 3}`,
       `instructor_0${i}`,
+      `${(i + 10) * 50}`,
       `2023-05-${i + 10}`,
       `0${i}:00`,
       `0${i}:45`

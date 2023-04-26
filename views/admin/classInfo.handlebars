@@ -6,11 +6,20 @@
 
 <h1>{{name}}</h1>
 
+<div>
+    {{#if thumbnail}}
+    <img class="thumbnail" src="{{thumbnail}}">
+    {{else}}
+    <img class="thumbnail" src="/public/images/No_Image_Available.jpg">
+    {{/if}}
+</div>
+
 <ul>
     <li>Sport: {{sport}}</li>
     <li>Sport Place: {{sportPlace}}</li>
     <li>Capacity: {{capacity}}</li>
     <li>Instructor: {{instructor}}</li>
+    <li>Price: {{price}}</li>
     <li>Date: {{date}}</li>
     <li>Start Time: {{startTime}}</li>
     <li>End Time: {{endTime}}</li>
@@ -19,11 +28,11 @@
 </ul>
 
 <label for="edit">Edit Class:</label>
-<button type="button" id="edit">Edit</button>
+<button type="button" id="expand">Edit</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
-    <form action="/admin/classes/{{id}}" method="post" id="edit-form">
+    <form action="/admin/classes/{{id}}" method="post" id="class-form">
         <label for="titleInput">Title:</label><br>
         <input type="text" id="titleInput" name="titleInput" value="{{classTitle}}" />
         <br>
@@ -53,11 +62,15 @@
         <br>
 
         <label for="capacityInput">Capacity:</label><br>
-        <input type="number" id="capacityInput" name="capacityInput" value="{{newCapacity}}" />
+        <input type="number" id="capacityInput" name="capacityInput" value="{{newCapacity}}" min="1" />
         <br>
 
         <label for="instructorInput">Instructor:</label><br>
         <input type="text" id="instructorInput" name="instructorInput" value="{{newInstructor}}" />
+        <br>
+
+        <label for="priceInput">Price:</label><br>
+        <input type="number" id="priceInput" name="priceInput" value="{{newPrice}}" min="0" />
         <br>
 
         <label for="dateInput">Date:</label><br>
@@ -72,9 +85,19 @@
         <input type="time" id="endTimeInput" name="endTimeInput" value="{{newEndTime}}" />
         <br>
 
+        <label for="thumbnailInput">Thumbnail URL:</label>
+        <br>
+        <input type="url" id="thumbnailInput" name="thumbnailInput" value="{{newThumbnail}}" />
+        <br>
+
         <input type="submit" value="Save" />
     </form>
 </div>
+
+<form action="/admin/classes/remove/{{id}}" method="get">
+    <label for="remove">Remove Class:</label>
+    <button type="submit" id="remove">Remove</button>
+</form>
 
 <h3>List of Student:</h3>
 <dl>

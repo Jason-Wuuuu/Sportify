@@ -8,11 +8,22 @@ const create = async (
   sportPlace,
   capacity,
   instructor,
+  price,
   date,
   startTime,
   endTime
 ) => {
   // validation
+  title = validation.checkString(title, "Title");
+  sport = validation.checkString(sport, "Sport");
+  sportPlace = validation.checkString(sportPlace, "Sport Place");
+  capacity = validation.checkCapacity(capacity, "Capacity");
+  instructor = validation.checkName(instructor, "Instructor");
+  price = validation.checkPrice(price, "Price");
+  date = validation.checkDate(date, "Date");
+  startTime = validation.checkTime(startTime, "Start Time");
+  endTime = validation.checkTime(endTime, "End Time");
+  validation.checkTimeRange(startTime, endTime);
 
   let newClass = {
     title: title,
@@ -20,9 +31,11 @@ const create = async (
     sportPlace: sportPlace,
     capacity: capacity,
     instructor: instructor,
+    price: price,
     date: date,
     startTime: startTime,
     endTime: endTime,
+    thumbnail: "",
     rating: 0,
     students: [],
   };
@@ -58,9 +71,9 @@ const remove = async (classID) => {
     _id: new ObjectId(classID),
   });
   if (deletionInfo.lastErrorObject.n === 0)
-    throw [404, `Error: Could not delete user with id of ${classID}`];
+    throw `Error: Could not delete class with id of ${classID}`;
 
-  return { ...deletionInfo.value, deleted: true };
+  return { deleted: true };
 };
 
 const update = async (
@@ -70,20 +83,24 @@ const update = async (
   sportPlace,
   capacity,
   instructor,
+  price,
   date,
   startTime,
-  endTime
+  endTime,
+  thumbnail
 ) => {
   // validation
   classID = validation.checkId(classID);
-  title = validation.checkString(title, "title");
-  sport = validation.checkString(sport, "sport");
-  sportPlace = validation.checkString(sportPlace, "sportPlace");
-  capacity = validation.checkString(capacity, "capacity");
-  instructor = validation.checkString(instructor, "instructor");
-  date = validation.checkString(date, "date");
-  startTime = validation.checkString(startTime, "startTime");
-  endTime = validation.checkString(endTime, "endTime");
+  title = validation.checkString(title, "Title");
+  sport = validation.checkString(sport, "Sport");
+  sportPlace = validation.checkString(sportPlace, "Sport Place");
+  capacity = validation.checkCapacity(capacity, "Capacity");
+  instructor = validation.checkName(instructor, "Instructor");
+  price = validation.checkPrice(price, "Price");
+  date = validation.checkDate(date, "Date");
+  startTime = validation.checkTime(startTime, "Start Time");
+  endTime = validation.checkTime(endTime, "End Time");
+  validation.checkTimeRange(startTime, endTime);
 
   const classUpdateInfo = {
     title: title,
@@ -91,9 +108,11 @@ const update = async (
     sportPlace: sportPlace,
     capacity: capacity,
     instructor: instructor,
+    price: price,
     date: date,
     startTime: startTime,
     endTime: endTime,
+    thumbnail: thumbnail,
   };
 
   const classCollection = await classes();
