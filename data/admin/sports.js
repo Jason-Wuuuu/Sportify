@@ -9,6 +9,7 @@ const create = async (name) => {
 
   let newSport = {
     name: name,
+    thumbnail: "",
   };
 
   const sportCollection = await sports();
@@ -45,13 +46,14 @@ const remove = async (sportID) => {
   return { deleted: true };
 };
 
-const update = async (sportID, name) => {
+const update = async (sportID, name, thumbnail) => {
   // validation
   sportID = validation.checkId(sportID);
   name = validation.checkString(name, "name");
 
   const sportUpdateInfo = {
     name: name,
+    thumbnail: thumbnail,
   };
 
   const sportCollection = await sports();

@@ -672,13 +672,20 @@ router
         error: e,
       });
     }
-    let userInfo = await userData.get(req.params.id);
-    return res.render("admin/remove", {
-      title: "Remove",
-      back: `users/${userInfo._id}`,
-      data: userInfo._id,
-      db: "users",
-    });
+    try {
+      let userInfo = await userData.get(req.params.id);
+      return res.render("admin/remove", {
+        title: "Remove",
+        back: `users/${userInfo._id}`,
+        data: userInfo._id,
+        db: "users",
+      });
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
   })
   .delete(async (req, res) => {
     try {
@@ -689,9 +696,16 @@ router
         error: e,
       });
     }
-    let deleteInfo = await userDataAdmin.remove(req.params.id);
-    if (deleteInfo.deleted) {
-      return res.redirect("/admin/users");
+    try {
+      let deleteInfo = await userDataAdmin.remove(req.params.id);
+      if (deleteInfo.deleted) {
+        return res.redirect("/admin/users");
+      }
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
     }
   });
 
@@ -877,13 +891,20 @@ router
         error: e,
       });
     }
-    let classInfo = await classData.get(req.params.id);
-    return res.render("admin/remove", {
-      title: "Remove",
-      back: `classes/${classInfo._id}`,
-      data: classInfo._id,
-      db: "classes",
-    });
+    try {
+      let classInfo = await classData.get(req.params.id);
+      return res.render("admin/remove", {
+        title: "Remove",
+        back: `classes/${classInfo._id}`,
+        data: classInfo._id,
+        db: "classes",
+      });
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
   })
   .delete(async (req, res) => {
     try {
@@ -894,9 +915,16 @@ router
         error: e,
       });
     }
-    let deleteInfo = await classData.remove(req.params.id);
-    if (deleteInfo.deleted) {
-      return res.redirect("/admin/classes");
+    try {
+      let deleteInfo = await classData.remove(req.params.id);
+      if (deleteInfo.deleted) {
+        return res.redirect("/admin/classes");
+      }
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
     }
   });
 
@@ -916,6 +944,8 @@ router
         id: sport._id,
         name: sport.name,
         newName: sport.name,
+        thumbnail: sport.thumbnail,
+        newThumbnail: sport.thumbnail,
       });
     } catch (e) {
       return res.status(404).render("admin/error", {
@@ -949,13 +979,19 @@ router
         error: e,
         id: origSport._id,
         name: origSport.name,
+        thumbnail: origSport.thumbnail,
         newName: sportInfo.nameInput,
+        newThumbnail: sportInfo.thumbnail,
       });
     }
 
     // update
     try {
-      const newSport = await sportData.update(sportID, sportInfo.nameInput);
+      const newSport = await sportData.update(
+        sportID,
+        sportInfo.nameInput,
+        sportInfo.thumbnailInput
+      );
       if (!newSport.updatedSport) throw "Internal Server Error";
       return res.redirect(`${sportID}`);
     } catch (e) {}
@@ -972,13 +1008,20 @@ router
         error: e,
       });
     }
-    let sportInfo = await sportData.get(req.params.id);
-    return res.render("admin/remove", {
-      title: "Remove",
-      back: `sports/${sportInfo._id}`,
-      data: sportInfo._id,
-      db: "sports",
-    });
+    try {
+      let sportInfo = await sportData.get(req.params.id);
+      return res.render("admin/remove", {
+        title: "Remove",
+        back: `sports/${sportInfo._id}`,
+        data: sportInfo._id,
+        db: "sports",
+      });
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
   })
   .delete(async (req, res) => {
     try {
@@ -989,9 +1032,16 @@ router
         error: e,
       });
     }
-    let deleteInfo = await sportData.remove(req.params.id);
-    if (deleteInfo.deleted) {
-      return res.redirect("/admin/sports");
+    try {
+      let deleteInfo = await sportData.remove(req.params.id);
+      if (deleteInfo.deleted) {
+        return res.redirect("/admin/sports");
+      }
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
     }
   });
 
@@ -1132,13 +1182,20 @@ router
         error: e,
       });
     }
-    let sportPlaceInfo = await sportPlaceData.get(req.params.id);
-    return res.render("admin/remove", {
-      title: "Remove",
-      back: `sportPlaces/${sportPlaceInfo._id}`,
-      data: sportPlaceInfo._id,
-      db: "sportPlaces",
-    });
+    try {
+      let sportPlaceInfo = await sportPlaceData.get(req.params.id);
+      return res.render("admin/remove", {
+        title: "Remove",
+        back: `sportPlaces/${sportPlaceInfo._id}`,
+        data: sportPlaceInfo._id,
+        db: "sportPlaces",
+      });
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
   })
   .delete(async (req, res) => {
     try {
@@ -1149,9 +1206,16 @@ router
         error: e,
       });
     }
-    let deleteInfo = await sportPlaceData.remove(req.params.id);
-    if (deleteInfo.deleted) {
-      return res.redirect("/admin/sportPlaces");
+    try {
+      let deleteInfo = await sportPlaceData.remove(req.params.id);
+      if (deleteInfo.deleted) {
+        return res.redirect("/admin/sportPlaces");
+      }
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
     }
   });
 
@@ -1211,13 +1275,20 @@ router
         error: e,
       });
     }
-    let eventInfo = await eventData.get(req.params.id);
-    return res.render("admin/remove", {
-      title: "Remove",
-      back: `events/${eventInfo._id}`,
-      data: eventInfo._id,
-      db: "events",
-    });
+    try {
+      let eventInfo = await eventData.get(req.params.id);
+      return res.render("admin/remove", {
+        title: "Remove",
+        back: `events/${eventInfo._id}`,
+        data: eventInfo._id,
+        db: "events",
+      });
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
   })
   .delete(async (req, res) => {
     try {
@@ -1228,9 +1299,16 @@ router
         error: e,
       });
     }
-    let deleteInfo = await eventDataAdmin.remove(req.params.id);
-    if (deleteInfo.deleted) {
-      return res.redirect("/admin/events");
+    try {
+      let deleteInfo = await eventDataAdmin.remove(req.params.id);
+      if (deleteInfo.deleted) {
+        return res.redirect("/admin/events");
+      }
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
     }
   });
 
