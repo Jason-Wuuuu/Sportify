@@ -24,7 +24,7 @@ for (let i = 1; i <= number_of_data; i++) {
       gender,
       `1995-03-0${i}`,
       `123456789${i}`,
-      `password${i}`
+      `Password.${i}`
     );
   } catch (e) {
     console.log(e);
@@ -40,7 +40,7 @@ for (let i = 1; i <= number_of_data; i++) {
       gender,
       `1995-03-0${i}`,
       `123456789${i}`,
-      `password${i}`
+      `Password.${i}`
     );
     // console.log(newAdmin);
   } catch (e) {
