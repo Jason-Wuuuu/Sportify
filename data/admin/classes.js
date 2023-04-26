@@ -35,6 +35,7 @@ const create = async (
     date: date,
     startTime: startTime,
     endTime: endTime,
+    thumbnail: "",
     rating: 0,
     students: [],
   };
@@ -85,7 +86,8 @@ const update = async (
   price,
   date,
   startTime,
-  endTime
+  endTime,
+  thumbnail
 ) => {
   // validation
   classID = validation.checkId(classID);
@@ -110,6 +112,7 @@ const update = async (
     date: date,
     startTime: startTime,
     endTime: endTime,
+    thumbnail: thumbnail,
   };
 
   const classCollection = await classes();

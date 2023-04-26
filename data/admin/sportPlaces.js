@@ -20,6 +20,7 @@ const create = async (name, sport, address, description, capacity, price) => {
     description: description,
     capacity: capacity,
     price: price,
+    thumbnail: "",
     rating: 0,
     users: [],
   };
@@ -69,7 +70,8 @@ const update = async (
   address,
   description,
   capacity,
-  price
+  price,
+  thumbnail
 ) => {
   // validation
   sportPlaceID = validation.checkId(sportPlaceID);
@@ -87,6 +89,7 @@ const update = async (
     description: description,
     capacity: capacity,
     price: price,
+    thumbnail: thumbnail,
   };
 
   const sportPlaceCollection = await sportPlaces();

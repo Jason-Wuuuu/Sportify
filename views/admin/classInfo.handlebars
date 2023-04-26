@@ -6,6 +6,14 @@
 
 <h1>{{name}}</h1>
 
+<div>
+    {{#if thumbnail}}
+    <img class="thumbnail" src="{{thumbnail}}">
+    {{else}}
+    <img class="thumbnail" src="/public/images/No_Image_Available.jpg">
+    {{/if}}
+</div>
+
 <ul>
     <li>Sport: {{sport}}</li>
     <li>Sport Place: {{sportPlace}}</li>
@@ -75,6 +83,11 @@
 
         <label for="endTimeInput">End Time:</label><br>
         <input type="time" id="endTimeInput" name="endTimeInput" value="{{newEndTime}}" />
+        <br>
+
+        <label for="thumbnailInput">Thumbnail URL:</label>
+        <br>
+        <input type="url" id="thumbnailInput" name="thumbnailInput" value="{{newThumbnail}}" />
         <br>
 
         <input type="submit" value="Save" />

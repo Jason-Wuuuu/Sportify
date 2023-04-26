@@ -935,6 +935,7 @@ router
         date: classInfo.date,
         startTime: classInfo.startTime,
         endTime: classInfo.endTime,
+        thumbnail: classInfo.thumbnail,
         rating: classInfo.rating,
         n: classInfo.students.length,
         users: classInfo.students,
@@ -947,6 +948,7 @@ router
         newDate: classInfo.date,
         newStartTime: classInfo.startTime,
         newEndTime: classInfo.endTime,
+        newThumbnail: classInfo.thumbnail,
       });
     } catch (e) {
       return res.status(404).render("admin/error", {
@@ -1012,16 +1014,6 @@ router
     } catch (e) {
       const sports = await getSportOptions(classInfo.sportInput);
       const sportPlaces = await getSportPlaceOptions(classInfo.sportPlaceInput);
-      const classList = await classData.getAll();
-      let classes = [];
-      if (classList) {
-        classes = classList.map((class_) =>
-          Object({
-            classID: class_._id,
-            className: class_.title,
-          })
-        );
-      }
 
       let origClassInfo = await classData.get(req.params.id);
 
@@ -1041,6 +1033,7 @@ router
         date: origClassInfo.date,
         startTime: origClassInfo.startTime,
         endTime: origClassInfo.endTime,
+        thumbnail: origClassInfo.thumbnail,
         rating: origClassInfo.rating,
         n: origClassInfo.students.length,
         users: origClassInfo.students,
@@ -1053,6 +1046,7 @@ router
         newDate: classInfo.dateInput,
         newStartTime: classInfo.startTimeInput,
         newEndTime: classInfo.endTimeInput,
+        newThumbnail: classInfo.thumbnailInput,
       });
     }
 
@@ -1068,7 +1062,8 @@ router
         classInfo.priceInput,
         classInfo.dateInput,
         classInfo.startTimeInput,
-        classInfo.endTimeInput
+        classInfo.endTimeInput,
+        classInfo.thumbnailInput
       );
       if (!newClass.updatedClass) throw "Internal Server Error";
       return res.redirect(`${classID}`);
@@ -1172,6 +1167,7 @@ router
         description: sportPlace.description,
         capacity: sportPlace.capacity,
         price: sportPlace.price,
+        thumbnail: sportPlace.thumbnail,
         rating: sportPlace.rating,
         n: sportPlace.users.length,
         users: sportPlace.users,
@@ -1181,6 +1177,7 @@ router
         newDescription: sportPlace.description,
         newCapacity: sportPlace.capacity,
         newPrice: sportPlace.price,
+        newThumbnail: sportPlace.thumbnail,
       });
     } catch (e) {
       return res.status(404).render("admin/error", {
@@ -1246,6 +1243,7 @@ router
         description: origSportPlace.description,
         capacity: origSportPlace.capacity,
         price: origSportPlace.price,
+        thumbnail: origSportPlace.thumbnail,
         rating: origSportPlace.rating,
         n: origSportPlace.users.length,
         users: origSportPlace.users,
@@ -1255,6 +1253,7 @@ router
         newDescription: sportPlaceInfo.descriptionInput,
         newCapacity: sportPlaceInfo.capacityInput,
         newPrice: sportPlaceInfo.priceInput,
+        newThumbnail: sportPlaceInfo.thumbnailInput,
       });
     }
 
@@ -1267,7 +1266,8 @@ router
         sportPlaceInfo.addressInput,
         sportPlaceInfo.descriptionInput,
         sportPlaceInfo.capacityInput,
-        sportPlaceInfo.priceInput
+        sportPlaceInfo.priceInput,
+        sportPlaceInfo.thumbnailInput
       );
       if (!newSportPlace.updatedSportPlace) throw "Internal Server Error";
       return res.redirect(`${sportPlaceID}`);
