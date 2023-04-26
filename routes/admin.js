@@ -97,6 +97,10 @@ router
         error: "There are no fields in the request body",
       });
     }
+    // check id
+    let adminID = req.session.admin.adminID;
+    adminID = validation.checkId(adminID);
+
     // validation
     try {
       adminInfo.firstNameInput = validation.checkName(
@@ -130,7 +134,8 @@ router
     } catch (e) {
       let origAdminInfo = await adminData.get(req.session.admin.adminID);
 
-      const options = getGenderOptions(adminInfo.gender);
+      const options = getGenderOptions(adminInfo.genderInput);
+      console.log(options);
       return res.status(400).render("admin/profile", {
         title: "Profile",
         hidden: "",
@@ -152,8 +157,6 @@ router
     }
     // update
     try {
-      const adminID = req.session.admin.adminID;
-
       const newAdmin = await adminData.update(
         adminID,
         adminInfo.firstNameInput,
@@ -378,13 +381,13 @@ router
         classInfo.sportPlaceInput,
         "Sport Place"
       );
-      classInfo.capacityInput = validation.checkString(
+      classInfo.capacityInput = validation.checkNumber(
         classInfo.capacityInput,
         "Capacity"
       );
       classInfo.instructorInput = validation.checkName(
         classInfo.instructorInput,
-        "instructor"
+        "Instructor"
       );
       classInfo.dateInput = validation.checkDate(classInfo.dateInput, "Date");
       classInfo.startTimeInput = validation.checkTime(
@@ -397,8 +400,8 @@ router
       );
 
       validation.checkTimeRange(
-        `${classInfo.dateInput} ${classInfo.startTimeInput}`,
-        `${classInfo.dateInput} ${classInfo.endTimeInput}`
+        classInfo.startTimeInput,
+        classInfo.endTimeInput
       );
     } catch (e) {
       const sports = await getSportOptions(classInfo.sportInput);
@@ -558,11 +561,11 @@ router
         sportPlaceInfo.descriptionInput,
         "Description"
       );
-      sportPlaceInfo.capacityInput = validation.checkString(
+      sportPlaceInfo.capacityInput = validation.checkNumber(
         sportPlaceInfo.capacityInput,
         "Capacity"
       );
-      sportPlaceInfo.priceInput = validation.checkString(
+      sportPlaceInfo.priceInput = validation.checkNumber(
         sportPlaceInfo.priceInput,
         "Price"
       );
@@ -733,6 +736,11 @@ router
         error: "There are no fields in the request body",
       });
     }
+
+    // check id
+    let classID = req.params.id;
+    classID = validation.checkId(classID);
+
     // validation
     try {
       classInfo.titleInput = validation.checkString(
@@ -747,13 +755,13 @@ router
         classInfo.sportPlaceInput,
         "Sport Place"
       );
-      classInfo.capacityInput = validation.checkString(
+      classInfo.capacityInput = validation.checkNumber(
         classInfo.capacityInput,
         "Capacity"
       );
       classInfo.instructorInput = validation.checkName(
         classInfo.instructorInput,
-        "instructor"
+        "Instructor"
       );
       classInfo.dateInput = validation.checkDate(classInfo.dateInput, "Date");
       classInfo.startTimeInput = validation.checkTime(
@@ -766,8 +774,8 @@ router
       );
 
       validation.checkTimeRange(
-        `${classInfo.dateInput} ${classInfo.startTimeInput}`,
-        `${classInfo.dateInput} ${classInfo.endTimeInput}`
+        classInfo.startTimeInput,
+        classInfo.endTimeInput
       );
     } catch (e) {
       const sports = await getSportOptions(classInfo.sportInput);
@@ -816,8 +824,6 @@ router
 
     // update
     try {
-      const classID = req.params.id;
-
       const newClass = await classData.update(
         classID,
         classInfo.titleInput,
@@ -867,6 +873,10 @@ router
         error: "There are no fields in the request body",
       });
     }
+    // check id
+    let sportID = req.params.id;
+    sportID = validation.checkId(sportID);
+
     // validation
     try {
       sportInfo.nameInput = validation.checkString(sportInfo.nameInput, "Name");
@@ -885,7 +895,6 @@ router
 
     // update
     try {
-      const sportID = req.params.id;
       const newSport = await sportData.update(sportID, sportInfo.nameInput);
       if (!newSport.updatedSport) throw "Internal Server Error";
       return res.redirect(`${sportID}`);
@@ -940,6 +949,11 @@ router
         error: "There are no fields in the request body",
       });
     }
+
+    // check id
+    let sportPlaceID = req.params.id;
+    sportPlaceID = validation.checkId(sportPlaceID);
+
     // validation
     try {
       sportPlaceInfo.nameInput = validation.checkString(
@@ -958,11 +972,11 @@ router
         sportPlaceInfo.descriptionInput,
         "Description"
       );
-      sportPlaceInfo.capacityInput = validation.checkString(
+      sportPlaceInfo.capacityInput = validation.checkNumber(
         sportPlaceInfo.capacityInput,
         "Capacity"
       );
-      sportPlaceInfo.priceInput = validation.checkString(
+      sportPlaceInfo.priceInput = validation.checkNumber(
         sportPlaceInfo.priceInput,
         "Price"
       );
@@ -997,8 +1011,6 @@ router
 
     // update
     try {
-      const sportPlaceID = req.params.id;
-
       const newSportPlace = await sportPlaceData.update(
         sportPlaceID,
         sportPlaceInfo.nameInput,
@@ -1050,8 +1062,10 @@ router
     }
   })
   .put(async (req, res) => {
+    // check id
+    let eventID = req.params.id;
+    eventID = validation.checkId(eventID);
     try {
-      const eventID = req.params.id;
       const event = await eventDataAdmin.approve(eventID);
       if (!event.approved) throw "Internal Server Error";
       return res.redirect("/admin/events");

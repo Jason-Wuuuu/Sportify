@@ -9,8 +9,8 @@ const create = async (name, sport, address, description, capacity, price) => {
   sport = validation.checkString(sport, "Sport");
   address = validation.checkString(address, "Address");
   description = validation.checkString(description, "Description");
-  capacity = validation.checkString(capacity, "Capacity");
-  price = validation.checkString(price, "Price");
+  capacity = validation.checkNumber(capacity, "Capacity");
+  price = validation.checkNumber(price, "Price");
 
   // add valid sport place to db
   let newSportPlace = {
@@ -73,12 +73,12 @@ const update = async (
 ) => {
   // validation
   sportPlaceID = validation.checkId(sportPlaceID);
-  name = validation.checkString(name, "name");
-  sport = validation.checkString(sport, "sport");
-  address = validation.checkString(address, "address");
-  description = validation.checkString(description, "description");
-  capacity = validation.checkString(capacity, "capacity");
-  price = validation.checkString(price, "price");
+  name = validation.checkString(name, "Name");
+  sport = validation.checkString(sport, "Sport");
+  address = validation.checkString(address, "Address");
+  description = validation.checkString(description, "Description");
+  capacity = validation.checkNumber(capacity, "Capacity");
+  price = validation.checkNumber(price, "Price");
 
   const sportPlaceInfo = {
     name: name,
