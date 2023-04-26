@@ -63,18 +63,6 @@ const get = async (adminID) => {
   return admin;
 };
 
-const remove = async (adminID) => {
-  adminID = validation.checkId(adminID);
-  const adminCollection = await admins();
-  const deletionInfo = await adminCollection.findOneAndDelete({
-    _id: new ObjectId(adminID),
-  });
-  if (deletionInfo.lastErrorObject.n === 0)
-    throw [404, `Error: Could not delete admin with id of ${adminID}`];
-
-  return { ...deletionInfo.value, deleted: true };
-};
-
 const update = async (
   adminID,
   firstName,
@@ -144,4 +132,4 @@ const check = async (email, password) => {
   return adminInfo;
 };
 
-export { create, getAll, get, remove, update, check };
+export { create, getAll, get, update, check };

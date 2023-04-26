@@ -18,6 +18,11 @@
     <li>Number of Participants: {{n}}</li>
 </ul>
 
+<form action="/admin/events/remove/{{id}}" method="get">
+    <label for="remove">Remove Event:</label>
+    <button type="submit" id="remove">Remove</button>
+</form>
+
 {{#if approved}}
 <h3>This event has been approved!</h3>
 

@@ -19,7 +19,7 @@ const checkName = (name, varName) => {
 };
 
 const checkNumber = (numVal, varName) => {
-  if (!numVal) throw `Error: You must supply a ${varName}!`;
+  if (!numVal && numVal !== 0) throw `Error: You must supply a ${varName}!`;
   if (typeof numVal !== "number") {
     try {
       numVal = Number.parseInt(numVal);
@@ -92,20 +92,16 @@ const checkInviteCode = (inviteCode) => {
   return inviteCode;
 };
 
-// maximum date
-const get_valid_date_range = () => {
-  let today = new Date();
-  let dd = today.getDate();
-  let mm = today.getMonth() + 1; //January is 0
-  let yyyy = today.getFullYear() - 13; // user shouldn't be less than 13 year-old
+const checkCapacity = (capacity, varName) => {
+  capacity = checkNumber(capacity, varName);
+  if (capacity < 1) throw `Error: ${varName} should be greater than 1.`;
+  return capacity;
+};
 
-  if (dd < 10) dd = "0" + dd;
-  if (mm < 10) mm = "0" + mm;
-
-  const min = "1900-01-01";
-  const max = yyyy + "-" + mm + "-" + dd;
-
-  return { min, max };
+const checkPrice = (price, varName) => {
+  price = checkNumber(price, varName);
+  if (price < 0) throw `Error: ${varName} should be greater than 0.`;
+  return price;
 };
 
 const checkDate = (date, varName) => {
@@ -139,6 +135,22 @@ const checkTimeRange = (start, end) => {
   const s = new Date(`2000-01-01 ${start}`);
   const e = new Date(`2000-01-01 ${end}`);
   if (e < s) throw `Error: Invalid Time Range`;
+};
+
+// maximum date
+const get_valid_date_range = () => {
+  let today = new Date();
+  let dd = today.getDate();
+  let mm = today.getMonth() + 1; //January is 0
+  let yyyy = today.getFullYear() - 13; // user shouldn't be less than 13 year-old
+
+  if (dd < 10) dd = "0" + dd;
+  if (mm < 10) mm = "0" + mm;
+
+  const min = "1900-01-01";
+  const max = yyyy + "-" + mm + "-" + dd;
+
+  return { min, max };
 };
 
 //client side js for admin
@@ -311,8 +323,8 @@ if (document.URL.includes("/admin")) {
         sport = checkString(sport, "Sport");
         address = checkString(address, "Address");
         description = checkString(description, "Description");
-        capacity = checkNumber(capacity, "Capacity");
-        price = checkNumber(price, "Price");
+        capacity = checkCapacity(capacity, "Capacity");
+        price = checkPrice(price, "Price");
       } catch (e) {
         event.preventDefault();
         if (name) nameInput.value = name;
@@ -335,6 +347,7 @@ if (document.URL.includes("/admin")) {
     let sportPlaceInput = document.getElementById("sportPlaceInput");
     let capacityInput = document.getElementById("capacityInput");
     let instructorInput = document.getElementById("instructorInput");
+    let priceInput = document.getElementById("priceInput");
     let dateInput = document.getElementById("dateInput");
     let startTimeInput = document.getElementById("startTimeInput");
     let endTimeInput = document.getElementById("endTimeInput");
@@ -355,6 +368,7 @@ if (document.URL.includes("/admin")) {
       let sportPlace = sportPlaceInput.value;
       let capacity = capacityInput.value;
       let instructor = instructorInput.value;
+      let price = priceInput.value;
       let date = dateInput.value;
       let startTime = startTimeInput.value;
       let endTime = endTimeInput.value;
@@ -364,8 +378,9 @@ if (document.URL.includes("/admin")) {
         title = checkString(title, "Title");
         sport = checkString(sport, "Sport");
         sportPlace = checkString(sportPlace, "Sport Place");
-        capacity = checkNumber(capacity, "Capacity");
+        capacity = checkCapacity(capacity, "Capacity");
         instructor = checkName(instructor, "Instructor");
+        price = checkPrice(price, "Price");
         date = checkDate(date, "Date");
         startTime = checkTime(startTime, "Start Time");
         endTime = checkTime(endTime, "End Time");
@@ -377,6 +392,7 @@ if (document.URL.includes("/admin")) {
         if (sportPlace) sportPlaceInput.value = sportPlace;
         if (capacity) capacityInput.value = capacity;
         if (instructor) instructorInput.value = instructor;
+        if (price) priceInput.value = price;
         if (date) dateInput.value = date;
         if (startTime) startTimeInput.value = startTime;
         if (endTime) endTimeInput.value = endTime;

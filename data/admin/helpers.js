@@ -22,7 +22,7 @@ const validationMethods = {
   },
 
   checkNumber(numVal, varName) {
-    if (!numVal) throw `Error: You must supply a ${varName}!`;
+    if (!numVal && numVal !== 0) throw `Error: You must supply a ${varName}!`;
     if (typeof numVal !== "number") {
       try {
         numVal = Number.parseInt(numVal);
@@ -106,6 +106,18 @@ const validationMethods = {
   checkPassword(password, varName) {
     password = this.checkString(password, varName);
     return password;
+  },
+
+  checkCapacity(capacity, varName) {
+    capacity = this.checkNumber(capacity, varName);
+    if (capacity < 1) throw `Error: ${varName} should be greater than 1.`;
+    return capacity;
+  },
+
+  checkPrice(price, varName) {
+    price = this.checkNumber(price, varName);
+    if (price < 0) throw `Error: ${varName} should be greater than 0.`;
+    return price;
   },
 
   checkDate(date, varName) {

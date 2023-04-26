@@ -73,6 +73,13 @@ app.use("/admin/users/:id", (req, res, next) => {
   if (!req.session.admin) {
     return res.redirect("/admin/login");
   }
+  next();
+});
+
+app.use("/admin/users/remove/:id", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
   if (req.method === "POST") req.method = "DELETE";
   next();
 });
@@ -81,6 +88,14 @@ app.use("/admin/classes", (req, res, next) => {
   if (!req.session.admin) {
     return res.redirect("/admin/login");
   }
+  next();
+});
+
+app.use("/admin/classes/remove/:id", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  if (req.method === "POST") req.method = "DELETE";
   next();
 });
 
@@ -99,6 +114,14 @@ app.use("/admin/sports", (req, res, next) => {
   next();
 });
 
+app.use("/admin/sports/remove/:id", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  if (req.method === "POST") req.method = "DELETE";
+  next();
+});
+
 app.use("/admin/sports/:id", (req, res, next) => {
   if (!req.session.admin) return res.redirect("/admin/login");
   if (req.method === "POST") req.method = "PUT";
@@ -107,6 +130,14 @@ app.use("/admin/sports/:id", (req, res, next) => {
 
 app.use("/admin/sportPlaces", (req, res, next) => {
   if (!req.session.admin) return res.redirect("/admin/login");
+  next();
+});
+
+app.use("/admin/sportPlaces/remove/:id", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  if (req.method === "POST") req.method = "DELETE";
   next();
 });
 
@@ -120,6 +151,14 @@ app.use("/admin/events", (req, res, next) => {
   if (!req.session.admin) {
     return res.redirect("/admin/login");
   }
+  next();
+});
+
+app.use("/admin/events/remove/:id", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  if (req.method === "POST") req.method = "DELETE";
   next();
 });
 
