@@ -81,6 +81,23 @@ const checkGender = (gender, varName) => {
 
 const checkPassword = (password, varName) => {
   password = checkString(password, varName);
+
+  const re_password = /[\S]{8,}/g;
+  if (!password.match(re_password))
+    throw `Error: ${varName} should be a minimum of 8 characters long`;
+
+  const re_upper = /[A-Z]/g;
+  if (!re_upper.test(password))
+    throw `Error: ${varName} should contain at least one uppercase character`;
+
+  const re_lower = /[a-z]/g;
+  if (!re_lower.test(password))
+    throw `Error: ${varName} should contain at least one lowercase character`;
+
+  const re_specialChar = /[^a-zA-Z\d\s]/g;
+  if (!re_specialChar.test(password))
+    throw `Error: ${varName} should contain at least one special character`;
+
   return password;
 };
 
@@ -251,7 +268,7 @@ if (document.URL.includes("/admin")) {
         contactNumber = checkContactNumber(contactNumber, "Contact Number");
         gender = checkGender(gender, "Gender");
         password = checkPassword(password, "Password");
-        confirmPassword = checkPassword(confirmPassword, "Confirm Password");
+        confirmPassword = checkString(confirmPassword, "Confirm Password");
         if (inviteCode) inviteCode = checkInviteCode(inviteCode, "Invite Code");
 
         if (password !== confirmPassword)

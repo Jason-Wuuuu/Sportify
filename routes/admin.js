@@ -313,6 +313,7 @@ router
     }
   });
 
+// Get/Post -> admin/db/
 router.route("/users").get(async (req, res) => {
   const userList = await userData.getAll();
   const users = userList.map((user) =>
@@ -637,30 +638,7 @@ router.route("/events").get(async (req, res) => {
   });
 });
 
-router.route("/users/:id").get(async (req, res) => {
-  try {
-    req.params.id = validation.checkId(req.params.id, "ID URL Param");
-  } catch (e) {
-    return res.status(400).render("admin/error", {
-      title: "Error",
-      error: e,
-    });
-  }
-
-  let userInfo = await userData.get(req.params.id);
-
-  return res.render("admin/userInfo", {
-    title: "User Info",
-    id: userInfo._id,
-    firstName: userInfo.firstName,
-    lastName: userInfo.lastName,
-    email: userInfo.email,
-    gender: userInfo.gender,
-    dateOfBirth: userInfo.dateOfBirth,
-    contactNumber: userInfo.contactNumber,
-  });
-});
-
+// Remove -> admin/db/remove/:id
 router
   .route("/users/remove/:id")
   .get(async (req, res) => {
@@ -708,6 +686,223 @@ router
       });
     }
   });
+
+router
+  .route("/classes/remove/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let classInfo = await classData.get(req.params.id);
+      return res.render("admin/remove", {
+        title: "Remove",
+        back: `classes/${classInfo._id}`,
+        data: classInfo._id,
+        db: "classes",
+      });
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  })
+  .delete(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let deleteInfo = await classData.remove(req.params.id);
+      if (deleteInfo.deleted) {
+        return res.redirect("/admin/classes");
+      }
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
+
+router
+  .route("/sports/remove/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let sportInfo = await sportData.get(req.params.id);
+      return res.render("admin/remove", {
+        title: "Remove",
+        back: `sports/${sportInfo._id}`,
+        data: sportInfo._id,
+        db: "sports",
+      });
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  })
+  .delete(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let deleteInfo = await sportData.remove(req.params.id);
+      if (deleteInfo.deleted) {
+        return res.redirect("/admin/sports");
+      }
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
+
+router
+  .route("/sportPlaces/remove/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let sportPlaceInfo = await sportPlaceData.get(req.params.id);
+      return res.render("admin/remove", {
+        title: "Remove",
+        back: `sportPlaces/${sportPlaceInfo._id}`,
+        data: sportPlaceInfo._id,
+        db: "sportPlaces",
+      });
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  })
+  .delete(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let deleteInfo = await sportPlaceData.remove(req.params.id);
+      if (deleteInfo.deleted) {
+        return res.redirect("/admin/sportPlaces");
+      }
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
+
+router
+  .route("/events/remove/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let eventInfo = await eventData.get(req.params.id);
+      return res.render("admin/remove", {
+        title: "Remove",
+        back: `events/${eventInfo._id}`,
+        data: eventInfo._id,
+        db: "events",
+      });
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  })
+  .delete(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let deleteInfo = await eventDataAdmin.remove(req.params.id);
+      if (deleteInfo.deleted) {
+        return res.redirect("/admin/events");
+      }
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
+
+// Info -> admin/db/:id
+router.route("/users/:id").get(async (req, res) => {
+  try {
+    req.params.id = validation.checkId(req.params.id, "ID URL Param");
+  } catch (e) {
+    return res.status(400).render("admin/error", {
+      title: "Error",
+      error: e,
+    });
+  }
+
+  let userInfo = await userData.get(req.params.id);
+
+  return res.render("admin/userInfo", {
+    title: "User Info",
+    id: userInfo._id,
+    firstName: userInfo.firstName,
+    lastName: userInfo.lastName,
+    email: userInfo.email,
+    gender: userInfo.gender,
+    dateOfBirth: userInfo.dateOfBirth,
+    contactNumber: userInfo.contactNumber,
+  });
+});
 
 router
   .route("/classes/:id")
@@ -881,60 +1076,15 @@ router
   });
 
 router
-  .route("/classes/remove/:id")
-  .get(async (req, res) => {
-    try {
-      req.params.id = validation.checkId(req.params.id, "ID URL Param");
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-    try {
-      let classInfo = await classData.get(req.params.id);
-      return res.render("admin/remove", {
-        title: "Remove",
-        back: `classes/${classInfo._id}`,
-        data: classInfo._id,
-        db: "classes",
-      });
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-  })
-  .delete(async (req, res) => {
-    try {
-      req.params.id = validation.checkId(req.params.id, "ID URL Param");
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-    try {
-      let deleteInfo = await classData.remove(req.params.id);
-      if (deleteInfo.deleted) {
-        return res.redirect("/admin/classes");
-      }
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-  });
-
-router
   .route("/sports/:id")
   .get(async (req, res) => {
     try {
       req.params.id = validation.checkId(req.params.id, "ID URL Param");
     } catch (e) {
-      return res.status(400).json({ error: e });
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
     }
     try {
       let sport = await sportData.get(req.params.id);
@@ -998,60 +1148,15 @@ router
   });
 
 router
-  .route("/sports/remove/:id")
-  .get(async (req, res) => {
-    try {
-      req.params.id = validation.checkId(req.params.id, "ID URL Param");
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-    try {
-      let sportInfo = await sportData.get(req.params.id);
-      return res.render("admin/remove", {
-        title: "Remove",
-        back: `sports/${sportInfo._id}`,
-        data: sportInfo._id,
-        db: "sports",
-      });
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-  })
-  .delete(async (req, res) => {
-    try {
-      req.params.id = validation.checkId(req.params.id, "ID URL Param");
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-    try {
-      let deleteInfo = await sportData.remove(req.params.id);
-      if (deleteInfo.deleted) {
-        return res.redirect("/admin/sports");
-      }
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-  });
-
-router
   .route("/sportPlaces/:id")
   .get(async (req, res) => {
     try {
       req.params.id = validation.checkId(req.params.id, "ID URL Param");
     } catch (e) {
-      return res.status(400).json({ error: e });
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
     }
     try {
       let sportPlace = await sportPlaceData.get(req.params.id);
@@ -1172,60 +1277,15 @@ router
   });
 
 router
-  .route("/sportPlaces/remove/:id")
-  .get(async (req, res) => {
-    try {
-      req.params.id = validation.checkId(req.params.id, "ID URL Param");
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-    try {
-      let sportPlaceInfo = await sportPlaceData.get(req.params.id);
-      return res.render("admin/remove", {
-        title: "Remove",
-        back: `sportPlaces/${sportPlaceInfo._id}`,
-        data: sportPlaceInfo._id,
-        db: "sportPlaces",
-      });
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-  })
-  .delete(async (req, res) => {
-    try {
-      req.params.id = validation.checkId(req.params.id, "ID URL Param");
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-    try {
-      let deleteInfo = await sportPlaceData.remove(req.params.id);
-      if (deleteInfo.deleted) {
-        return res.redirect("/admin/sportPlaces");
-      }
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-  });
-
-router
   .route("/events/:id")
   .get(async (req, res) => {
     try {
       req.params.id = validation.checkId(req.params.id, "ID URL Param");
     } catch (e) {
-      return res.status(400).json({ error: e });
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
     }
     try {
       let event = await eventData.get(req.params.id);
@@ -1262,54 +1322,6 @@ router
       if (!event.approved) throw "Internal Server Error";
       return res.redirect("/admin/events");
     } catch (e) {}
-  });
-
-router
-  .route("/events/remove/:id")
-  .get(async (req, res) => {
-    try {
-      req.params.id = validation.checkId(req.params.id, "ID URL Param");
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-    try {
-      let eventInfo = await eventData.get(req.params.id);
-      return res.render("admin/remove", {
-        title: "Remove",
-        back: `events/${eventInfo._id}`,
-        data: eventInfo._id,
-        db: "events",
-      });
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-  })
-  .delete(async (req, res) => {
-    try {
-      req.params.id = validation.checkId(req.params.id, "ID URL Param");
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-    try {
-      let deleteInfo = await eventDataAdmin.remove(req.params.id);
-      if (deleteInfo.deleted) {
-        return res.redirect("/admin/events");
-      }
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
   });
 
 router.route("/logout").get(async (req, res) => {
