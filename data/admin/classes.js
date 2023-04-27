@@ -4,8 +4,8 @@ import validation from "./helpers.js";
 
 const create = async (
   title,
-  sport,
-  sportPlace,
+  sportID,
+  sportPlaceID,
   capacity,
   instructor,
   price,
@@ -14,9 +14,9 @@ const create = async (
   endTime
 ) => {
   // validation
-  title = validation.checkString(title, "Title");
-  sport = validation.checkString(sport, "Sport");
-  sportPlace = validation.checkString(sportPlace, "Sport Place");
+  title = validation.checkTitle(title, "Title");
+  sportID = validation.checkId(sportID, "SportID");
+  sportPlaceID = validation.checkId(sportPlaceID, "Sport PlaceID");
   capacity = validation.checkCapacity(capacity, "Capacity");
   instructor = validation.checkName(instructor, "Instructor");
   price = validation.checkPrice(price, "Price");
@@ -25,10 +25,11 @@ const create = async (
   endTime = validation.checkTime(endTime, "End Time");
   validation.checkTimeRange(startTime, endTime);
 
+  // add valid class to db
   let newClass = {
     title: title,
-    sport: sport,
-    sportPlace: sportPlace,
+    sportID: sportID,
+    sportPlaceID: sportPlaceID,
     capacity: capacity,
     instructor: instructor,
     price: price,
@@ -79,8 +80,8 @@ const remove = async (classID) => {
 const update = async (
   classID,
   title,
-  sport,
-  sportPlace,
+  sportID,
+  sportPlaceID,
   capacity,
   instructor,
   price,
@@ -91,9 +92,9 @@ const update = async (
 ) => {
   // validation
   classID = validation.checkId(classID);
-  title = validation.checkString(title, "Title");
-  sport = validation.checkString(sport, "Sport");
-  sportPlace = validation.checkString(sportPlace, "Sport Place");
+  title = validation.checkTitle(title, "Title");
+  sportID = validation.checkId(sportID, "SportID");
+  sportPlaceID = validation.checkId(sportPlaceID, "Sport PlaceID");
   capacity = validation.checkCapacity(capacity, "Capacity");
   instructor = validation.checkName(instructor, "Instructor");
   price = validation.checkPrice(price, "Price");
@@ -102,10 +103,12 @@ const update = async (
   endTime = validation.checkTime(endTime, "End Time");
   validation.checkTimeRange(startTime, endTime);
 
+  if (thumbnail) thumbnail = validation.checkURL(thumbnail, "Thumbnail");
+
   const classUpdateInfo = {
     title: title,
-    sport: sport,
-    sportPlace: sportPlace,
+    sportID: sportID,
+    sportPlaceID: sportPlaceID,
     capacity: capacity,
     instructor: instructor,
     price: price,
@@ -127,13 +130,5 @@ const update = async (
   }
   return { updatedClass: true };
 };
-
-//
-
-const getAllUsers = async () => {};
-
-const getAllInstructors = async () => {};
-
-const removeUser = async (userID) => {};
 
 export { create, getAll, get, remove, update };

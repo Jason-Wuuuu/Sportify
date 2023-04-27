@@ -40,9 +40,9 @@ const create = async (
   const userCollection = await users();
   const newInsertInformation = await userCollection.insertOne(newUser);
   const newId = newInsertInformation.insertedId;
-  await get(newId.toString());
+  const user = await get(newId.toString());
 
-  return { insertedUser: true };
+  return { userID: user._id.toString(), insertedUser: true };
 };
 
 const get = async (userID) => {

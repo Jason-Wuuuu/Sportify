@@ -14,6 +14,7 @@ const number_of_data = 9;
 
 // add valid data
 for (let i = 1; i <= number_of_data; i++) {
+  let userID = undefined;
   try {
     let gender = "male";
     if (i % 2 == 0) gender = "female";
@@ -26,6 +27,7 @@ for (let i = 1; i <= number_of_data; i++) {
       `123456789${i}`,
       `Password.${i}`
     );
+    userID = newUser.userID;
   } catch (e) {
     console.log(e);
   }
@@ -47,21 +49,25 @@ for (let i = 1; i <= number_of_data; i++) {
     console.log(e);
   }
 
+  let sportID = undefined;
   try {
     const newSport = await sports.create(`Sport_0${i}`);
+    sportID = newSport.sportID;
   } catch (e) {
     console.log(e);
   }
 
+  let sportPlaceID = undefined;
   try {
     const newSportPlace = await sportPlaces.create(
       `SportPlace_0${i}`,
-      `Sport_0${i}`,
+      sportID,
       `address_for_SportPlace_0${i}`,
       `This is the description of SportPlace_0${i}`,
       `${(i + 5) * 10}`,
       `${(i + 10) * 50}`
     );
+    sportPlaceID = newSportPlace.sportPlaceID;
   } catch (e) {
     console.log(e);
   }
@@ -69,8 +75,8 @@ for (let i = 1; i <= number_of_data; i++) {
   try {
     const newClass = await classes.create(
       `Class_0${i}`,
-      `Sport_0${i}`,
-      `sportPlace_0${i}`,
+      sportID,
+      sportPlaceID,
       `${(i + 5) * 3}`,
       `instructor_0${i}`,
       `${(i + 10) * 50}`,
@@ -84,7 +90,7 @@ for (let i = 1; i <= number_of_data; i++) {
 
   try {
     const newEvents = await events.create(
-      "64446957e281134798976647",
+      userID,
       `Event_0${i}`,
       `This is the description of Event_0${i}`,
       `Sport_0${i}`,

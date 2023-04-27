@@ -37,36 +37,30 @@
         <input type="text" id="titleInput" name="titleInput" value="{{classTitle}}" />
         <br>
 
-        <label for="sportInput">Sport:</label><br>
-        <select id="sportInput" , name="sportInput">
-            {{#if newSport}}
-            <option value="{{newSport}}">{{newSport}}</option>
-            {{/if}}
+        <label for="sportIDInput">Sport:</label><br>
+        <select id="sportIDInput" , name="sportIDInput">
             <option value="">-</option>
             {{#each sports}}
-            <option value="{{this}}">{{this}}</option>
+            <option value="{{sportID}}">{{name}}</option>
             {{/each}}
         </select>
         <br>
 
-        <label for="sportPlaceInput">Sport Places:</label><br>
-        <select id="sportPlaceInput" , name="sportPlaceInput">
-            {{#if newSportPlace}}
-            <option value="{{newSportPlace}}">{{newSportPlace}}</option>
-            {{/if}}
+        <label for="sportPlaceIDInput">Sport Places:</label><br>
+        <select id="sportPlaceIDInput" , name="sportPlaceIDInput">
             <option value="">-</option>
             {{#each sportPlaces}}
-            <option value="{{this}}">{{this}}</option>
+            <option value="{{sportPlaceID}}">{{name}}</option>
             {{/each}}
         </select>
-        <br>
-
-        <label for="capacityInput">Capacity:</label><br>
-        <input type="number" id="capacityInput" name="capacityInput" value="{{newCapacity}}" min="1" />
         <br>
 
         <label for="instructorInput">Instructor:</label><br>
         <input type="text" id="instructorInput" name="instructorInput" value="{{newInstructor}}" />
+        <br>
+
+        <label for="capacityInput">Capacity:</label><br>
+        <input type="number" id="capacityInput" name="capacityInput" value="{{newCapacity}}" min="1" />
         <br>
 
         <label for="priceInput">Price:</label><br>

@@ -7,7 +7,8 @@ import * as adminData from "../data/admin/admins.js";
 import * as classData from "../data/admin/classes.js";
 import * as sportData from "../data/admin/sports.js";
 import * as sportPlaceData from "../data/admin/sportPlaces.js";
-import validation from "../data/admin/helpers.js";
+import validation, { checkUsedEmail } from "../data/admin/helpers.js";
+import xss from "xss";
 
 const router = Router();
 
@@ -28,30 +29,24 @@ const getGenderOptions = (selected) => {
   return options;
 };
 
-const getSportOptions = async (selected) => {
+const getSportOptions = async () => {
   const sportList = await sportData.getAll();
   let sports = [];
   if (sportList) {
-    sports = sportList.map((sport) => sport.name);
-  }
-  if (selected) {
-    const index = sports.indexOf(selected);
-    if (!index === -1) throw `Error: ${selected} not found in sport`;
-    sports.splice(index, 1);
+    sports = sportList.map((sport) =>
+      Object({ sportID: sport._id, name: sport.name })
+    );
   }
   return sports;
 };
 
-const getSportPlaceOptions = async (selected) => {
+const getSportPlaceOptions = async () => {
   const sportPlacetList = await sportPlaceData.getAll();
   let sportPlaces = [];
   if (sportPlacetList) {
-    sportPlaces = sportPlacetList.map((sportPlace) => sportPlace.name);
-  }
-  if (selected) {
-    const index = sportPlaces.indexOf(selected);
-    if (!index === -1) throw `Error: ${selected} not found in sport places`;
-    sportPlaces.splice(index, 1);
+    sportPlaces = sportPlacetList.map((sportPlace) =>
+      Object({ sportPlaceID: sportPlace._id, name: sportPlace.name })
+    );
   }
   return sportPlaces;
 };
@@ -97,6 +92,7 @@ router
         error: "There are no fields in the request body",
       });
     }
+
     // check id
     let adminID = req.session.admin.adminID;
     adminID = validation.checkId(adminID);
@@ -131,6 +127,7 @@ router
         adminInfo.passwordInput,
         "Password"
       );
+      checkUsedEmail(adminInfo.emailInput);
     } catch (e) {
       let origAdminInfo = await adminData.get(req.session.admin.adminID);
 
@@ -223,6 +220,7 @@ router
         adminInfo.passwordInput,
         "Password"
       );
+      checkUsedEmail(adminInfo.emailInput);
     } catch (e) {
       const options = getGenderOptions(adminInfo.genderInput);
 
@@ -364,17 +362,17 @@ router
     }
     // validation
     try {
-      classInfo.titleInput = validation.checkString(
+      classInfo.titleInput = validation.checkTitle(
         classInfo.titleInput,
         "Title"
       );
-      classInfo.sportInput = validation.checkString(
-        classInfo.sportInput,
-        "Sport"
+      classInfo.sportIDInput = validation.checkId(
+        classInfo.sportIDInput,
+        "SportID"
       );
-      classInfo.sportPlaceInput = validation.checkString(
-        classInfo.sportPlaceInput,
-        "Sport Place"
+      classInfo.sportPlaceIDInput = validation.checkId(
+        classInfo.sportPlaceIDInput,
+        "Sport PlaceID"
       );
       classInfo.capacityInput = validation.checkCapacity(
         classInfo.capacityInput,
@@ -403,8 +401,8 @@ router
         classInfo.endTimeInput
       );
     } catch (e) {
-      const sports = await getSportOptions(classInfo.sportInput);
-      const sportPlaces = await getSportPlaceOptions(classInfo.sportPlaceInput);
+      const sports = await getSportOptions();
+      const sportPlaces = await getSportPlaceOptions();
       const classList = await classData.getAll();
       let classes = [];
       if (classList) {
@@ -423,11 +421,9 @@ router
         sportPlaces: sportPlaces,
         classes: classes,
         classTitle: classInfo.titleInput,
-        sport: classInfo.sportInput,
-        sportPlace: classInfo.sportPlaceInput,
         capacity: classInfo.capacityInput,
         instructor: classInfo.instructorInput,
-        price: classInfo.price,
+        price: classInfo.priceInput,
         date: classInfo.dateInput,
         startTime: classInfo.startTimeInput,
         endTime: classInfo.endTimeInput,
@@ -437,8 +433,8 @@ router
     try {
       const newClass = await classData.create(
         classInfo.titleInput,
-        classInfo.sportInput,
-        classInfo.sportPlaceInput,
+        classInfo.sportIDInput,
+        classInfo.sportPlaceIDInput,
         classInfo.capacityInput,
         classInfo.instructorInput,
         classInfo.priceInput,
@@ -481,9 +477,11 @@ router
       });
     }
 
+    //let cleanFN = xss(req.body.nameInput);
+
     // validation
     try {
-      sportInfo.nameInput = validation.checkString(sportInfo.nameInput, "Name");
+      sportInfo.nameInput = validation.checkTitle(sportInfo.nameInput, "Name");
     } catch (e) {
       const sportList = await sportData.getAll();
       const sports = sportList.map((sport) =>
@@ -545,13 +543,13 @@ router
 
     // validation
     try {
-      sportPlaceInfo.nameInput = validation.checkString(
+      sportPlaceInfo.nameInput = validation.checkTitle(
         sportPlaceInfo.nameInput,
         "Name"
       );
-      sportPlaceInfo.sportInput = validation.checkString(
-        sportPlaceInfo.sportInput,
-        "Sport"
+      sportPlaceInfo.sportIDInput = validation.checkId(
+        sportPlaceInfo.sportIDInput,
+        "sportID"
       );
       sportPlaceInfo.addressInput = validation.checkString(
         sportPlaceInfo.addressInput,
@@ -570,7 +568,7 @@ router
         "Price"
       );
     } catch (e) {
-      const sports = await getSportOptions(sportPlaceInfo.sportInput);
+      const sports = await getSportOptions();
 
       const sportPlacetList = await sportPlaceData.getAll();
       const sportPlaces = sportPlacetList.map((sportPlace) =>
@@ -587,7 +585,6 @@ router
         sports: sports,
         sportPlaces: sportPlaces,
         name: sportPlaceInfo.nameInput,
-        sport: sportPlaceInfo.sportInput,
         address: sportPlaceInfo.addressInput,
         description: sportPlaceInfo.descriptionInput,
         capacity: sportPlaceInfo.capacityInput,
@@ -598,7 +595,7 @@ router
     try {
       const newSportPlace = await sportPlaceData.create(
         sportPlaceInfo.nameInput,
-        sportPlaceInfo.sportInput,
+        sportPlaceInfo.sportIDInput,
         sportPlaceInfo.addressInput,
         sportPlaceInfo.descriptionInput,
         sportPlaceInfo.capacityInput,
@@ -623,17 +620,8 @@ router.route("/events").get(async (req, res) => {
     })
   );
 
-  const unapprovedEventList = await eventDataAdmin.getUnapprovedEvents();
-  const unapprovedEvents = unapprovedEventList.map((event) =>
-    Object({
-      eventID: event._id,
-      eventName: event.name,
-    })
-  );
-
   return res.render("admin/events", {
     title: "Events",
-    unapprovedEvents: unapprovedEvents,
     events: events,
   });
 });
@@ -920,6 +908,10 @@ router
       let classInfo = await classData.get(req.params.id);
       const sports = await getSportOptions(classInfo.sport);
       const sportPlaces = await getSportPlaceOptions(classInfo.sportPlace);
+
+      const sportInfo = await sportData.get(classInfo.sportID);
+      const sportPlaceInfo = await sportPlaceData.get(classInfo.sportPlaceID);
+
       return res.render("admin/classInfo", {
         title: "Class Info",
         hidden: "hidden",
@@ -927,8 +919,8 @@ router
         sports: sports,
         sportPlaces: sportPlaces,
         name: classInfo.title,
-        sport: classInfo.sport,
-        sportPlace: classInfo.sportPlace,
+        sport: sportInfo.name,
+        sportPlace: sportPlaceInfo.name,
         capacity: classInfo.capacity,
         instructor: classInfo.instructor,
         price: classInfo.price,
@@ -940,8 +932,6 @@ router
         n: classInfo.students.length,
         users: classInfo.students,
         classTitle: classInfo.title,
-        newSport: classInfo.sport,
-        newSportPlace: classInfo.sportPlace,
         newCapacity: classInfo.capacity,
         newInstructor: classInfo.instructor,
         newPrice: classInfo.price,
@@ -973,17 +963,17 @@ router
 
     // validation
     try {
-      classInfo.titleInput = validation.checkString(
+      classInfo.titleInput = validation.checkTitle(
         classInfo.titleInput,
         "Title"
       );
-      classInfo.sportInput = validation.checkString(
-        classInfo.sportInput,
-        "Sport"
+      classInfo.sportIDInput = validation.checkId(
+        classInfo.sportIDInput,
+        "SportID"
       );
-      classInfo.sportPlaceInput = validation.checkString(
-        classInfo.sportPlaceInput,
-        "Sport Place"
+      classInfo.sportPlaceIDInput = validation.checkId(
+        classInfo.sportPlaceIDInput,
+        "Sport PlaceID"
       );
       classInfo.capacityInput = validation.checkCapacity(
         classInfo.capacityInput,
@@ -1007,13 +997,19 @@ router
         "End Time"
       );
 
+      if (classInfo.thumbnailInput)
+        classInfo.thumbnailInput = validation.checkURL(
+          classInfo.thumbnailInput,
+          "Thumbnail"
+        );
+
       validation.checkTimeRange(
         classInfo.startTimeInput,
         classInfo.endTimeInput
       );
     } catch (e) {
-      const sports = await getSportOptions(classInfo.sportInput);
-      const sportPlaces = await getSportPlaceOptions(classInfo.sportPlaceInput);
+      const sports = await getSportOptions();
+      const sportPlaces = await getSportPlaceOptions();
 
       let origClassInfo = await classData.get(req.params.id);
 
@@ -1038,8 +1034,6 @@ router
         n: origClassInfo.students.length,
         users: origClassInfo.students,
         classTitle: origClassInfo.title,
-        newSport: classInfo.sportInput,
-        newSportPlace: classInfo.sportPlaceInput,
         newCapacity: classInfo.capacityInput,
         newInstructor: classInfo.instructorInput,
         newPrice: classInfo.priceInput,
@@ -1055,8 +1049,8 @@ router
       const newClass = await classData.update(
         classID,
         classInfo.titleInput,
-        classInfo.sportInput,
-        classInfo.sportPlaceInput,
+        classInfo.sportIDInput,
+        classInfo.sportPlaceIDInput,
         classInfo.capacityInput,
         classInfo.instructorInput,
         classInfo.priceInput,
@@ -1090,7 +1084,7 @@ router
         name: sport.name,
         newName: sport.name,
         thumbnail: sport.thumbnail,
-        newThumbnail: sport.thumbnail,
+        newThumbnail: sport.thumbnailInput,
       });
     } catch (e) {
       return res.status(404).render("admin/error", {
@@ -1114,7 +1108,13 @@ router
 
     // validation
     try {
-      sportInfo.nameInput = validation.checkString(sportInfo.nameInput, "Name");
+      sportInfo.nameInput = validation.checkTitle(sportInfo.nameInput, "Name");
+
+      if (sportInfo.thumbnailInput)
+        sportInfo.thumbnailInput = validation.checkURL(
+          sportInfo.thumbnailInput,
+          "Thumbnail"
+        );
     } catch (e) {
       let origSport = await sportData.get(req.params.id);
 
@@ -1126,7 +1126,7 @@ router
         name: origSport.name,
         thumbnail: origSport.thumbnail,
         newName: sportInfo.nameInput,
-        newThumbnail: sportInfo.thumbnail,
+        newThumbnail: sportInfo.thumbnailInput,
       });
     }
 
@@ -1155,6 +1155,8 @@ router
     }
     try {
       let sportPlace = await sportPlaceData.get(req.params.id);
+
+      const sportInfo = await sportData.get(sportPlace.sportID);
       const sports = await getSportOptions(sportPlace.sport);
       return res.render("admin/sportPlaceInfo", {
         title: "SportPlace Info",
@@ -1162,7 +1164,7 @@ router
         id: sportPlace._id,
         sports: sports,
         name: sportPlace.name,
-        sport: sportPlace.sport,
+        sport: sportInfo.name,
         address: sportPlace.address,
         description: sportPlace.description,
         capacity: sportPlace.capacity,
@@ -1172,7 +1174,6 @@ router
         n: sportPlace.users.length,
         users: sportPlace.users,
         newName: sportPlace.name,
-        newSport: sportPlace.sport,
         newAddress: sportPlace.address,
         newDescription: sportPlace.description,
         newCapacity: sportPlace.capacity,
@@ -1202,13 +1203,13 @@ router
 
     // validation
     try {
-      sportPlaceInfo.nameInput = validation.checkString(
+      sportPlaceInfo.nameInput = validation.checkTitle(
         sportPlaceInfo.nameInput,
         "Name"
       );
-      sportPlaceInfo.sportInput = validation.checkString(
-        sportPlaceInfo.sportInput,
-        "Sport"
+      sportPlaceInfo.sportIDInput = validation.checkId(
+        sportPlaceInfo.sportIDInput,
+        "SportID"
       );
       sportPlaceInfo.addressInput = validation.checkString(
         sportPlaceInfo.addressInput,
@@ -1226,6 +1227,12 @@ router
         sportPlaceInfo.priceInput,
         "Price"
       );
+
+      if (sportPlaceInfo.thumbnailInput)
+        sportPlaceInfo.thumbnailInput = validation.checkURL(
+          sportPlaceInfo.thumbnailInput,
+          "Thumbnail"
+        );
     } catch (e) {
       const sports = await getSportOptions(sportPlaceInfo.sportInput);
 
@@ -1248,7 +1255,6 @@ router
         n: origSportPlace.users.length,
         users: origSportPlace.users,
         newName: sportPlaceInfo.nameInput,
-        newSport: sportPlaceInfo.sportInput,
         newAddress: sportPlaceInfo.addressInput,
         newDescription: sportPlaceInfo.descriptionInput,
         newCapacity: sportPlaceInfo.capacityInput,
@@ -1262,7 +1268,7 @@ router
       const newSportPlace = await sportPlaceData.update(
         sportPlaceID,
         sportPlaceInfo.nameInput,
-        sportPlaceInfo.sportInput,
+        sportPlaceInfo.sportIDInput,
         sportPlaceInfo.addressInput,
         sportPlaceInfo.descriptionInput,
         sportPlaceInfo.capacityInput,
@@ -1276,53 +1282,40 @@ router
     }
   });
 
-router
-  .route("/events/:id")
-  .get(async (req, res) => {
-    try {
-      req.params.id = validation.checkId(req.params.id, "ID URL Param");
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-    try {
-      let event = await eventData.get(req.params.id);
-      return res.render("admin/eventInfo", {
-        title: "Event Info",
-        id: event._id,
-        name: event.name,
-        userID: event.userID,
-        description: event.description,
-        sport: event.sport,
-        sportPlace: event.sportPlace,
-        capacity: event.capacity,
-        date: event.date,
-        startTime: event.startTime,
-        endTime: event.endTime,
-        approved: event.approved,
-        n: event.participants.length,
-        participants: event.participants,
-      });
-    } catch (e) {
-      return res.status(404).render("admin/error", {
-        title: "Error",
-        error: `${e}`,
-        back: "events",
-      });
-    }
-  })
-  .put(async (req, res) => {
-    // check id
-    let eventID = req.params.id;
-    eventID = validation.checkId(eventID);
-    try {
-      const event = await eventDataAdmin.approve(eventID);
-      if (!event.approved) throw "Internal Server Error";
-      return res.redirect("/admin/events");
-    } catch (e) {}
-  });
+router.route("/events/:id").get(async (req, res) => {
+  try {
+    req.params.id = validation.checkId(req.params.id, "ID URL Param");
+  } catch (e) {
+    return res.status(400).render("admin/error", {
+      title: "Error",
+      error: e,
+    });
+  }
+  try {
+    let event = await eventData.get(req.params.id);
+    return res.render("admin/eventInfo", {
+      title: "Event Info",
+      id: event._id,
+      name: event.name,
+      userID: event.userID,
+      description: event.description,
+      sport: event.sport,
+      sportPlace: event.sportPlace,
+      capacity: event.capacity,
+      date: event.date,
+      startTime: event.startTime,
+      endTime: event.endTime,
+      n: event.participants.length,
+      participants: event.participants,
+    });
+  } catch (e) {
+    return res.status(404).render("admin/error", {
+      title: "Error",
+      error: `${e}`,
+      back: "events",
+    });
+  }
+});
 
 router.route("/logout").get(async (req, res) => {
   req.session.destroy();

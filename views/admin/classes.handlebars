@@ -23,35 +23,24 @@
         <input type="text" id="titleInput" name="titleInput" value="{{classTitle}}" />
         <br>
 
-        <label for="sportInput">Sport:</label>
+        <label for="sportIDInput">Sport:</label>
         <br>
-        <select id="sportInput" , name="sportInput">
-            {{#if sport}}
-            <option value="{{sport}}">{{sport}}</option>
-            {{/if}}
+        <select id="sportIDInput" , name="sportIDInput">
             <option value="">-</option>
             {{#each sports}}
-            <option value="{{this}}">{{this}}</option>
+            <option value="{{sportID}}">{{name}}</option>
             {{/each}}
         </select>
         <br>
 
-        <label for="sportPlaceInput">Sport Places:</label>
+        <label for="sportPlaceIDInput">Sport Places:</label>
         <br>
-        <select id="sportPlaceInput" , name="sportPlaceInput">
-            {{#if sportPlace}}
-            <option value="{{sportPlace}}">{{sportPlace}}</option>
-            {{/if}}
+        <select id="sportPlaceIDInput" , name="sportPlaceIDInput">
             <option value="">-</option>
             {{#each sportPlaces}}
-            <option value="{{this}}">{{this}}</option>
+            <option value="{{sportPlaceID}}">{{name}}</option>
             {{/each}}
         </select>
-        <br>
-
-        <label for="capacityInput">Capacity:</label>
-        <br>
-        <input type="number" id="capacityInput" name="capacityInput" value="{{capacity}}" min="1" />
         <br>
 
         <label for="instructorInput">Instructor:</label>
@@ -59,8 +48,13 @@
         <input type="text" id="instructorInput" name="instructorInput" value="{{instructor}}" />
         <br>
 
+        <label for="capacityInput">Capacity:</label>
+        <br>
+        <input type="number" id="capacityInput" name="capacityInput" value="{{capacity}}" min="1" />
+        <br>
+
         <label for="priceInput">Price:</label><br>
-        <input type="number" id="priceInput" name="priceInput" value="{{Price}}" min="0" />
+        <input type="number" id="priceInput" name="priceInput" value="{{price}}" min="0" />
         <br>
 
         <label for="dateInput">Date:</label>

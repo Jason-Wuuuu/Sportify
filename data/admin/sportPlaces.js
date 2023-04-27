@@ -3,19 +3,19 @@ import { ObjectId } from "mongodb";
 import validation from "./helpers.js";
 
 //
-const create = async (name, sport, address, description, capacity, price) => {
+const create = async (name, sportID, address, description, capacity, price) => {
   // validation
-  name = validation.checkString(name, "Name");
-  sport = validation.checkString(sport, "Sport");
+  name = validation.checkTitle(name, "Name");
+  sportID = validation.checkId(sportID, "SportID");
   address = validation.checkString(address, "Address");
   description = validation.checkString(description, "Description");
   capacity = validation.checkCapacity(capacity, "Capacity");
-  price = validation.checkNumber(price, "Price");
+  price = validation.checkPrice(price, "Price");
 
   // add valid sport place to db
   let newSportPlace = {
     name: name,
-    sport: sport,
+    sportID: sportID,
     address: address,
     description: description,
     capacity: capacity,
@@ -30,9 +30,9 @@ const create = async (name, sport, address, description, capacity, price) => {
     newSportPlace
   );
   const newId = newInsertInformation.insertedId;
-  await get(newId.toString());
+  const sportPlace = await get(newId.toString());
 
-  return { insertedSportPlace: true };
+  return { sportPlaceID: sportPlace._id.toString(), insertedSportPlace: true };
 };
 
 const getAll = async () => {
@@ -66,7 +66,7 @@ const remove = async (sportPlaceID) => {
 const update = async (
   sportPlaceID,
   name,
-  sport,
+  sportID,
   address,
   description,
   capacity,
@@ -75,16 +75,18 @@ const update = async (
 ) => {
   // validation
   sportPlaceID = validation.checkId(sportPlaceID);
-  name = validation.checkString(name, "Name");
-  sport = validation.checkString(sport, "Sport");
+  name = validation.checkTitle(name, "Name");
+  sportID = validation.checkId(sportID, "SportID");
   address = validation.checkString(address, "Address");
   description = validation.checkString(description, "Description");
   capacity = validation.checkCapacity(capacity, "Capacity");
-  price = validation.checkNumber(price, "Price");
+  price = validation.checkPrice(price, "Price");
+
+  if (thumbnail) thumbnail = validation.checkURL(thumbnail, "Thumbnail");
 
   const sportPlaceInfo = {
     name: name,
-    sport: sport,
+    sportID: sportID,
     address: address,
     description: description,
     capacity: capacity,

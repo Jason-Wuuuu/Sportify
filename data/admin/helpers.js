@@ -1,3 +1,4 @@
+import { admins } from "../../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 
@@ -44,6 +45,22 @@ const validationMethods = {
     return name;
   },
 
+  checkTitle(title, varName) {
+    title = this.checkString(title, varName);
+    if (Number.parseInt(title))
+      throw `Error: ${varName} shouldn't be only numbers.`;
+    return title;
+  },
+
+  checkURL(url, varName) {
+    url = this.checkString(url, varName);
+
+    const re_url = /[\/\S]+/g;
+    if (!url.match(re_url))
+      throw `Error: ${varName} is and invalid url or contains spaces.`;
+    return url;
+  },
+
   checkEmail(email, varName) {
     email = this.checkString(email, varName);
 
@@ -82,7 +99,7 @@ const validationMethods = {
     contactNumber = contactNumber.replace(" ", "");
     const re_contactNumber = /^[\d]{8,20}$/g;
     if (!contactNumber.match(re_contactNumber))
-      throw `Error: invalid ${varName}`;
+      throw `Error: ${varName} should contain only digits.`;
     return contactNumber;
   },
 
@@ -145,7 +162,7 @@ const validationMethods = {
     if (!d) throw `Error: Invalid ${varName}.`;
 
     const today = new Date();
-    if (d < today) throw `Error: Invalid Date.`;
+    if (d < today) throw `Error: Date shouldn't be less than today.`;
 
     return date;
   },
@@ -171,6 +188,13 @@ const validationMethods = {
     const e = new Date(`2000-01-01 ${end}`);
     if (e < s) throw `Error: Invalid Time Range`;
   },
+};
+
+export const checkUsedEmail = async (email) => {
+  const adminCollection = await admins();
+  const admin = await adminCollection.findOne({ email: email });
+  if (admin) throw "Error: Email address already been used.";
+  return true;
 };
 
 export const passwordMethods = {
