@@ -51,6 +51,12 @@ const getSportPlaceOptions = async () => {
   return sportPlaces;
 };
 
+const applyXSS = (req_body) => {
+  Object.keys(req_body).forEach(function (key, index) {
+    req_body[key] = xss(req_body[key]);
+  });
+};
+
 // http://localhost:3000/admin/profile
 router
   .route("/profile")
@@ -93,6 +99,9 @@ router
       });
     }
 
+    // XSS
+    applyXSS(adminInfo);
+
     // check id
     let adminID = req.session.admin.adminID;
     adminID = validation.checkId(adminID);
@@ -128,12 +137,14 @@ router
         "Password"
       );
 
-      await checkUsedEmail(adminInfo.emailInput);
+      // check email duplicate only when changing the email
+      let admin = await adminData.get(adminID);
+      if (adminInfo.emailInput !== admin.email)
+        await checkUsedEmail(adminInfo.emailInput);
     } catch (e) {
       let origAdminInfo = await adminData.get(req.session.admin.adminID);
 
       const options = getGenderOptions(adminInfo.genderInput);
-      console.log(options);
       return res.status(400).render("admin/profile", {
         title: "Profile",
         hidden: "",
@@ -191,6 +202,10 @@ router
         error: "There are no fields in the request body",
       });
     }
+
+    // XSS
+    applyXSS(adminInfo);
+
     // validation for admin registration
     try {
       adminInfo.firstNameInput = validation.checkName(
@@ -274,6 +289,10 @@ router
         error: "There are no fields in the request body",
       });
     }
+
+    // XSS
+    applyXSS(admin);
+
     // input checking
     try {
       admin.emailAddressInput = validation.checkEmail(
@@ -362,6 +381,10 @@ router
         error: "There are no fields in the request body",
       });
     }
+
+    // XSS
+    applyXSS(classInfo);
+
     // validation
     try {
       classInfo.titleInput = validation.checkTitle(
@@ -480,7 +503,8 @@ router
       });
     }
 
-    //let cleanFN = xss(req.body.nameInput);
+    // XSS
+    applyXSS(sportInfo);
 
     // validation
     try {
@@ -544,6 +568,9 @@ router
         error: "There are no fields in the request body",
       });
     }
+
+    // XSS
+    applyXSS(sportPlaceInfo);
 
     // validation
     try {
@@ -962,6 +989,9 @@ router
       });
     }
 
+    // XSS
+    applyXSS(classInfo);
+
     // check id
     let classID = req.params.id;
     classID = validation.checkId(classID);
@@ -1087,9 +1117,9 @@ router
         hidden: "hidden",
         id: sport._id,
         name: sport.name,
-        newName: sport.name,
         thumbnail: sport.thumbnail,
-        newThumbnail: sport.thumbnailInput,
+        newName: sport.name,
+        newThumbnail: sport.thumbnail,
       });
     } catch (e) {
       return res.status(404).render("admin/error", {
@@ -1107,6 +1137,10 @@ router
         error: "There are no fields in the request body",
       });
     }
+
+    // XSS
+    applyXSS(sportInfo);
+
     // check id
     let sportID = req.params.id;
     sportID = validation.checkId(sportID);
@@ -1201,6 +1235,9 @@ router
         error: "There are no fields in the request body",
       });
     }
+
+    // XSS
+    applyXSS(sportPlaceInfo);
 
     // check id
     let sportPlaceID = req.params.id;
