@@ -85,8 +85,9 @@ const update = async (
   );
   password = validation.checkPassword(password, "Password");
 
-  // check if email has already been used
-  await checkUsedEmail(email);
+  // check email duplicate only when changing the email
+  let admin = await get(adminID);
+  if (email !== admin.email) await checkUsedEmail(email);
 
   // encrypt password
   password = await passwordMethods.encrypt(password);
