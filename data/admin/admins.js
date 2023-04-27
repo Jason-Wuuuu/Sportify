@@ -40,6 +40,7 @@ const create = async (
     password: password,
   };
 
+  const adminCollection = await admins();
   const newInsertInformation = await adminCollection.insertOne(newAdmin);
   const newId = newInsertInformation.insertedId;
   await get(newId.toString());

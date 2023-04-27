@@ -347,6 +347,7 @@ router
     return res.render("admin/classes", {
       title: "Classes",
       hidden: "hidden",
+      n: classes.length,
       sports: sports,
       sportPlaces: sportPlaces,
       classes: classes,
@@ -465,6 +466,7 @@ router
     return res.render("admin/sports", {
       title: "Sports",
       hidden: "hidden",
+      n: sports.length,
       sports: sports,
     });
   })
@@ -528,6 +530,7 @@ router
     return res.render("admin/sportPlaces", {
       title: "Sport Places",
       hidden: "hidden",
+      n: sportPlaces.length,
       sports: sports,
       sportPlaces: sportPlaces,
     });
@@ -622,6 +625,7 @@ router.route("/events").get(async (req, res) => {
 
   return res.render("admin/events", {
     title: "Events",
+    n: events.length,
     events: events,
   });
 });
