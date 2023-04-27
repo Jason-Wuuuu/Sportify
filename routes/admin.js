@@ -127,7 +127,8 @@ router
         adminInfo.passwordInput,
         "Password"
       );
-      checkUsedEmail(adminInfo.emailInput);
+
+      await checkUsedEmail(adminInfo.emailInput);
     } catch (e) {
       let origAdminInfo = await adminData.get(req.session.admin.adminID);
 
@@ -220,7 +221,7 @@ router
         adminInfo.passwordInput,
         "Password"
       );
-      checkUsedEmail(adminInfo.emailInput);
+      await checkUsedEmail(adminInfo.emailInput);
     } catch (e) {
       const options = getGenderOptions(adminInfo.genderInput);
 
