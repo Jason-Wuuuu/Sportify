@@ -7,7 +7,8 @@ import * as adminData from "../data/admin/admins.js";
 import * as classData from "../data/admin/classes.js";
 import * as sportData from "../data/admin/sports.js";
 import * as sportPlaceData from "../data/admin/sportPlaces.js";
-import validation from "../data/admin/helpers.js";
+import validation, { checkUsedEmail } from "../data/admin/helpers.js";
+import xss from "xss";
 
 const router = Router();
 
@@ -28,7 +29,7 @@ const getGenderOptions = (selected) => {
   return options;
 };
 
-const getSportOptions = async (selected) => {
+const getSportOptions = async () => {
   const sportList = await sportData.getAll();
   let sports = [];
   if (sportList) {
@@ -36,26 +37,16 @@ const getSportOptions = async (selected) => {
       Object({ sportID: sport._id, name: sport.name })
     );
   }
-  if (selected) {
-    const index = sports.indexOf(selected);
-    if (!index === -1) throw `Error: ${selected} not found in sport`;
-    sports.splice(index, 1);
-  }
   return sports;
 };
 
-const getSportPlaceOptions = async (selected) => {
+const getSportPlaceOptions = async () => {
   const sportPlacetList = await sportPlaceData.getAll();
   let sportPlaces = [];
   if (sportPlacetList) {
     sportPlaces = sportPlacetList.map((sportPlace) =>
       Object({ sportPlaceID: sportPlace._id, name: sportPlace.name })
     );
-  }
-  if (selected) {
-    const index = sportPlaces.indexOf(selected);
-    if (!index === -1) throw `Error: ${selected} not found in sport places`;
-    sportPlaces.splice(index, 1);
   }
   return sportPlaces;
 };
@@ -101,6 +92,7 @@ router
         error: "There are no fields in the request body",
       });
     }
+
     // check id
     let adminID = req.session.admin.adminID;
     adminID = validation.checkId(adminID);
@@ -135,6 +127,7 @@ router
         adminInfo.passwordInput,
         "Password"
       );
+      checkUsedEmail(adminInfo.emailInput);
     } catch (e) {
       let origAdminInfo = await adminData.get(req.session.admin.adminID);
 
@@ -227,6 +220,7 @@ router
         adminInfo.passwordInput,
         "Password"
       );
+      checkUsedEmail(adminInfo.emailInput);
     } catch (e) {
       const options = getGenderOptions(adminInfo.genderInput);
 
@@ -368,7 +362,7 @@ router
     }
     // validation
     try {
-      classInfo.titleInput = validation.checkString(
+      classInfo.titleInput = validation.checkTitle(
         classInfo.titleInput,
         "Title"
       );
@@ -407,8 +401,8 @@ router
         classInfo.endTimeInput
       );
     } catch (e) {
-      const sports = await getSportOptions(classInfo.sportInput);
-      const sportPlaces = await getSportPlaceOptions(classInfo.sportPlaceInput);
+      const sports = await getSportOptions();
+      const sportPlaces = await getSportPlaceOptions();
       const classList = await classData.getAll();
       let classes = [];
       if (classList) {
@@ -429,7 +423,7 @@ router
         classTitle: classInfo.titleInput,
         capacity: classInfo.capacityInput,
         instructor: classInfo.instructorInput,
-        price: classInfo.price,
+        price: classInfo.priceInput,
         date: classInfo.dateInput,
         startTime: classInfo.startTimeInput,
         endTime: classInfo.endTimeInput,
@@ -483,9 +477,11 @@ router
       });
     }
 
+    //let cleanFN = xss(req.body.nameInput);
+
     // validation
     try {
-      sportInfo.nameInput = validation.checkString(sportInfo.nameInput, "Name");
+      sportInfo.nameInput = validation.checkTitle(sportInfo.nameInput, "Name");
     } catch (e) {
       const sportList = await sportData.getAll();
       const sports = sportList.map((sport) =>
@@ -547,7 +543,7 @@ router
 
     // validation
     try {
-      sportPlaceInfo.nameInput = validation.checkString(
+      sportPlaceInfo.nameInput = validation.checkTitle(
         sportPlaceInfo.nameInput,
         "Name"
       );
@@ -572,7 +568,7 @@ router
         "Price"
       );
     } catch (e) {
-      const sports = await getSportOptions(sportPlaceInfo.sportInput);
+      const sports = await getSportOptions();
 
       const sportPlacetList = await sportPlaceData.getAll();
       const sportPlaces = sportPlacetList.map((sportPlace) =>
@@ -624,17 +620,8 @@ router.route("/events").get(async (req, res) => {
     })
   );
 
-  const unapprovedEventList = await eventDataAdmin.getUnapprovedEvents();
-  const unapprovedEvents = unapprovedEventList.map((event) =>
-    Object({
-      eventID: event._id,
-      eventName: event.name,
-    })
-  );
-
   return res.render("admin/events", {
     title: "Events",
-    unapprovedEvents: unapprovedEvents,
     events: events,
   });
 });
@@ -976,7 +963,7 @@ router
 
     // validation
     try {
-      classInfo.titleInput = validation.checkString(
+      classInfo.titleInput = validation.checkTitle(
         classInfo.titleInput,
         "Title"
       );
@@ -1010,13 +997,19 @@ router
         "End Time"
       );
 
+      if (classInfo.thumbnailInput)
+        classInfo.thumbnailInput = validation.checkURL(
+          classInfo.thumbnailInput,
+          "Thumbnail"
+        );
+
       validation.checkTimeRange(
         classInfo.startTimeInput,
         classInfo.endTimeInput
       );
     } catch (e) {
-      const sports = await getSportOptions(classInfo.sportInput);
-      const sportPlaces = await getSportPlaceOptions(classInfo.sportPlaceInput);
+      const sports = await getSportOptions();
+      const sportPlaces = await getSportPlaceOptions();
 
       let origClassInfo = await classData.get(req.params.id);
 
@@ -1091,7 +1084,7 @@ router
         name: sport.name,
         newName: sport.name,
         thumbnail: sport.thumbnail,
-        newThumbnail: sport.thumbnail,
+        newThumbnail: sport.thumbnailInput,
       });
     } catch (e) {
       return res.status(404).render("admin/error", {
@@ -1115,7 +1108,13 @@ router
 
     // validation
     try {
-      sportInfo.nameInput = validation.checkString(sportInfo.nameInput, "Name");
+      sportInfo.nameInput = validation.checkTitle(sportInfo.nameInput, "Name");
+
+      if (sportInfo.thumbnailInput)
+        sportInfo.thumbnailInput = validation.checkURL(
+          sportInfo.thumbnailInput,
+          "Thumbnail"
+        );
     } catch (e) {
       let origSport = await sportData.get(req.params.id);
 
@@ -1127,7 +1126,7 @@ router
         name: origSport.name,
         thumbnail: origSport.thumbnail,
         newName: sportInfo.nameInput,
-        newThumbnail: sportInfo.thumbnail,
+        newThumbnail: sportInfo.thumbnailInput,
       });
     }
 
@@ -1204,7 +1203,7 @@ router
 
     // validation
     try {
-      sportPlaceInfo.nameInput = validation.checkString(
+      sportPlaceInfo.nameInput = validation.checkTitle(
         sportPlaceInfo.nameInput,
         "Name"
       );
@@ -1228,6 +1227,12 @@ router
         sportPlaceInfo.priceInput,
         "Price"
       );
+
+      if (sportPlaceInfo.thumbnailInput)
+        sportPlaceInfo.thumbnailInput = validation.checkURL(
+          sportPlaceInfo.thumbnailInput,
+          "Thumbnail"
+        );
     } catch (e) {
       const sports = await getSportOptions(sportPlaceInfo.sportInput);
 
@@ -1277,53 +1282,40 @@ router
     }
   });
 
-router
-  .route("/events/:id")
-  .get(async (req, res) => {
-    try {
-      req.params.id = validation.checkId(req.params.id, "ID URL Param");
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-    try {
-      let event = await eventData.get(req.params.id);
-      return res.render("admin/eventInfo", {
-        title: "Event Info",
-        id: event._id,
-        name: event.name,
-        userID: event.userID,
-        description: event.description,
-        sport: event.sport,
-        sportPlace: event.sportPlace,
-        capacity: event.capacity,
-        date: event.date,
-        startTime: event.startTime,
-        endTime: event.endTime,
-        approved: event.approved,
-        n: event.participants.length,
-        participants: event.participants,
-      });
-    } catch (e) {
-      return res.status(404).render("admin/error", {
-        title: "Error",
-        error: `${e}`,
-        back: "events",
-      });
-    }
-  })
-  .put(async (req, res) => {
-    // check id
-    let eventID = req.params.id;
-    eventID = validation.checkId(eventID);
-    try {
-      const event = await eventDataAdmin.approve(eventID);
-      if (!event.approved) throw "Internal Server Error";
-      return res.redirect("/admin/events");
-    } catch (e) {}
-  });
+router.route("/events/:id").get(async (req, res) => {
+  try {
+    req.params.id = validation.checkId(req.params.id, "ID URL Param");
+  } catch (e) {
+    return res.status(400).render("admin/error", {
+      title: "Error",
+      error: e,
+    });
+  }
+  try {
+    let event = await eventData.get(req.params.id);
+    return res.render("admin/eventInfo", {
+      title: "Event Info",
+      id: event._id,
+      name: event.name,
+      userID: event.userID,
+      description: event.description,
+      sport: event.sport,
+      sportPlace: event.sportPlace,
+      capacity: event.capacity,
+      date: event.date,
+      startTime: event.startTime,
+      endTime: event.endTime,
+      n: event.participants.length,
+      participants: event.participants,
+    });
+  } catch (e) {
+    return res.status(404).render("admin/error", {
+      title: "Error",
+      error: `${e}`,
+      back: "events",
+    });
+  }
+});
 
 router.route("/logout").get(async (req, res) => {
   req.session.destroy();

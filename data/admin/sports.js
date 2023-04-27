@@ -5,8 +5,9 @@ import validation from "./helpers.js";
 //
 const create = async (name) => {
   // validation
-  name = validation.checkString(name, "name");
+  name = validation.checkTitle(name, "Name");
 
+  // add valid sport to db
   let newSport = {
     name: name,
     thumbnail: "",
@@ -49,7 +50,9 @@ const remove = async (sportID) => {
 const update = async (sportID, name, thumbnail) => {
   // validation
   sportID = validation.checkId(sportID);
-  name = validation.checkString(name, "name");
+  name = validation.checkTitle(name, "Name");
+
+  if (thumbnail) thumbnail = validation.checkURL(thumbnail, "Thumbnail");
 
   const sportUpdateInfo = {
     name: name,
