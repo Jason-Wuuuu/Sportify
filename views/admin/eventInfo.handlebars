@@ -23,9 +23,6 @@
     <button type="submit" id="remove">Remove</button>
 </form>
 
-{{#if approved}}
-<h3>This event has been approved!</h3>
-
 <h3>List of Participants:</h3>
 <dl>
     <div id="userList">
@@ -39,8 +36,3 @@
         {{/if}}
     </div>
 </dl>
-{{else}}
-<form action="/admin/events/{{id}}" method="post">
-    <input type="submit" id="approve" name="approve" value="Approve" />
-</form>
-{{/if}}
