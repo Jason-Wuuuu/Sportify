@@ -24,7 +24,7 @@ const create = async (
   password = validation.checkPassword(password, "Password");
 
   // check if email has already been used
-  checkUsedEmail(email);
+  await checkUsedEmail(email);
 
   // encrypt password
   password = await passwordMethods.encrypt(password);
@@ -86,7 +86,7 @@ const update = async (
   password = validation.checkPassword(password, "Password");
 
   // check if email has already been used
-  checkUsedEmail(email);
+  await checkUsedEmail(email);
 
   // encrypt password
   password = await passwordMethods.encrypt(password);
