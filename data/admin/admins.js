@@ -24,7 +24,7 @@ const create = async (
   password = validation.checkPassword(password, "Password");
 
   // check if email has already been used
-  checkUsedEmail(email);
+  await checkUsedEmail(email);
 
   // encrypt password
   password = await passwordMethods.encrypt(password);
@@ -40,6 +40,7 @@ const create = async (
     password: password,
   };
 
+  const adminCollection = await admins();
   const newInsertInformation = await adminCollection.insertOne(newAdmin);
   const newId = newInsertInformation.insertedId;
   await get(newId.toString());
@@ -84,8 +85,9 @@ const update = async (
   );
   password = validation.checkPassword(password, "Password");
 
-  // check if email has already been used
-  checkUsedEmail(email);
+  // check email duplicate only when changing the email
+  let admin = await get(adminID);
+  if (email !== admin.email) await checkUsedEmail(email);
 
   // encrypt password
   password = await passwordMethods.encrypt(password);

@@ -25,14 +25,19 @@ const create = async (
   );
   password = helperMethodsForUsers.checkPassword(password, "Password");
 
+  // check if email has already been used
+  await helperMethodsForUsers.checkUsedEmail(email);
+
+  // encrypt password
   password = await helperMethodsForUsers.encryptPassword(password);
 
+  // add valid user to db
   let newUser = {
     firstName: firstName,
     lastName: lastName,
     email: email,
     gender: gender,
-    dateOfBirth: dateOfBirth, // 01-01-1999 (> 13 years old)
+    dateOfBirth: dateOfBirth,
     contactNumber: contactNumber,
     password: password,
   };
@@ -40,13 +45,13 @@ const create = async (
   const userCollection = await users();
   const newInsertInformation = await userCollection.insertOne(newUser);
   const newId = newInsertInformation.insertedId;
-  const user = await get(newId.toString());
+  await get(newId.toString());
 
-  return { userID: user._id.toString(), insertedUser: true };
+  return { insertedUser: true };
 };
 
 const get = async (userID) => {
-  userID = helperMethodsForUsers.checkString(userID);
+  userID = helperMethodsForUsers.checkId(userID);
   const userCollection = await users();
   const user = await userCollection.findOne({ _id: new ObjectId(userID) });
   if (!user) throw "Error: user not found";
@@ -88,9 +93,6 @@ const check = async (email, password) => {
 
   const userInfo = {
     userID: user._id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
   };
 
   return userInfo;
