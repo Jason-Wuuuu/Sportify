@@ -1,17 +1,15 @@
-{{!--
-
-login form handlebar template
-
---}}
-
 <h1>{{title}}</h1>
 
 <form action="/login" method="post" id="user-login-form">
     <label for="emailAddressInput">Email:</label>
+    <br>
     <input type="email" id="emailAddressInput" name="emailAddressInput" value="{{emailAddress}}" />
+    <br>
 
     <label for="passwordInput">Password:</label>
+    <br>
     <input type="password" id="passwordInput" name="passwordInput" value="{{password}}" />
+    <br>
 
     <input type="submit" value="Submit" />
 </form>

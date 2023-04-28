@@ -45,22 +45,6 @@ const validationMethods = {
     return name;
   },
 
-  checkTitle(title, varName) {
-    title = this.checkString(title, varName);
-    if (Number.parseInt(title))
-      throw `Error: ${varName} shouldn't be only numbers.`;
-    return title;
-  },
-
-  checkURL(url, varName) {
-    url = this.checkString(url, varName);
-
-    const re_url = /[\/\S]+/g;
-    if (!url.match(re_url))
-      throw `Error: ${varName} is and invalid url or contains spaces.`;
-    return url;
-  },
-
   checkEmail(email, varName) {
     email = this.checkString(email, varName);
 
@@ -140,7 +124,22 @@ const validationMethods = {
       throw `Error: ${varName} should contain at least one special character`;
 
     return password;
-    return password;
+  },
+
+  checkTitle(title, varName) {
+    title = this.checkString(title, varName);
+    if (Number.parseInt(title))
+      throw `Error: ${varName} shouldn't be only numbers.`;
+    return title;
+  },
+
+  checkURL(url, varName) {
+    url = this.checkString(url, varName);
+
+    const re_url = /[\/\S]+/g;
+    if (!url.match(re_url))
+      throw `Error: ${varName} is and invalid url or contains spaces.`;
+    return url;
   },
 
   checkCapacity(capacity, varName) {
