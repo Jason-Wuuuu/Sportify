@@ -185,7 +185,7 @@ const validationMethods = {
   checkTimeRange(start, end) {
     const s = new Date(`2000-01-01 ${start}`);
     const e = new Date(`2000-01-01 ${end}`);
-    if (e < s) throw `Error: Invalid Time Range`;
+    if (e <= s) throw `Error: Invalid Time Range`;
   },
 };
 

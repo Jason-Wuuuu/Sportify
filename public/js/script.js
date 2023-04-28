@@ -168,7 +168,7 @@ const checkTime = (time, varName) => {
 const checkTimeRange = (start, end) => {
   const s = new Date(`2000-01-01 ${start}`);
   const e = new Date(`2000-01-01 ${end}`);
-  if (e < s) throw `Error: Invalid Time Range`;
+  if (e <= s) throw `Error: Invalid Time Range`;
 };
 
 // maximum date
@@ -449,4 +449,105 @@ if (document.URL.includes("/admin")) {
 }
 //client side js for user
 else {
+  // error showing function
+  const show_error = (err_msg) => {
+    let errorDiv = document.getElementById("error");
+    errorDiv.hidden = false;
+    errorDiv.innerHTML = err_msg;
+  };
+
+  // login-form
+  let loginForm = document.getElementById("user-login-form");
+  if (loginForm) {
+    console.log("We found a user-login-form");
+    // get elements
+    let emailInput = document.getElementById("emailAddressInput");
+    emailInput.focus();
+    let passwordInput = document.getElementById("passwordInput");
+    // submit
+    loginForm.addEventListener("submit", (event) => {
+      // get values
+      let email = emailInput.value;
+      let password = passwordInput.value;
+      try {
+        email = checkEmail(email, "email");
+        password = checkString(password, "password");
+      } catch (e) {
+        event.preventDefault();
+        if (email) {
+          emailInput.value = email;
+          passwordInput.focus();
+        } else {
+          emailInput.focus();
+        }
+        show_error(e);
+      }
+    });
+  }
+
+  // register and profile
+  let userInfo = document.getElementById("user-info-form");
+  if (userInfo) {
+    console.log("We found an user-info-form");
+    // get elements
+    let firstNameInput = document.getElementById("firstNameInput");
+    let lastNameInput = document.getElementById("lastNameInput");
+    let emailInput = document.getElementById("emailInput");
+    let dateOfBirthInput = document.getElementById("dateOfBirthInput");
+    let contactNumberInput = document.getElementById("contactNumberInput");
+    let genderInput = document.getElementById("genderInput");
+    let passwordInput = document.getElementById("passwordInput");
+    let confirmPasswordInput = document.getElementById("confirmPasswordInput");
+    let inviteCodeInput = document.getElementById("inviteCodeInput");
+
+    // get valid range for date
+    const { min, max } = get_valid_date_range();
+    dateOfBirthInput.setAttribute("min", min);
+    dateOfBirthInput.setAttribute("max", max);
+
+    // submit
+    userInfo.addEventListener("submit", (event) => {
+      // get values
+      let firstName = firstNameInput.value;
+      let lastName = lastNameInput.value;
+      let email = emailInput.value;
+      let dateOfBirth = dateOfBirthInput.value;
+      let contactNumber = contactNumberInput.value;
+      let gender = genderInput.value;
+      let password = passwordInput.value;
+      let confirmPassword = confirmPasswordInput.value;
+      let inviteCode = undefined;
+      if (inviteCodeInput) inviteCode = inviteCodeInput.value;
+
+      // validation
+      try {
+        firstName = checkName(firstName, "First Name");
+        lastName = checkName(lastName, "Last Name");
+        email = checkEmail(email, "Email");
+        dateOfBirth = checkDateOfBirth(dateOfBirth, "Date Of Birth");
+        contactNumber = checkContactNumber(contactNumber, "Contact Number");
+        gender = checkGender(gender, "Gender");
+        password = checkPassword(password, "Password");
+        confirmPassword = checkString(confirmPassword, "Confirm Password");
+        if (inviteCode) inviteCode = checkInviteCode(inviteCode, "Invite Code");
+
+        if (password !== confirmPassword)
+          throw "Error: Confirm password and password does not match.";
+      } catch (e) {
+        event.preventDefault();
+
+        if (firstName) firstNameInput.value = firstName;
+        if (lastName) lastNameInput.value = lastName;
+        if (email) emailInput.value = email;
+        if (gender) genderInput.value = gender;
+        if (dateOfBirth) dateOfBirthInput.value = dateOfBirth;
+        if (contactNumber) contactNumberInput.value = contactNumber;
+        if (password) passwordInput.value = password;
+        confirmPasswordInput.value = "";
+        if (inviteCode) inviteCodeInput.value = inviteCode;
+
+        show_error(e);
+      }
+    });
+  }
 }

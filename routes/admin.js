@@ -279,7 +279,14 @@ router
 router
   .route("/login")
   .get(async (req, res) => {
-    //code here for GET
+    if (req.session.user) {
+      return res.render("admin/login", {
+        title: "Login",
+        hidden: "",
+        error:
+          "Seems like you have already logged in as an user. \nMake sure to login as an admin to access the rest of the admin pages.",
+      });
+    }
     return res.render("admin/login", { title: "Login" });
   })
   .post(async (req, res) => {
@@ -1097,7 +1104,7 @@ router
       );
       if (!newClass.updatedClass) throw "Internal Server Error";
       return res.redirect(`${classID}`);
-    } catch (e) { }
+    } catch (e) {}
   });
 
 router
@@ -1179,7 +1186,7 @@ router
       );
       if (!newSport.updatedSport) throw "Internal Server Error";
       return res.redirect(`${sportID}`);
-    } catch (e) { }
+    } catch (e) {}
   });
 
 router
@@ -1365,7 +1372,6 @@ router.route("/logout").get(async (req, res) => {
   return res.render("admin/logout", { title: "Logout" });
 });
 
-
 router
   .route("/timeSlot")
   .get(async (req, res) => {
@@ -1413,7 +1419,6 @@ router
         timeSlotInfo.slotInput,
         "slotID"
       );
-
     } catch (e) {
       // const sports = await getSportOptions(timeSlotInfo.sportIDInput);
       // const sportPlacetList = await sportPlaceData.getAll();
