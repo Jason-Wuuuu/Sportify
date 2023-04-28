@@ -139,11 +139,6 @@ const helperMethodsForUsers = {
     return password;
   },
 
-  checkPassword(password, varName) {
-    password = this.checkString(password, varName);
-    return password;
-  },
-
   async checkUsedEmail(email) {
     const userCollection = await users();
     const user = await userCollection.findOne({ email: email });
