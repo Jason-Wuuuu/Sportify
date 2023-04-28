@@ -995,7 +995,7 @@ router
 
     // check id
     let classID = req.params.id;
-    classID = validation.checkId(classID);
+    classID = validation.checkId(classID, "classID");
 
     // validation
     try {
@@ -1097,7 +1097,7 @@ router
       );
       if (!newClass.updatedClass) throw "Internal Server Error";
       return res.redirect(`${classID}`);
-    } catch (e) {}
+    } catch (e) { }
   });
 
 router
@@ -1144,7 +1144,7 @@ router
 
     // check id
     let sportID = req.params.id;
-    sportID = validation.checkId(sportID);
+    sportID = validation.checkId(sportID, "sportID");
 
     // validation
     try {
@@ -1179,7 +1179,7 @@ router
       );
       if (!newSport.updatedSport) throw "Internal Server Error";
       return res.redirect(`${sportID}`);
-    } catch (e) {}
+    } catch (e) { }
   });
 
 router
@@ -1242,7 +1242,7 @@ router
 
     // check id
     let sportPlaceID = req.params.id;
-    sportPlaceID = validation.checkId(sportPlaceID);
+    sportPlaceID = validation.checkId(sportPlaceID, "sportPlaceID");
 
     // validation
     try {
@@ -1434,7 +1434,7 @@ router
       //   address: timeSlotInfo.sportplaceIDInput,
       //   description: timeSlotInfo.dateInput,
       //   capacity: timeSlotInfo.slotInput,
-        
+
       // });
       return res.status(500).render("admin/error", {
         title: "Error",

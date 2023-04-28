@@ -192,7 +192,6 @@ router.route("/events/:sports").get(async (req, res) => {
   return res.render("events", { sport: sport, events: eventList });
 });
 
-
 router.route("/venue/:sports").get(async (req, res) => {
   try {
     req.params.sports = helperMethodsForUsers.checkString(req.params.sports, "sports Param");
@@ -202,9 +201,37 @@ router.route("/venue/:sports").get(async (req, res) => {
       error: e,
     });
   }
-  let sport = req.params.sports;
-  let venueList = await sportsplaceData.getSportPlacesBySport(sport);
-  return res.render("venue", { sport: sport, venues: venueList });
+  try {
+    let sport = req.params.sports;
+    let venueList = await sportsplaceData.getSportPlacesBySport(sport);
+    return res.render("venue", { sport: sport, venues: venueList, title: "Venue List" });
+  } catch (e) {
+    return res.status(404).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
+
+router.route("/venueInfo/:id").get(async (req, res) => {
+  try {
+    req.params.id = helperMethodsForUsers.checkId(req.params.id, "sports place id Param");
+  } catch (e) {
+    return res.status(400).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+  try {
+    let sportplaceid = req.params.id;
+    let venuedetails = await sportsplaceData.getSportPlace(sportplaceid);
+    return res.render("venueInfo", { venueinfo: venuedetails ,title:"Reserve Venue"});
+  } catch (e) {
+    return res.status(404).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
 });
 
 export default router;

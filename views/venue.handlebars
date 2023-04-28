@@ -10,32 +10,34 @@
 
     </nav>
 </header>
-
+<h1>{{title}}</h1>
 <h2>List of Venues For : {{sport}}</h2>
-
-{{#each venues}}
-<div class="blog-card">
-    <div class="meta">
-        <div class="photo" style="background-image: url({{this.thumbnail}})"></div>
-        <ul class="details">
-            <li class="location">Location : {{this.address}}</li>
-            <li> Price : {{this.price}}</li>
-            <li> Rating : {{this.rating}}</li>
-        </ul>
+<form  id="venue-form">
+    {{#each venues}}
+    <div class="blog-card">
+        <div class="meta">
+            <div class="photo" style="background-image: url({{this.thumbnail}})"></div>
+            <ul class="details">
+                <li class="location">Location : {{this.address}}</li>
+                <li> Price : {{this.price}}</li>
+                <li> Rating : {{this.rating}}</li>
+            </ul>
+        </div>
+        <div class="description">
+            <h1>{{this.name}}</h1>
+            <p>{{this.description}}</p>
+            <p class="read-more">
+                <a href="/venueInfo/{{this._id}}"> Reserve Venue </a>
+                {{!-- <input type="submit" value="Reserve Venue" > --}}
+                <a style="color: red;">Capacity:
+                    {{this.capacity}}
+                </a>
+            </p>
+        </div>
     </div>
-    <div class="description">
-         <h1>{{this.name}}</h1>
-      <p>{{this.description}}</p>
-        <p class="read-more">
-            <input type="submit" value="Reserve Venue" />
-            <a style="color: red;">Capacity:
-                {{this.capacity}}
-            </a>
-        </p>
-    </div>
-</div>
 
-<div id="error" class="error" {{hidden}}>{{error}}</div>
-{{else}}
-<p>Sorry!<br /> No Venue found for {{sport}}.</p>
-{{/each}}
+    <div id="error" class="error" {{hidden}}>{{error}}</div>
+    {{else}}
+    <p>Sorry!<br /> No Venue found for {{sport}}.</p>
+    {{/each}}
+</form>
