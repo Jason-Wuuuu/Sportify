@@ -4,6 +4,7 @@ import * as eventsData from "../data/user/events.js";
 import * as sportsData from "../data/user/sports.js";
 import { helperMethodsForUsers } from "../data/user/helpers.js";
 import * as sportsplaceData from "../data/user/sportPlaces.js";
+import xss from "xss";
 
 const router = Router();
 
@@ -22,6 +23,12 @@ const getGenderOptions = (selected) => {
     options.splice(index, 1);
   }
   return options;
+};
+
+const applyXSS = (req_body) => {
+  Object.keys(req_body).forEach(function (key, index) {
+    req_body[key] = xss(req_body[key]);
+  });
 };
 
 // http://localhost:3000/
@@ -59,12 +66,16 @@ router
   .post(async (req, res) => {
     let userInfo = req.body;
     if (!userInfo || Object.keys(userInfo).length === 0) {
-      return tus(400).render("admin/error", {
+      return tus(400).render("error", {
         title: "Error",
         error: "There are no fields in the request body",
       });
     }
 
+    // XSS
+    applyXSS(userInfo);
+
+    // validation
     try {
       userInfo.firstNameInput = helperMethodsForUsers.checkName(
         userInfo.firstNameInput,
@@ -138,6 +149,15 @@ router
   })
   .post(async (req, res) => {
     const user = req.body;
+    if (!user || Object.keys(user).length === 0) {
+      return tus(400).render("error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+
+    // XSS
+    applyXSS(user);
 
     // input checking
     try {
