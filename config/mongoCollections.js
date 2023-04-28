@@ -20,3 +20,4 @@ export const sports = getCollectionFn("sports");
 export const sportPlaces = getCollectionFn("sportPlaces");
 export const events = getCollectionFn("events");
 export const classes = getCollectionFn("classes");
+export const timeSlot = getCollectionFn("timeSlot");
