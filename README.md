@@ -12,3 +12,4 @@
 2. routes for admins: '/admin' 
 
 ### Invite code for admin registration: `admin`
+testing 1st commit
