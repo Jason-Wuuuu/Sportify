@@ -15,7 +15,7 @@
 
 <h2>We have {{n}} sport places.</h2>
 
-<label for="add">Add New Sport Place:</label>
+<label>Add New Sport Place:</label>
 <button type="button" id="expand">Add</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
@@ -28,7 +28,7 @@
 
         <label for="sportIDInput">Sport:</label>
         <br>
-        <select id="sportIDInput" , name="sportIDInput">
+        <select id="sportIDInput" name="sportIDInput">
             <option value="">-</option>
             {{#each sports}}
             <option value="{{sportID}}">{{name}}</option>
@@ -43,7 +43,7 @@
 
         <label for="descriptionInput">Description:</label>
         <br>
-        <textarea id="descriptionInput" name="descriptionInput" value="{{description}}">{{description}}</textarea>
+        <textarea id="descriptionInput" name="descriptionInput">{{description}}</textarea>
         <br>
 
         <label for="capacityInput">Capacity:</label>

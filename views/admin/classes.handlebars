@@ -15,7 +15,7 @@
 
 <h2>We have {{n}} classes.</h2>
 
-<label for="add">Add New Class:</label>
+<label>Add New Class:</label>
 <button type="button" id="expand">Add</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
@@ -28,7 +28,7 @@
 
         <label for="sportIDInput">Sport:</label>
         <br>
-        <select id="sportIDInput" , name="sportIDInput">
+        <select id="sportIDInput" name="sportIDInput">
             <option value="">-</option>
             {{#each sports}}
             <option value="{{sportID}}">{{name}}</option>
@@ -38,7 +38,7 @@
 
         <label for="sportPlaceIDInput">Sport Places:</label>
         <br>
-        <select id="sportPlaceIDInput" , name="sportPlaceIDInput">
+        <select id="sportPlaceIDInput" name="sportPlaceIDInput">
             <option value="">-</option>
             {{#each sportPlaces}}
             <option value="{{sportPlaceID}}">{{name}}</option>

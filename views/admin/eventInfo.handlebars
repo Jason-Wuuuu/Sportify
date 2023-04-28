@@ -24,15 +24,15 @@
 </form>
 
 <h3>List of Participants:</h3>
-<dl>
-    <div id="userList">
-        {{#if n}}
-        {{#each participants}}
-        <dt>ID: {{participantID}}</dt>
-        <dd>Name: {{participantFirstName}}, {{participantLastName}}</dd>
+<div id="userList">
+    {{#if n}}
+    <dl>
+        {{#each users}}
+        <dt>ID: {{userID}}</dt>
+        <dd>Name: {{userFirstName}}, {{userLastName}}</dd>
         {{/each}}
-        {{else}}
-        <p>There are no participants for this event...</p>
-        {{/if}}
-    </div>
-</dl>
+    </dl>
+    {{else}}
+    There are no participants for this event...
+    {{/if}}
+</div>

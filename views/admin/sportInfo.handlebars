@@ -8,13 +8,13 @@
 
 <div>
     {{#if thumbnail}}
-    <img class="thumbnail" src="{{thumbnail}}">
+    <img class="thumbnail" src="{{thumbnail}}" alt="{{name}}">
     {{else}}
-    <img class="thumbnail" src="/public/images/No_Image_Available.jpg">
+    <img class="thumbnail" src="/public/images/No_Image_Available.jpg" alt="{{name}}">
     {{/if}}
 </div>
 
-<label for="edit">Edit Sport:</label>
+<label>Edit Sport:</label>
 <button type="button" id="expand">Edit</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
