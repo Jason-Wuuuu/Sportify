@@ -1,4 +1,6 @@
 import bcrypt from "bcrypt";
+import { users } from "../../config/mongoCollections.js";
+
 const helperMethodsForSports = {
   checkString(strVal, varName) {
     if (!strVal) throw `Error: You must supply a ${varName}!`;
@@ -23,18 +25,9 @@ const helperMethodsForEvents = {
   },
 };
 
-const helperMethodsForSportPlaceIDs = {};
+const helperMethodsForSportPlaces = {};
 
 const helperMethodsForUsers = {
-  checkString(strVal, varName) {
-    if (!strVal) throw `Error: You must supply a ${varName}!`;
-    if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
-    strVal = strVal.trim();
-    if (strVal.length === 0)
-      throw `Error: ${varName} cannot be an empty string or string with just spaces`;
-    return strVal;
-  },
-
   checkId(id, varName) {
     if (!id) throw `Error: You must provide a ${varName}`;
     if (typeof id !== "string") throw `Error:${varName} must be a string`;
@@ -79,10 +72,10 @@ const helperMethodsForUsers = {
     const dob = new Date(dateOfBirth);
     if (!dob) throw `Error: Invalid ${varName}.`;
 
-    var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth() + 1; //January is 0
-    var yyyy = today.getFullYear() - 13; // user shouldn't be less than 13 year-old
+    const today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth() + 1; //January is 0
+    let yyyy = today.getFullYear() - 13; // user shouldn't be less than 13 year-old
 
     if (dd < 10) dd = "0" + dd;
     if (mm < 10) mm = "0" + mm;
@@ -102,7 +95,7 @@ const helperMethodsForUsers = {
     contactNumber = contactNumber.replace(" ", "");
     const re_contactNumber = /^[\d]{8,20}$/g;
     if (!contactNumber.match(re_contactNumber))
-      throw `Error: invalid ${varName}`;
+      throw `Error: ${varName} should contain only digits.`;
     return contactNumber;
   },
 
@@ -125,7 +118,36 @@ const helperMethodsForUsers = {
 
   checkPassword(password, varName) {
     password = this.checkString(password, varName);
+
+    const re_password = /[\S]{8,}/g;
+    if (!password.match(re_password))
+      throw `Error: ${varName} should be a minimum of 8 characters long`;
+
+    const re_upper = /[A-Z]/g;
+    if (!re_upper.test(password))
+      throw `Error: ${varName} should contain at least one uppercase character`;
+
+    const re_lower = /[a-z]/g;
+    if (!re_lower.test(password))
+      throw `Error: ${varName} should contain at least one lowercase character`;
+
+    const re_specialChar = /[^a-zA-Z\d\s]/g;
+    if (!re_specialChar.test(password))
+      throw `Error: ${varName} should contain at least one special character`;
+
     return password;
+  },
+
+  checkPassword(password, varName) {
+    password = this.checkString(password, varName);
+    return password;
+  },
+
+  async checkUsedEmail(email) {
+    const userCollection = await users();
+    const user = await userCollection.findOne({ email: email });
+    if (user) throw "Error: Email address already been used.";
+    return true;
   },
 
   async encryptPassword(password, sr = 10) {
@@ -143,6 +165,6 @@ export {
   helperMethodsForUsers,
   helperMethodsForClasses,
   helperMethodsForEvents,
-  helperMethodsForSportPlaceIDs,
+  helperMethodsForSportPlaces,
   helperMethodsForSports,
 };

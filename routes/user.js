@@ -6,6 +6,24 @@ import { helperMethodsForUsers } from "../data/user/helpers.js";
 
 const router = Router();
 
+// functions
+const getGenderOptions = (selected) => {
+  let options = [
+    "male",
+    "female",
+    "transgender",
+    "non-binary",
+    "prefer not to respond",
+  ];
+  if (selected) {
+    const index = options.indexOf(selected);
+    if (!index === -1) throw `Error: ${selected} not found in gender`;
+    options.splice(index, 1);
+  }
+  return options;
+};
+
+// http://localhost:3000/
 router.route("/").get(async (req, res) => {
   const userInfo = req.session.user;
   const sportsInfo = await sportsData.getAll();
@@ -16,7 +34,6 @@ router.route("/").get(async (req, res) => {
     return res.render("homepage", {
       title: "Sportify",
       authenticated: true,
-      firstName: userInfo.firstName,
       sports: sportsInfo,
     });
   } else {
@@ -31,10 +48,19 @@ router.route("/").get(async (req, res) => {
 router
   .route("/register")
   .get(async (req, res) => {
-    return res.render("register", { title: "Register" });
+    return res.render("register", {
+      title: "Register",
+      genderOptions: getGenderOptions(),
+    });
   })
   .post(async (req, res) => {
     let userInfo = req.body;
+    if (!userInfo || Object.keys(userInfo).length === 0) {
+      return tus(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
 
     try {
       userInfo.firstNameInput = helperMethodsForUsers.checkName(
@@ -65,7 +91,11 @@ router
         userInfo.passwordInput,
         "Password"
       );
+
+      await helperMethodsForUsers.checkUsedEmail(userInfo.emailInput);
     } catch (e) {
+      const options = getGenderOptions(userInfo.genderInput);
+
       return res.status(400).render("register", {
         title: "Register",
         hidden: "",
@@ -73,9 +103,10 @@ router
         firstName: userInfo.firstNameInput,
         lastName: userInfo.lastNameInput,
         email: userInfo.emailInput,
-        dateOfBirth: userInfo.dateOfBirth,
-        contactNumber: userInfo.contactNumber,
-        gender: userInfo.gender,
+        dateOfBirth: userInfo.dateOfBirthInput,
+        contactNumber: userInfo.contactNumberInput,
+        gender: userInfo.genderInput,
+        genderOptions: options,
         password: userInfo.passwordInput,
       });
     }
