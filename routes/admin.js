@@ -101,7 +101,6 @@ router
 
     // XSS
     applyXSS(adminInfo);
-    console.log("XSS applied");
 
     // check id
     let adminID = req.session.admin.adminID;
