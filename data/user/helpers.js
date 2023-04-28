@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { users } from "../../config/mongoCollections.js";
+import { ObjectId } from "mongodb";
 
 const helperMethodsForSports = {
   checkString(strVal, varName) {
@@ -135,11 +136,6 @@ const helperMethodsForUsers = {
     if (!re_specialChar.test(password))
       throw `Error: ${varName} should contain at least one special character`;
 
-    return password;
-  },
-
-  checkPassword(password, varName) {
-    password = this.checkString(password, varName);
     return password;
   },
 

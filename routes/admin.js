@@ -9,6 +9,7 @@ import * as sportData from "../data/admin/sports.js";
 import * as sportPlaceData from "../data/admin/sportPlaces.js";
 import validation, { checkUsedEmail } from "../data/admin/helpers.js";
 import xss from "xss";
+import * as timeSlot from "../data/admin/timeSlot.js";
 
 const router = Router();
 
@@ -278,7 +279,14 @@ router
 router
   .route("/login")
   .get(async (req, res) => {
-    //code here for GET
+    if (req.session.user) {
+      return res.render("admin/login", {
+        title: "Login",
+        hidden: "",
+        error:
+          "Seems like you have already logged in as an user. \nMake sure to login as an admin to access the rest of the admin pages.",
+      });
+    }
     return res.render("admin/login", { title: "Login" });
   })
   .post(async (req, res) => {
@@ -994,7 +1002,7 @@ router
 
     // check id
     let classID = req.params.id;
-    classID = validation.checkId(classID);
+    classID = validation.checkId(classID, "classID");
 
     // validation
     try {
@@ -1143,7 +1151,7 @@ router
 
     // check id
     let sportID = req.params.id;
-    sportID = validation.checkId(sportID);
+    sportID = validation.checkId(sportID, "sportID");
 
     // validation
     try {
@@ -1241,7 +1249,7 @@ router
 
     // check id
     let sportPlaceID = req.params.id;
-    sportPlaceID = validation.checkId(sportPlaceID);
+    sportPlaceID = validation.checkId(sportPlaceID, "sportPlaceID");
 
     // validation
     try {
@@ -1363,6 +1371,98 @@ router.route("/logout").get(async (req, res) => {
   req.session.destroy();
   return res.render("admin/logout", { title: "Logout" });
 });
+
+router
+  .route("/timeSlot")
+  .get(async (req, res) => {
+    const sports = await getSportOptions();
+
+    const sportPlacetList = await sportPlaceData.getAll();
+    const sportPlaces = sportPlacetList.map((sportPlace) =>
+      Object({
+        sportPlaceID: sportPlace._id,
+        sportPlaceName: sportPlace.name,
+      })
+    );
+
+    return res.render("admin/timeSlot", {
+      title: "Add TimeSlots",
+      hidden: "hidden",
+      sports: sports,
+      sportPlaces: sportPlaces,
+    });
+  })
+  .post(async (req, res) => {
+    let timeSlotInfo = req.body;
+    if (!timeSlotInfo || Object.keys(timeSlotInfo).length === 0) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+
+    // validation
+    try {
+      timeSlotInfo.sportIDInput = validation.checkId(
+        timeSlotInfo.sportIDInput,
+        "sportID"
+      );
+      timeSlotInfo.sportplaceIDInput = validation.checkId(
+        timeSlotInfo.sportplaceIDInput,
+        "sportPlaceID"
+      );
+      timeSlotInfo.dateInput = validation.checkString(
+        timeSlotInfo.dateInput,
+        "date"
+      );
+      timeSlotInfo.slotInput = validation.checkNumber(
+        timeSlotInfo.slotInput,
+        "slotID"
+      );
+    } catch (e) {
+      // const sports = await getSportOptions(timeSlotInfo.sportIDInput);
+      // const sportPlacetList = await sportPlaceData.getAll();
+      // const sportPlaces = sportPlacetList.map((sportPlace) =>
+      //   Object({
+      //     sportPlaceID: sportPlace._id,
+      //     sportPlaceName: sportPlace.name,
+      //   })
+      // );
+
+      // return res.status(400).render("admin/timeSlot", {
+      //   title: "Add TimeSlots",
+      //   hidden: "",
+      //   error: e,
+      //   sports: sports,
+      //   sportPlaces: sportPlaces,
+      //   name: timeSlotInfo.sportIDInput,
+      //   address: timeSlotInfo.sportplaceIDInput,
+      //   description: timeSlotInfo.dateInput,
+      //   capacity: timeSlotInfo.slotInput,
+
+      // });
+      return res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+
+    try {
+      const newSlot = await timeSlot.create(
+        timeSlotInfo.sportIDInput,
+        timeSlotInfo.sportplaceIDInput,
+        timeSlotInfo.dateInput,
+        timeSlotInfo.slotInput
+      );
+      if (!newSlot.insertedtimeSlot) throw "Internal Server Error";
+      return res.redirect("timeSlot");
+    } catch (e) {
+      return res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
 
 // all other admin urls
 router.route("*").get(async (req, res) => {

@@ -51,7 +51,7 @@ const create = async (
 };
 
 const get = async (userID) => {
-  userID = helperMethodsForUsers.checkId(userID);
+  userID = helperMethodsForUsers.checkId(userID, "userID");
   const userCollection = await users();
   const user = await userCollection.findOne({ _id: new ObjectId(userID) });
   if (!user) throw "Error: user not found";

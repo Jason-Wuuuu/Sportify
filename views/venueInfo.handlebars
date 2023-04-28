@@ -1,0 +1,27 @@
+<header>
+    <nav class="navbar">
+        <a href="/venue/{{venueinfo.sportname}}">Back</a>
+    </nav>
+</header>
+<h1>{{title}}</h1>
+<h2>Venue Details for : {{venueinfo.name}}</h2>
+
+<form id="venueInfo-form">
+    <div id="error" class="error" {{hidden}}>{{error}}</div>
+    <div>
+        {{#if thumbnail}}
+        <img class="thumbnail" src="{{thumbnail}}">
+        {{else}}
+        <img class="thumbnail" src="/public/images/No_Image_Available.jpg">
+        {{/if}}
+    </div>
+    <ul>
+        <li>Sport: {{venueinfo.sportname}}</li>
+        <li>Venue name: {{venueinfo.name}}</li>
+         <li>Description: {{venueinfo.description}}</li>
+        <li>Address: {{venueinfo.address}}</li>       
+        <li>price: {{venueinfo.price}}</li>
+        <li>capacity: {{venueinfo.capacity}}</li>
+        <li>Rating: {{venueinfo.rating}}</li>
+    </ul>
+</form>

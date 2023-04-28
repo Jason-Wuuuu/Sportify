@@ -56,7 +56,7 @@ const getAll = async () => {
 };
 
 const get = async (classID) => {
-  classID = validation.checkId(classID);
+  classID = validation.checkId(classID,"classID");
   const classCollection = await classes();
   const foundClass = await classCollection.findOne({
     _id: new ObjectId(classID),
@@ -66,7 +66,7 @@ const get = async (classID) => {
 };
 
 const remove = async (classID) => {
-  classID = validation.checkId(classID);
+  classID = validation.checkId(classID,"classID");
   const classCollection = await classes();
   const deletionInfo = await classCollection.findOneAndDelete({
     _id: new ObjectId(classID),

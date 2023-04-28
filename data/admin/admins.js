@@ -55,7 +55,7 @@ const getAll = async () => {
 };
 
 const get = async (adminID) => {
-  adminID = validation.checkId(adminID);
+  adminID = validation.checkId(adminID,"adminID");
   const adminCollection = await admins();
   const admin = await adminCollection.findOne({ _id: new ObjectId(adminID) });
   if (!admin) throw "Error: Admin not found";

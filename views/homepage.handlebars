@@ -4,7 +4,7 @@
     {{#if authenticated}}
 
     <a href="/profile">Profile</a>
-
+    <a href="/venue/{{sport}}">Reserve Venue</a>
     <a href="/logout">Logout</a>
 
     {{else}}
@@ -18,7 +18,7 @@
 </header>
 
 {{#if authenticated}}
-<h2>Welcome Back!</h2>
+<h2>Welcome Back! {{userFirstName}}</h2>
 {{/if}}
 
 <div id="cardsdiv">

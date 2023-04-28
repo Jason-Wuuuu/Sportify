@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 import validation from "./helpers.js";
 
 const remove = async (eventID) => {
-  eventID = validation.checkId(eventID);
+  eventID = validation.checkId(eventID,"eventID");
   const eventCollection = await events();
   const deletionInfo = await eventCollection.findOneAndDelete({
     _id: new ObjectId(eventID),
