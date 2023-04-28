@@ -456,6 +456,23 @@ else {
     errorDiv.innerHTML = err_msg;
   };
 
+  // Edit Button
+  let expand = document.getElementById("expand");
+  if (expand) {
+    expand.addEventListener("click", (event) => {
+      let formDiv = document.getElementById("form");
+      let errorDiv = document.getElementById("error");
+
+      if (formDiv.hidden) {
+        formDiv.hidden = false;
+        errorDiv.hidden = false;
+      } else {
+        formDiv.hidden = true;
+        errorDiv.hidden = true;
+      }
+    });
+  }
+
   // login-form
   let loginForm = document.getElementById("user-login-form");
   if (loginForm) {

@@ -199,19 +199,125 @@ router.route("/logout").get(async (req, res) => {
   return res.render("logout", { title: "Logout" });
 });
 
-router.route("/profile").get(async (req, res) => {
-  let userInfo = await userData.get(req.session.user.userID);
+router
+  .route("/profile")
+  .get(async (req, res) => {
+    let userInfo = await userData.get(req.session.user.userID);
 
-  return res.render("profile", {
-    title: "Profile",
-    firstName: userInfo.firstName,
-    lastName: userInfo.lastName,
-    email: userInfo.email,
-    gender: userInfo.gender,
-    dateOfBirth: userInfo.dateOfBirth,
-    contactNumber: userInfo.contactNumber,
+    const options = getGenderOptions(userInfo.gender);
+    return res.render("profile", {
+      title: "Profile",
+      hidden: "hidden",
+      firstName: userInfo.firstName,
+      lastName: userInfo.lastName,
+      email: userInfo.email,
+      gender: userInfo.gender,
+      genderOptions: options,
+      dateOfBirth: userInfo.dateOfBirth,
+      contactNumber: userInfo.contactNumber,
+      newFirstName: userInfo.firstName,
+      newLastName: userInfo.lastName,
+      newEmail: userInfo.email,
+      newGender: userInfo.gender,
+      newDateOfBirth: userInfo.dateOfBirth,
+      newContactNumber: userInfo.contactNumber,
+    });
+  })
+  .put(async (req, res) => {
+    let userInfo = req.body;
+    if (!userInfo || Object.keys(userInfo).length === 0) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+
+    // XSS
+    applyXSS(userInfo);
+
+    // check id
+    let userID = req.session.user.userID;
+    userID = helperMethodsForUsers.checkId(userID);
+
+    // validation
+    try {
+      userInfo.firstNameInput = helperMethodsForUsers.checkName(
+        userInfo.firstNameInput,
+        "First Name"
+      );
+      userInfo.lastNameInput = helperMethodsForUsers.checkName(
+        userInfo.lastNameInput,
+        "Last Name"
+      );
+      userInfo.emailInput = helperMethodsForUsers.checkEmail(
+        userInfo.emailInput,
+        "Email"
+      );
+      userInfo.dateOfBirthInput = helperMethodsForUsers.checkDateOfBirth(
+        userInfo.dateOfBirthInput,
+        "Date Of Birth"
+      );
+      userInfo.contactNumberInput = helperMethodsForUsers.checkContactNumber(
+        userInfo.contactNumberInput,
+        "Contact Number"
+      );
+      userInfo.genderInput = helperMethodsForUsers.checkGender(
+        userInfo.genderInput,
+        "Gender"
+      );
+      userInfo.passwordInput = helperMethodsForUsers.checkPassword(
+        userInfo.passwordInput,
+        "Password"
+      );
+
+      // check email duplicate only when changing the email
+      let user = await userData.get(userID);
+      if (userInfo.emailInput !== user.email)
+        await helperMethodsForUsers.checkUsedEmail(userInfo.emailInput);
+    } catch (e) {
+      let origUserInfo = await userData.get(req.session.user.userID);
+
+      const options = getGenderOptions(userInfo.genderInput);
+      return res.status(400).render("profile", {
+        title: "Profile",
+        hidden: "",
+        error: e,
+        firstName: origUserInfo.firstName,
+        lastName: origUserInfo.lastName,
+        email: origUserInfo.email,
+        gender: origUserInfo.gender,
+        genderOptions: options,
+        dateOfBirth: origUserInfo.dateOfBirth,
+        contactNumber: origUserInfo.contactNumber,
+        newFirstName: userInfo.firstNameInput,
+        newLastName: userInfo.lastNameInput,
+        newEmail: userInfo.emailInput,
+        newGender: userInfo.genderInput,
+        newDateOfBirth: userInfo.dateOfBirthInput,
+        newContactNumber: userInfo.contactNumberInput,
+      });
+    }
+    // update
+    try {
+      const newUser = await userData.update(
+        userID,
+        userInfo.firstNameInput,
+        userInfo.lastNameInput,
+        userInfo.emailInput,
+        userInfo.genderInput,
+        userInfo.dateOfBirthInput,
+        userInfo.contactNumberInput,
+        userInfo.passwordInput
+      );
+      if (!newUser.updatedUser) throw "Internal Server Error";
+      return res.redirect("profile");
+    } catch (e) {
+      return res.status(500).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
   });
-});
 
 router.route("/events/:sports").get(async (req, res) => {
   let sport = req.params.sports;

@@ -73,7 +73,51 @@ const update = async (
   dateOfBirth,
   contactNumber,
   password
-) => {};
+) => {
+  // validation
+  userID = helperMethodsForUsers.checkId(userID);
+  firstName = helperMethodsForUsers.checkString(firstName, "First Name");
+  lastName = helperMethodsForUsers.checkString(lastName, "Last Name");
+  email = helperMethodsForUsers.checkEmail(email, "Email");
+  gender = helperMethodsForUsers.checkGender(gender, "Gender");
+  dateOfBirth = helperMethodsForUsers.checkDateOfBirth(
+    dateOfBirth,
+    "Date Of Birth"
+  );
+  contactNumber = helperMethodsForUsers.checkContactNumber(
+    contactNumber,
+    "Contact Number"
+  );
+  password = helperMethodsForUsers.checkPassword(password, "Password");
+
+  // check email duplicate only when changing the email
+  let user = await get(userID);
+  if (email !== user.email) await helperMethodsForUsers.checkUsedEmail(email);
+
+  // encrypt password
+  password = await helperMethodsForUsers.encryptPassword(password);
+
+  const userCollection = await users();
+  const updatedInfo = await userCollection.findOneAndUpdate(
+    { _id: new ObjectId(userID) },
+    {
+      $set: {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        gender: gender,
+        dateOfBirth: dateOfBirth,
+        contactNumber: contactNumber,
+        password: password,
+      },
+    },
+    { returnDocument: "after" }
+  );
+  if (updatedInfo.lastErrorObject.n === 0) {
+    throw `Error: no user exists with an id of ${userID}.`;
+  }
+  return { updatedUser: true };
+};
 
 const check = async (email, password) => {
   email = helperMethodsForUsers.checkEmail(email, "Email Address");
