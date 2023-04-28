@@ -3,6 +3,7 @@ import * as userData from "../data/user/users.js";
 import * as eventsData from "../data/user/events.js";
 import * as sportsData from "../data/user/sports.js";
 import { helperMethodsForUsers } from "../data/user/helpers.js";
+import * as sportsplaceData from "../data/user/sportPlaces.js";
 
 const router = Router();
 
@@ -189,6 +190,21 @@ router.route("/events/:sports").get(async (req, res) => {
   let sport = req.params.sports;
   let eventList = await eventsData.getEventsBySport(sport);
   return res.render("events", { sport: sport, events: eventList });
+});
+
+
+router.route("/venue/:sports").get(async (req, res) => {
+  try {
+    req.params.sports = helperMethodsForUsers.checkString(req.params.sports, "sports Param");
+  } catch (e) {
+    return res.status(400).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+  let sport = req.params.sports;
+  let venueList = await sportsplaceData.getSportPlacesBySport(sport);
+  return res.render("venue", { sport: sport, venues: venueList });
 });
 
 export default router;

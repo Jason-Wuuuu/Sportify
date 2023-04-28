@@ -4,6 +4,7 @@ import * as admin from "./data/admin/admins.js";
 import * as sports from "./data/admin/sports.js";
 import * as classes from "./data/admin/classes.js";
 import * as sportPlaces from "./data/admin/sportPlaces.js";
+import * as timeSlot from "./data/admin/timeSlot.js";
 
 import { dbConnection, closeConnection } from "./config/mongoConnection.js";
 
@@ -103,6 +104,17 @@ for (let i = 1; i <= number_of_data; i++) {
   } catch (e) {
     console.log(e);
   }
+
+  try {
+    const newslot = await timeSlot.create(
+      sportID,
+      sportPlaceID,      
+      `2023-06-${i + 10}`,
+      2
+    );
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 console.log(`${number_of_data} new valid users added.`);
@@ -111,6 +123,7 @@ console.log(`${number_of_data} new valid sports added.`);
 console.log(`${number_of_data} new valid sport places added.`);
 console.log(`${number_of_data} new valid classes added.`);
 console.log(`${number_of_data} new valid events added.`);
+console.log(`${number_of_data} new valid timeSlot added.`);
 
 await closeConnection();
 console.log("Done!");

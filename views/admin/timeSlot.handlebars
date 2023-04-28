@@ -1,0 +1,66 @@
+<header>
+    <nav class="navbar">
+        <a href="/admin/profile">Profile</a>
+        <a href="/admin/sports">Sports</a>
+        <a href="/admin/sportPlaces">SportPlaces</a>
+        <a href="/admin/classes">Classes</a>
+        <a href="/admin/events">Events</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/timeSlot">Slots</a>
+        <a href="/admin/logout">Logout</a>
+    </nav>
+</header>
+
+<h1>{{title}}</h1>
+
+<label for="add">Add Time Slot:</label>
+<button type="button" id="expand">Add</button>
+
+<div id="error" class="error" {{hidden}}>{{error}}</div>
+<div id="form" class="form" {{hidden}}>
+    <form action="/admin/timeSlot" method="post" id="sport-form">
+        <label for="sportIDInput">Select Sport:</label><br>
+        <select id="sportIDInput" , name="sportIDInput">
+            <option value="">-</option>
+            {{#each sports}}
+            <option value="{{sportID}}">{{name}}</option>
+            {{/each}}
+        </select>
+        <br>
+
+        <label for="sportplaceIDInput">Select Sport Place:</label><br>
+        <select id="sportplaceIDInput" , name="sportplaceIDInput">
+            <option value="">-</option>
+            {{#each sportPlaces}}
+            <option value="{{sportPlaceID}}">{{sportPlaceName}}</option>
+            {{/each}}
+        </select>
+        <br>
+
+        <label for="dateInput">Select Date:</label>
+        <br>
+        <input type="date" id="dateInput" name="dateInput" value="{{date}}" />
+        <br>
+
+        <label for="slotInput">Select Slot:</label>
+        <select name="slotInput" id="slotInput">
+            <option value="">-</option>
+            <option value="1">05:00AM to 01:00PM</option>
+            <option value="2">01:00PM to 09:00PM</option>
+            <option value="3">09:00PM to 05:00PM</option>
+        </select>
+        <br>
+
+        <input type="submit" value="Submit" />
+    </form>
+</div>
+
+
+{{!-- <h3>List of Slots:</h3>
+<div id="sportList">
+    <ul>
+        {{#each sports}}
+        <li><a href="/admin/sports/{{sportID}}">{{sportName}}</a></li>
+        {{/each}}
+    </ul>
+</div> --}}

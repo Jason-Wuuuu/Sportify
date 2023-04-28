@@ -38,7 +38,7 @@ const create = async (
 
 
 const get = async (ID) => {
-    ID = validation.checkId(ID);
+    ID = validation.checkId(ID,"ID");
     const slotCollection = await timeSlot();
     const timeSlot = await slotCollection.findOne({ _id: new ObjectId(ID) });
     if (!timeSlot) throw "Error: Slot can not be found";
