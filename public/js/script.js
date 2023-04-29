@@ -1,3 +1,5 @@
+console.log("This is Sportify");
+
 // client side validation function
 const checkString = (strVal, varName) => {
   if (!strVal) throw `Error: You must supply a ${varName}!`;
