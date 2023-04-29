@@ -199,6 +199,11 @@ router.route("/events/:sports").get(async (req, res) => {
   return res.render("events", { sport: sport, events: eventList });
 });
 
+router.route("/classes/:sports").get(async (req, res) => {
+  let sport = req.params.sports;
+  return res.render("classes", { sport: sport });
+});
+
 router.route("/venue/:sports").get(async (req, res) => {
   try {
     req.params.sports = helperMethodsForUsers.checkString(
