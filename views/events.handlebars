@@ -2,7 +2,7 @@
   <nav class="navbar">
     <a href="/" class="logo">Sportify</a>
 
-    <a href="/events/{{sport}}">Events</a>
+    <a class="active" href="/events/{{sport}}">Events</a>
     <a href="*">Classes</a>
     <a href="/venue/{{sport}}">Reserve Venue</a>
     <a href="*">Places</a>
@@ -31,10 +31,16 @@
       <p>{{this.description}}</p>
       <p class="joinLink">
         {{#if this.available}}
-          <a href="#">
-            RSVP Event! [
-            {{this.participants.length}}/{{this.capacity}}]
-          </a>
+          {{#if this.registered}}
+            <a style="color: green;">
+              Event Joined! ✅
+            </a>
+          {{else}}
+            <a href="/events/{{sport}}/register/{{this._id}}">
+              RSVP Event! [
+              {{this.participants.length}}/{{this.capacity}}]
+            </a>
+          {{/if}}
         {{else}}
           <a style="color: red;">Event Full! 😢 [
             {{this.participants.length}}/{{this.capacity}}]
