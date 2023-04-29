@@ -5,12 +5,12 @@ import validation from "./helpers.js";
 //
 const create = async (name, sportID, address, description, capacity, price) => {
   // validation
-  name = validation.checkString(name, "Name");
+  name = validation.checkTitle(name, "Name");
   sportID = validation.checkId(sportID, "SportID");
   address = validation.checkString(address, "Address");
   description = validation.checkString(description, "Description");
   capacity = validation.checkCapacity(capacity, "Capacity");
-  price = validation.checkNumber(price, "Price");
+  price = validation.checkPrice(price, "Price");
 
   // add valid sport place to db
   let newSportPlace = {
@@ -42,7 +42,7 @@ const getAll = async () => {
 };
 
 const get = async (sportPlaceID) => {
-  sportPlaceID = validation.checkId(sportPlaceID);
+  sportPlaceID = validation.checkId(sportPlaceID,"sportPlaceID");
   const sportPlaceCollection = await sportPlaces();
   const sportPlace = await sportPlaceCollection.findOne({
     _id: new ObjectId(sportPlaceID),
@@ -52,7 +52,7 @@ const get = async (sportPlaceID) => {
 };
 
 const remove = async (sportPlaceID) => {
-  sportPlaceID = validation.checkId(sportPlaceID);
+  sportPlaceID = validation.checkId(sportPlaceID,"sportPlaceID");
   const sportPlaceCollection = await sportPlaces();
   const deletionInfo = await sportPlaceCollection.findOneAndDelete({
     _id: new ObjectId(sportPlaceID),
@@ -74,13 +74,15 @@ const update = async (
   thumbnail
 ) => {
   // validation
-  sportPlaceID = validation.checkId(sportPlaceID);
-  name = validation.checkString(name, "Name");
-  sportID = validation.checkString(sportID, "SportID");
+  sportPlaceID = validation.checkId(sportPlaceID,"sportPlaceID");
+  name = validation.checkTitle(name, "Name");
+  sportID = validation.checkId(sportID, "SportID");
   address = validation.checkString(address, "Address");
   description = validation.checkString(description, "Description");
   capacity = validation.checkCapacity(capacity, "Capacity");
-  price = validation.checkNumber(price, "Price");
+  price = validation.checkPrice(price, "Price");
+
+  if (thumbnail) thumbnail = validation.checkURL(thumbnail, "Thumbnail");
 
   const sportPlaceInfo = {
     name: name,

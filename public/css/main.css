@@ -130,7 +130,7 @@ img.thumbnail {
 }
 
 .error {
-  color: lightcoral;
+  color: #f38787;
 
   font-size: larger;
   font-weight: bold;
@@ -151,12 +151,14 @@ img.thumbnail {
   color: black;
   text-align: center;
 }
+
 .cardlink {
   text-decoration: none;
   color: white;
   font-weight: bolder;
   font-size: 25px;
 }
+
 .card:hover {
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }

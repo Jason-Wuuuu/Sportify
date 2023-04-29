@@ -6,14 +6,16 @@
         <a href="/admin/classes">Classes</a>
         <a href="/admin/events">Events</a>
         <a href="/admin/users">Users</a>
+        <a href="/admin/timeSlot">Slots</a>
         <a href="/admin/logout">Logout</a>
     </nav>
 </header>
 
 <h1>{{title}}</h1>
 
+<h2>We have {{n}} sports.</h2>
 
-<label for="add">Add New Sport:</label>
+<label>Add New Sport:</label>
 <button type="button" id="expand">Add</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>

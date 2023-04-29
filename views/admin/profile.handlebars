@@ -6,24 +6,25 @@
         <a href="/admin/classes">Classes</a>
         <a href="/admin/events">Events</a>
         <a href="/admin/users">Users</a>
+        <a href="/admin/timeSlot">Slots</a>
         <a href="/admin/logout">Logout</a>
     </nav>
 </header>
 
 <h1>Welcome Back {{firstName}}!</h1>
 
-<h3>You're an Admin!</h3>
+<h2>You're an Admin!</h2>
 
 <ul>
     <li>First Name: {{firstName}}</li>
     <li>Last Name: {{lastName}}</li>
     <li>Email: {{email}}</li>
-    <li id="gender" value="{{gender}}">Gender: {{gender}}</li>
+    <li>Gender: {{gender}}</li>
     <li>Date Of Birth: {{dateOfBirth}}</li>
     <li>Contact Number: {{contactNumber}}</li>
 </ul>
 
-<label for="edit">Edit Profile:</label>
+<label>Edit Profile:</label>
 <button type="button" id="expand">Edit</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
@@ -66,7 +67,7 @@
         <input type="password" id="passwordInput" name="passwordInput" />
         <br>
 
-        <label for="password-hint" class="hint">Password Hint:</label><br>
+        <label class="hint">Password Hint:</label><br>
         <ul id="password-hint">
             <li class="hint">Should be a minimum of 8 characters long</li>
             <li class="hint">Should contain at least one uppercase character</li>

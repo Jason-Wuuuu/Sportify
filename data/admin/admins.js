@@ -1,6 +1,6 @@
 import { admins } from "../../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
-import validation, { passwordMethods } from "./helpers.js";
+import validation, { passwordMethods, checkUsedEmail } from "./helpers.js";
 
 const create = async (
   firstName,
@@ -24,9 +24,7 @@ const create = async (
   password = validation.checkPassword(password, "Password");
 
   // check if email has already been used
-  const adminCollection = await admins();
-  const admin = await adminCollection.findOne({ email: email });
-  if (admin) throw "Error: Email address already been used.";
+  await checkUsedEmail(email);
 
   // encrypt password
   password = await passwordMethods.encrypt(password);
@@ -42,6 +40,7 @@ const create = async (
     password: password,
   };
 
+  const adminCollection = await admins();
   const newInsertInformation = await adminCollection.insertOne(newAdmin);
   const newId = newInsertInformation.insertedId;
   await get(newId.toString());
@@ -56,7 +55,7 @@ const getAll = async () => {
 };
 
 const get = async (adminID) => {
-  adminID = validation.checkId(adminID);
+  adminID = validation.checkId(adminID,"adminID");
   const adminCollection = await admins();
   const admin = await adminCollection.findOne({ _id: new ObjectId(adminID) });
   if (!admin) throw "Error: Admin not found";
@@ -85,6 +84,10 @@ const update = async (
     "Contact Number"
   );
   password = validation.checkPassword(password, "Password");
+
+  // check email duplicate only when changing the email
+  let admin = await get(adminID);
+  if (email !== admin.email) await checkUsedEmail(email);
 
   // encrypt password
   password = await passwordMethods.encrypt(password);

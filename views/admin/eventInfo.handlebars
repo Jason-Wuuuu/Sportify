@@ -23,24 +23,16 @@
     <button type="submit" id="remove">Remove</button>
 </form>
 
-{{#if approved}}
-<h3>This event has been approved!</h3>
-
 <h3>List of Participants:</h3>
-<dl>
-    <div id="userList">
-        {{#if n}}
-        {{#each participants}}
-        <dt>ID: {{participantID}}</dt>
-        <dd>Name: {{participantFirstName}}, {{participantLastName}}</dd>
+<div id="userList">
+    {{#if n}}
+    <dl>
+        {{#each users}}
+        <dt>ID: {{userID}}</dt>
+        <dd>Name: {{userFirstName}}, {{userLastName}}</dd>
         {{/each}}
-        {{else}}
-        <p>There are no participants for this event...</p>
-        {{/if}}
-    </div>
-</dl>
-{{else}}
-<form action="/admin/events/{{id}}" method="post">
-    <input type="submit" id="approve" name="approve" value="Approve" />
-</form>
-{{/if}}
+    </dl>
+    {{else}}
+    There are no participants for this event...
+    {{/if}}
+</div>

@@ -31,6 +31,22 @@ const checkNumber = (numVal, varName) => {
   return numVal;
 };
 
+const checkTitle = (title, varName) => {
+  title = checkString(title, varName);
+  if (Number.parseInt(title))
+    throw `Error: ${varName} shouldn't be only numbers.`;
+  return title;
+};
+
+const checkURL = (url, varName) => {
+  url = checkString(url, varName);
+
+  const re_url = /[\/\S]+/g;
+  if (!url.match(re_url))
+    throw `Error: ${varName} is and invalid url or contains spaces.`;
+  return url;
+};
+
 const checkEmail = (email, varName) => {
   email = checkString(email, varName);
 
@@ -58,7 +74,8 @@ const checkContactNumber = (contactNumber, varName) => {
 
   contactNumber = contactNumber.replace(" ", "");
   const re_contactNumber = /^[\d]{8,20}$/g;
-  if (!contactNumber.match(re_contactNumber)) throw `Error: invalid ${varName}`;
+  if (!contactNumber.match(re_contactNumber))
+    throw `Error: ${varName} should contain only digits.`;
   return contactNumber;
 };
 
@@ -128,7 +145,7 @@ const checkDate = (date, varName) => {
   if (!d) throw `Error: Invalid ${varName}.`;
 
   const today = new Date();
-  if (d < today) throw `Error: Invalid Date.`;
+  if (d < today) throw `Error: Date shouldn't be less than today.`;
 
   return date;
 };
@@ -151,7 +168,7 @@ const checkTime = (time, varName) => {
 const checkTimeRange = (start, end) => {
   const s = new Date(`2000-01-01 ${start}`);
   const e = new Date(`2000-01-01 ${end}`);
-  if (e < s) throw `Error: Invalid Time Range`;
+  if (e <= s) throw `Error: Invalid Time Range`;
 };
 
 // maximum date
@@ -296,18 +313,23 @@ if (document.URL.includes("/admin")) {
   if (sportInfo) {
     // get elements
     let nameInput = document.getElementById("nameInput");
+    let thumbnailInput = document.getElementById("thumbnailInput");
 
     // submit
     sportInfo.addEventListener("submit", (event) => {
       // get values
       let name = nameInput.value;
+      let thumbnail = undefined;
+      if (thumbnailInput) thumbnail = thumbnailInput.value;
 
       //validation
       try {
-        name = checkString(name, "Name");
+        name = checkTitle(name, "Name");
+        if (thumbnail) thumbnail = checkURL(thumbnail, "Thumbnail");
       } catch (e) {
         event.preventDefault();
         if (name) nameInput.value = name;
+        if (thumbnail) thumbnailInput.value = thumbnail;
         show_error(e);
       }
     });
@@ -323,6 +345,7 @@ if (document.URL.includes("/admin")) {
     let descriptionInput = document.getElementById("descriptionInput");
     let capacityInput = document.getElementById("capacityInput");
     let priceInput = document.getElementById("priceInput");
+    let thumbnailInput = document.getElementById("thumbnailInput");
 
     // submit
     sportPlaceInfo.addEventListener("submit", (event) => {
@@ -333,6 +356,8 @@ if (document.URL.includes("/admin")) {
       let description = descriptionInput.value;
       let capacity = capacityInput.value;
       let price = priceInput.value;
+      let thumbnail = undefined;
+      if (thumbnailInput) thumbnail = thumbnailInput.value;
 
       //validation
       try {
@@ -342,6 +367,7 @@ if (document.URL.includes("/admin")) {
         description = checkString(description, "Description");
         capacity = checkCapacity(capacity, "Capacity");
         price = checkPrice(price, "Price");
+        if (thumbnail) thumbnail = checkURL(thumbnail, "Thumbnail");
       } catch (e) {
         event.preventDefault();
         if (name) nameInput.value = name;
@@ -349,6 +375,7 @@ if (document.URL.includes("/admin")) {
         if (description) descriptionInput.value = description;
         if (capacity) capacityInput.value = capacity;
         if (price) priceInput.value = price;
+        if (thumbnail) thumbnailInput.value = thumbnail;
         show_error(e);
       }
     });
@@ -359,14 +386,15 @@ if (document.URL.includes("/admin")) {
   if (classInfo) {
     // get elements
     let titleInput = document.getElementById("titleInput");
-    let sportInput = document.getElementById("sportInput");
-    let sportPlaceInput = document.getElementById("sportPlaceInput");
+    let sportIDInput = document.getElementById("sportIDInput");
+    let sportPlaceIDInput = document.getElementById("sportPlaceIDInput");
     let capacityInput = document.getElementById("capacityInput");
     let instructorInput = document.getElementById("instructorInput");
     let priceInput = document.getElementById("priceInput");
     let dateInput = document.getElementById("dateInput");
     let startTimeInput = document.getElementById("startTimeInput");
     let endTimeInput = document.getElementById("endTimeInput");
+    let thumbnailInput = document.getElementById("thumbnailInput");
 
     const today = new Date();
     let dd = today.getDate() + 1;
@@ -380,20 +408,22 @@ if (document.URL.includes("/admin")) {
     classInfo.addEventListener("submit", (event) => {
       // get values
       let title = titleInput.value;
-      let sport = sportInput.value;
-      let sportPlace = sportPlaceInput.value;
+      let sportID = sportIDInput.value;
+      let sportPlaceID = sportPlaceIDInput.value;
       let capacity = capacityInput.value;
       let instructor = instructorInput.value;
       let price = priceInput.value;
       let date = dateInput.value;
       let startTime = startTimeInput.value;
       let endTime = endTimeInput.value;
+      let thumbnail = undefined;
+      if (thumbnailInput) thumbnail = thumbnailInput.value;
 
       //validation
       try {
         title = checkString(title, "Title");
-        sport = checkString(sport, "Sport");
-        sportPlace = checkString(sportPlace, "Sport Place");
+        sportID = checkString(sportID, "SportID");
+        sportPlaceID = checkString(sportPlaceID, "Sport PlaceID");
         capacity = checkCapacity(capacity, "Capacity");
         instructor = checkName(instructor, "Instructor");
         price = checkPrice(price, "Price");
@@ -401,17 +431,17 @@ if (document.URL.includes("/admin")) {
         startTime = checkTime(startTime, "Start Time");
         endTime = checkTime(endTime, "End Time");
         checkTimeRange(startTime, endTime);
+        if (thumbnail) thumbnail = checkURL(thumbnail, "Thumbnail");
       } catch (e) {
         event.preventDefault();
         if (title) titleInput.value = title;
-        if (sport) sportInput.value = sport;
-        if (sportPlace) sportPlaceInput.value = sportPlace;
         if (capacity) capacityInput.value = capacity;
         if (instructor) instructorInput.value = instructor;
         if (price) priceInput.value = price;
         if (date) dateInput.value = date;
         if (startTime) startTimeInput.value = startTime;
         if (endTime) endTimeInput.value = endTime;
+        if (thumbnail) thumbnailInput.value = thumbnail;
         show_error(e);
       }
     });
@@ -429,4 +459,122 @@ else {
       error.textContent = "Please Log-In or SignUp to see next page.";
     });
   });
+  // error showing function
+  const show_error = (err_msg) => {
+    let errorDiv = document.getElementById("error");
+    errorDiv.hidden = false;
+    errorDiv.innerHTML = err_msg;
+  };
+
+  // Edit Button
+  let expand = document.getElementById("expand");
+  if (expand) {
+    expand.addEventListener("click", (event) => {
+      let formDiv = document.getElementById("form");
+      let errorDiv = document.getElementById("error");
+
+      if (formDiv.hidden) {
+        formDiv.hidden = false;
+        errorDiv.hidden = false;
+      } else {
+        formDiv.hidden = true;
+        errorDiv.hidden = true;
+      }
+    });
+  }
+
+  // login-form
+  let loginForm = document.getElementById("user-login-form");
+  if (loginForm) {
+    console.log("We found a user-login-form");
+    // get elements
+    let emailInput = document.getElementById("emailAddressInput");
+    emailInput.focus();
+    let passwordInput = document.getElementById("passwordInput");
+    // submit
+    loginForm.addEventListener("submit", (event) => {
+      // get values
+      let email = emailInput.value;
+      let password = passwordInput.value;
+      try {
+        email = checkEmail(email, "email");
+        password = checkString(password, "password");
+      } catch (e) {
+        event.preventDefault();
+        if (email) {
+          emailInput.value = email;
+          passwordInput.focus();
+        } else {
+          emailInput.focus();
+        }
+        show_error(e);
+      }
+    });
+  }
+
+  // register and profile
+  let userInfo = document.getElementById("user-info-form");
+  if (userInfo) {
+    console.log("We found an user-info-form");
+    // get elements
+    let firstNameInput = document.getElementById("firstNameInput");
+    let lastNameInput = document.getElementById("lastNameInput");
+    let emailInput = document.getElementById("emailInput");
+    let dateOfBirthInput = document.getElementById("dateOfBirthInput");
+    let contactNumberInput = document.getElementById("contactNumberInput");
+    let genderInput = document.getElementById("genderInput");
+    let passwordInput = document.getElementById("passwordInput");
+    let confirmPasswordInput = document.getElementById("confirmPasswordInput");
+    let inviteCodeInput = document.getElementById("inviteCodeInput");
+
+    // get valid range for date
+    const { min, max } = get_valid_date_range();
+    dateOfBirthInput.setAttribute("min", min);
+    dateOfBirthInput.setAttribute("max", max);
+
+    // submit
+    userInfo.addEventListener("submit", (event) => {
+      // get values
+      let firstName = firstNameInput.value;
+      let lastName = lastNameInput.value;
+      let email = emailInput.value;
+      let dateOfBirth = dateOfBirthInput.value;
+      let contactNumber = contactNumberInput.value;
+      let gender = genderInput.value;
+      let password = passwordInput.value;
+      let confirmPassword = confirmPasswordInput.value;
+      let inviteCode = undefined;
+      if (inviteCodeInput) inviteCode = inviteCodeInput.value;
+
+      // validation
+      try {
+        firstName = checkName(firstName, "First Name");
+        lastName = checkName(lastName, "Last Name");
+        email = checkEmail(email, "Email");
+        dateOfBirth = checkDateOfBirth(dateOfBirth, "Date Of Birth");
+        contactNumber = checkContactNumber(contactNumber, "Contact Number");
+        gender = checkGender(gender, "Gender");
+        password = checkPassword(password, "Password");
+        confirmPassword = checkString(confirmPassword, "Confirm Password");
+        if (inviteCode) inviteCode = checkInviteCode(inviteCode, "Invite Code");
+
+        if (password !== confirmPassword)
+          throw "Error: Confirm password and password does not match.";
+      } catch (e) {
+        event.preventDefault();
+
+        if (firstName) firstNameInput.value = firstName;
+        if (lastName) lastNameInput.value = lastName;
+        if (email) emailInput.value = email;
+        if (gender) genderInput.value = gender;
+        if (dateOfBirth) dateOfBirthInput.value = dateOfBirth;
+        if (contactNumber) contactNumberInput.value = contactNumber;
+        if (password) passwordInput.value = password;
+        confirmPasswordInput.value = "";
+        if (inviteCode) inviteCodeInput.value = inviteCode;
+
+        show_error(e);
+      }
+    });
+  }
 }

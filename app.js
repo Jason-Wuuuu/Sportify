@@ -169,14 +169,6 @@ app.use("/admin/events/remove/:id", (req, res, next) => {
   next();
 });
 
-app.use("/admin/events/:id", (req, res, next) => {
-  if (!req.session.admin) {
-    return res.redirect("/admin/login");
-  }
-  if (req.method === "POST") req.method = "PUT";
-  next();
-});
-
 app.use("/admin/logout", (req, res, next) => {
   if (!req.session.admin) {
     return res.redirect("/admin/login");
@@ -199,6 +191,14 @@ app.use("/register", (req, res, next) => {
   next();
 });
 
+app.use("/profile", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/login");
+  }
+  if (req.method === "POST") req.method = "PUT";
+  next();
+});
+
 app.use(async (req, res, next) => {
   const currentTime = new Date().toUTCString();
   const req_method = req.method;
@@ -208,7 +208,7 @@ app.use(async (req, res, next) => {
   if (req.session.admin) authenticated = "Admin";
 
   const log_msg = `[${currentTime}]: ${req_method} ${req_route} (${authenticated})`;
-  //console.log(log_msg);
+  console.log(log_msg);
 
   next();
 });

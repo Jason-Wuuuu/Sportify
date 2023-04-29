@@ -5,8 +5,9 @@ import validation from "./helpers.js";
 //
 const create = async (name) => {
   // validation
-  name = validation.checkString(name, "name");
+  name = validation.checkTitle(name, "Name");
 
+  // add valid sport to db
   let newSport = {
     name: name,
     thumbnail: "",
@@ -27,7 +28,7 @@ const getAll = async () => {
 };
 
 const get = async (sportID) => {
-  sportID = validation.checkId(sportID);
+  sportID = validation.checkId(sportID,"sportID");
   const sportCollection = await sports();
   const sport = await sportCollection.findOne({ _id: new ObjectId(sportID) });
   if (!sport) throw "Error: Sport not found";
@@ -35,7 +36,7 @@ const get = async (sportID) => {
 };
 
 const remove = async (sportID) => {
-  sportID = validation.checkId(sportID);
+  sportID = validation.checkId(sportID,"sportID");
   const sportCollection = await sports();
   const deletionInfo = await sportCollection.findOneAndDelete({
     _id: new ObjectId(sportID),
@@ -48,8 +49,10 @@ const remove = async (sportID) => {
 
 const update = async (sportID, name, thumbnail) => {
   // validation
-  sportID = validation.checkId(sportID);
-  name = validation.checkString(name, "name");
+  sportID = validation.checkId(sportID,"sportID");
+  name = validation.checkTitle(name, "Name");
+
+  if (thumbnail) thumbnail = validation.checkURL(thumbnail, "Thumbnail");
 
   const sportUpdateInfo = {
     name: name,
