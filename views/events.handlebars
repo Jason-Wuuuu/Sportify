@@ -15,20 +15,20 @@
 <h2>Latest Events For : {{sport}}</h2>
 
 {{#each events}}
-  <div class="blog-card">
-    <div class="meta">
-      <div class="photo" style="background-image: url({{this.image}})"></div>
-      <ul class="details">
+  <div class="bgcard">
+    <div class="info">
+      <div class="bgimg" style="background-image: url({{this.image}})"></div>
+      <ul class="info-list">
         <li class="author">Event By : {{this.username}}</li>
         <li class="date">Date : {{this.date}}</li>
         <li class="location">Location : {{this.sportPlace}}</li>
         <li class="time"> Time : {{this.startTime}} to {{this.endTime}}</li>
       </ul>
     </div>
-    <div class="description">
+    <div class="textDetails">
       <h1>{{this.name}}</h1>
       <p>{{this.description}}</p>
-      <p class="read-more">
+      <p class="joinLink">
         {{#if this.available}}
           <a href="#">
             RSVP Event! [

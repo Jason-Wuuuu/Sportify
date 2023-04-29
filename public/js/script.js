@@ -419,4 +419,14 @@ if (document.URL.includes("/admin")) {
 }
 //client side js for user
 else {
+  //homepage
+  const links = document.querySelectorAll("a.err");
+
+  links.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      let error = document.getElementById("error-msg");
+      error.textContent = "Please Log-In or SignUp to see next page.";
+    });
+  });
 }

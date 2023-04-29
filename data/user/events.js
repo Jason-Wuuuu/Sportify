@@ -85,9 +85,16 @@ const getEventsBySport = async (sport) => {
   sport = validation.helperMethodsForEvents.checkString(sport, "Sport");
 
   const eventCollection = await events();
+  let dt = new Date();
+  const yyyy = dt.getFullYear();
+  const mm = String(dt.getMonth() + 1).padStart(2, "0");
+  const dd = String(dt.getDate()).padStart(2, "0");
+  const fdt = `${yyyy}-${mm}-${dd}`;
+
   const event = await eventCollection
     .find({
       sport: sport,
+      date: { $gte: fdt },
     })
     .toArray();
   if (!event) throw "Error: Event not found";
@@ -102,6 +109,9 @@ const getEventsBySport = async (sport) => {
       } catch (e) {
         item.username = "Unknown User";
         item._id = item._id.toString();
+        item._id = item._id.toString();
+        item.available =
+          item.participants.length < item.capacity ? true : false;
       }
     }
   }

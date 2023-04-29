@@ -19,24 +19,39 @@
 
 {{#if authenticated}}
   <h2>Welcome Back! {{firstName}}</h2>
-{{/if}}
 
-<div id="cardsdiv">
-  <div class="cards">
-    {{#each sports}}
-      <div class="card">
-        <img
-          src={{this.thumbnail}}
-          alt="{{this.name}} Image"
-          style="width:100%"
-        />
-        <div class="container">
-          <h4><a
-              class="cardlink"
-              href="/events/{{this.name}}"
-            >{{this.name}}</a></h4>
+  <div id="cardsdiv">
+    <div class="cards">
+      {{#each sports}}
+        <div class="card">
+          <img src={{this.thumbnail}} alt="{{this.name}}" style="width:100%" />
+          <div class="container">
+            <h4><a
+                id="sport-link"
+                class="cardlink"
+                href="/events/{{this.name}}"
+              >{{this.name}}</a></h4>
+          </div>
         </div>
-      </div>
-    {{/each}}
+      {{/each}}
+    </div>
   </div>
-</div>
+{{else}}
+  <h2 id="error-msg"></h2>
+
+  <div id="cardsdiv">
+    <div class="cards">
+      {{#each sports}}
+        <div class="card">
+          <img src={{this.thumbnail}} alt="{{this.name}}" style="width:100%" />
+          <div class="container">
+            <h4><a
+                class="cardlink err"
+                href="/events/{{this.name}}"
+              >{{this.name}}</a></h4>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+{{/if}}
