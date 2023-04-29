@@ -1,4 +1,4 @@
-import { Router } from "express";
+import e, { Router } from "express";
 import * as userData from "../data/user/users.js";
 import * as eventsData from "../data/user/events.js";
 import * as sportsData from "../data/user/sports.js";
@@ -322,7 +322,52 @@ router
 router.route("/events/:sports").get(async (req, res) => {
   let sport = req.params.sports;
   let eventList = await eventsData.getEventsBySport(sport);
-  return res.render("events", { sport: sport, events: eventList });
+  for (let item of eventList) {
+    if (item.participants.includes(req.session.user.userID)) {
+      item.registered = true;
+    } else {
+      item.registered = false;
+    }
+  }
+  return res.render("events", {
+    title: "events",
+    sport: sport,
+    events: eventList,
+  });
+});
+
+router.route("/events/:sports/register/:eventid").get(async (req, res) => {
+  try {
+    let eventid = req.params.eventid;
+    if (req.session.user) {
+      let uid = req.session.user.userID;
+      let updateParticipantlist = await eventsData.join(eventid, uid);
+      if (updateParticipantlist.updatedEventParticipants == true) {
+        let eventList = await eventsData.getEventsBySport(req.params.sports);
+        for (let item of eventList) {
+          if (item.participants.includes(req.session.user.userID)) {
+            item.registered = true;
+          } else {
+            item.registered = false;
+          }
+        }
+        return res.render("events", {
+          title: "events",
+          sport: req.params.sports,
+          events: eventList,
+        });
+      } else {
+        throw "Failed to Add User in Participant list.";
+      }
+    } else {
+      throw "Only authenticated USER can use this feature!";
+    }
+  } catch (e) {
+    return res.status(400).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
 });
 
 router.route("/venue/:sports").get(async (req, res) => {

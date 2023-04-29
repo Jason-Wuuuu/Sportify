@@ -47,13 +47,6 @@ app.use("/admin/login", (req, res, next) => {
   next();
 });
 
-app.use("/events/:sports", (req, res, next) => {
-  if (!req.session.user && !req.session.admin) {
-    return res.redirect("/");
-  }
-  next();
-});
-
 app.use("/admin/register", (req, res, next) => {
   if (req.session.admin) {
     return res.redirect("/admin/profile");
@@ -177,6 +170,20 @@ app.use("/admin/logout", (req, res, next) => {
 });
 
 // middleware for users
+app.use("/events/:sports", (req, res, next) => {
+  if (!req.session.user && !req.session.admin) {
+    return res.redirect("/");
+  }
+  next();
+});
+
+app.use("/events/:sports/register/:eventid", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
 app.use("/login", (req, res, next) => {
   if (req.session.user) {
     return res.redirect("/");

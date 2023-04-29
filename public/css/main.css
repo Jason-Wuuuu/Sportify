@@ -353,3 +353,8 @@ a.logo {
     padding-left: 25px;
   }
 }
+
+.active {
+  color: orange;
+  font-weight: bold;
+}

@@ -72,7 +72,18 @@ const update = async (
 
 //
 const join = async (eventID, userID) => {
-  // add user to the participant field (an array) in events collection
+  eventID = validation.helperMethodsForEvents.checkId(eventID, "eventID");
+  userID = validation.helperMethodsForEvents.checkId(userID, "userID");
+  const eventCollection = await events();
+  const updateInfo = await eventCollection.findOneAndUpdate(
+    { _id: new ObjectId(eventID) },
+    { $push: { participants: userID } },
+    { returnDocument: "after" }
+  );
+  if (updateInfo.lastErrorObject.n === 0)
+    throw `Error: Update failed, could not find a sport with id of ${sportID}`;
+
+  return { updatedEventParticipants: true };
 };
 
 const quit = async (eventID, userID) => {};
@@ -103,16 +114,13 @@ const getEventsBySport = async (sport) => {
       try {
         let user = await userData.get(item.userID);
         item.username = user.firstName + " " + user.lastName;
-        item._id = item._id.toString();
-        item.available =
-          item.participants.length < item.capacity ? true : false;
+
+        //if(item.participants.includes())
       } catch (e) {
         item.username = "Unknown User";
-        item._id = item._id.toString();
-        item._id = item._id.toString();
-        item.available =
-          item.participants.length < item.capacity ? true : false;
       }
+      item._id = item._id.toString();
+      item.available = item.participants.length < item.capacity ? true : false;
     }
   }
   return event;
@@ -128,5 +136,5 @@ const getAvailableEvents = async () => {}; // events that the capacity is not fu
 
 // sorting ?
 
-export { create, get, getAll, getEventsBySport };
+export { create, get, getAll, getEventsBySport, join };
 //testing my local branch repo connection to github repo via test commit
