@@ -14,4 +14,26 @@
 </header>
 
 
-<h2>Your classes for : {{sport}}</h2>
+<h2>Classes for : {{sport}}</h2>
+
+{{#each classList}}
+  <div class="blog-card">
+    <div class="meta">
+      <ul class="details">
+        <li class="author">Instructor : {{this.instructor}}</li>
+        <li class="date">Date : {{this.date}}</li>
+        <li class="time"> Time : {{this.startTime}} to {{this.endTime}}</li>
+      </ul>
+    </div>
+   <div class="description">
+      <h1>{{this.title}}</h1>
+      <p>Rating: {{this.rating}}</p>
+      <p>Price: {{this.price}}</p>
+      <p class="read-more">
+       Capacity: {{this.capacity}}
+      </p>
+    </div>
+  </div>
+{{else}}
+  <p>Sorry!<br /> No classes found for {{sport}}.</p>
+{{/each}}
