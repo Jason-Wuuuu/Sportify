@@ -3,6 +3,8 @@ import { ObjectId } from "mongodb";
 
 const reserve = async (classID, userID) => {
   // add user to the student field (an array) in class collection
+  const classCollection = await classes();
+
 };
 
 const quit = async (classID, userID) => {};
@@ -15,7 +17,11 @@ const getAllClasses = async () => {};
 
 const getAllStudents = async (classID) => {};
 
-const getClassesBySport = async (sportID) => {};
+const getClassesBySport = async (sportID) => {
+  const classCollection = await classes();
+  const classList = await classCollection.find({sportID: sportID}).toArray();
+  return classList;
+};
 
 const getClassesBySportPlace = async (sportPlaceID) => {};
 
@@ -24,5 +30,7 @@ const getClassesByInstructor = async (instructor) => {};
 const getClassesByTime = async (time) => {};
 
 const getAvailableClasses = async () => {}; // classes that the capacity is not full
+
+export {getClassesBySport};
 
 // sorting ?
