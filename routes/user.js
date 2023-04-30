@@ -2,6 +2,7 @@ import { Router } from "express";
 import * as userData from "../data/user/users.js";
 import * as eventsData from "../data/user/events.js";
 import * as sportsData from "../data/user/sports.js";
+import * as classesData from "../data/user/classes.js";
 import { helperMethodsForUsers } from "../data/user/helpers.js";
 import * as sportsplaceData from "../data/user/sportPlaces.js";
 
@@ -200,8 +201,11 @@ router.route("/events/:sports").get(async (req, res) => {
 });
 
 router.route("/classes/:sports").get(async (req, res) => {
-  let sport = req.params.sports;
-  return res.render("classes", { sport: sport });
+  let sportName = req.params.sports;
+  let sport = await sportsData.getByName(sportName);
+  let sportObjectId = sport._id.toString();
+  let classList = await classesData.getClassesBySport(sportObjectId);
+  return res.render("classes", { sport: sport.name, classList : classList });
 });
 
 router.route("/venue/:sports").get(async (req, res) => {
