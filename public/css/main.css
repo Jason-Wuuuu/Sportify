@@ -358,3 +358,17 @@ a.logo {
   color: orange;
   font-weight: bold;
 }
+.addevent {
+  position: fixed;
+  right: 10%;
+  top: 9%;
+  transform: translateY(-50%);
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  border: solid 1px #28323e;
+  background: rgb(132, 171, 222);
+  color: #fff;
+  padding: 8px 12px;
+  text-decoration: none;
+}

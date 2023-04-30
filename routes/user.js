@@ -3,6 +3,7 @@ import * as userData from "../data/user/users.js";
 import * as eventsData from "../data/user/events.js";
 import * as sportsData from "../data/user/sports.js";
 import { helperMethodsForUsers } from "../data/user/helpers.js";
+import * as validation from "../data/user/helpers.js";
 import * as sportsplaceData from "../data/user/sportPlaces.js";
 import xss from "xss";
 
@@ -329,12 +330,110 @@ router.route("/events/:sports").get(async (req, res) => {
       item.registered = false;
     }
   }
+  eventList = eventList.reverse();
   return res.render("events", {
     title: "events",
     sport: sport,
     events: eventList,
   });
 });
+
+router
+  .route("/addevent/:sports")
+  .get(async (req, res) => {
+    try {
+      let sport = req.params.sports;
+      let uid = req.session.user.userID;
+      let sportplaces = await sportsplaceData.getSportPlacesBySport(sport);
+
+      return res.render("addevent", {
+        title: "Add Event",
+        sport: sport,
+        userID: uid,
+        places: sportplaces,
+      });
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  })
+  .post(async (req, res) => {
+    try {
+      for (const key in req.body) {
+        req.body[key] = xss(req.body[key]);
+      }
+      let owner = validation.helperMethodsForEvents.checkId(
+        req.body.owner,
+        "userID"
+      );
+      let evenntname = validation.helperMethodsForEvents.checkEventName(
+        req.body.eventname,
+        "Event Name"
+      );
+      let desc = validation.helperMethodsForEvents.checkEventName(
+        req.body.desc,
+        "Description"
+      );
+      let sportname = validation.helperMethodsForEvents.checkString(
+        req.body.sportname,
+        "Sport Name"
+      );
+      let sportPlace = validation.helperMethodsForEvents.checkString(
+        req.body.sportPlace,
+        "SportPlace"
+      );
+      let CapacityInput = validation.helperMethodsForEvents.checkCapacity(
+        req.body.CapacityInput,
+        "Capacity"
+      );
+      let dateinput = validation.helperMethodsForEvents.checkDate(
+        req.body.dateinput,
+        "Event Date"
+      );
+      let startTime = validation.helperMethodsForEvents.checkEventTime(
+        req.body.startTime,
+        "Event Start Time"
+      );
+      let endTime = validation.helperMethodsForEvents.checkEventTime(
+        req.body.endTime,
+        "Event End time"
+      );
+      let thumbnail = validation.helperMethodsForEvents.checkURL(
+        req.body.thumbnail,
+        "Thumbnail URL"
+      );
+      let timerange = validation.helperMethodsForEvents.checkTimeRange(
+        startTime,
+        endTime
+      );
+
+      let event = await eventsData.create(
+        owner,
+        evenntname,
+        desc,
+        sportname,
+        sportPlace,
+        CapacityInput,
+        dateinput,
+        startTime,
+        endTime,
+        thumbnail
+      );
+
+      if (event.insertedEvent == true) {
+        return res.redirect(`/events/${sportname}`);
+      } else {
+        throw "Event could not be added!";
+      }
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
 
 router.route("/events/:sports/register/:eventid").get(async (req, res) => {
   try {

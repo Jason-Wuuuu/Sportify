@@ -1,0 +1,89 @@
+<header>
+  <nav class="navbar">
+    <a href="/" class="logo">Sportify</a>
+
+    <a href="/events/{{sport}}">Events</a>
+    <a href="*">Classes</a>
+    <a href="/venue/{{sport}}">Reserve Venue</a>
+    <a href="*">Places</a>
+
+    <a href="/profile">Profile</a>
+    <a href="/logout">Logout</a>
+
+  </nav>
+</header>
+<h2></h2>
+
+<div class="error" id="errors"></div>
+
+<form action="/addevent/sports" method="post" id="addeventform">
+
+  <label for="owner">Event by User:</label><br />
+  <input type="text" id="owner" name="owner" value="{{userID}}" readonly />
+  <br />
+
+  <label for="eventname">Enter Event Name Here:</label><br />
+  <input type="text" id="eventname" name="eventname" required />
+  <br />
+
+  <label for="desc">Enter Description Here:</label><br />
+  <input type="text" id="desc" name="desc" required />
+  <br />
+
+  <label for="sportsname">Preselected sports value: {{sport}}</label><br />
+  <input
+    type="text"
+    id="sportname"
+    name="sportname"
+    value="{{sport}}"
+    readonly
+  />
+  <br />
+
+  <label for="sportPlace">Select Sports facility for Event : </label><br />
+  <select id="sportPlace" name="sportPlace" required>
+    {{#each places}}
+      <option value="{{this.name}}">{{this.name}}</option>
+    {{/each}}
+  </select>
+  <br />
+
+  <label for="CapacityInput">Enter Event Capacity Here:</label><br />
+  <input
+    type="number"
+    id="CapacityInput"
+    name="CapacityInput"
+    pattern="[0-9]*"
+    inputmode="numeric"
+    min="1"
+    required
+  />
+  <br />
+
+  <label for="dateinput">Enter Date for Event:</label><br />
+  <input
+    type="date"
+    id="dateinput"
+    name="dateinput"
+    min="<%= new Date().toISOString().split('T')[0] %>"
+    required
+  />
+  <br />
+
+  <label for="startTime">Enter a Start time:</label>
+  <br />
+  <input type="time" id="startTime" name="startTime" required />
+  <br />
+
+  <label for="endTime">Enter a End time:</label>
+  <br />
+  <input type="time" id="endTime" name="endTime" required />
+  <br />
+
+  <label for="thumbnail">Enter a Thumbnail URL here:</label>
+  <br />
+  <input type="url" id="thumbnail" name="thumbnail" required />
+  <br />
+
+  <input type="submit" value="Create Event" />
+</form>

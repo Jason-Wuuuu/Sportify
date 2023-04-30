@@ -12,31 +12,74 @@ const create = async (
   capacity,
   date,
   startTime,
-  endTime
+  endTime,
+  thumbnail
 ) => {
-  // validation
+  try {
+    // validation
+    let euserID = validation.helperMethodsForEvents.checkId(userID, "userID");
+    let ename = validation.helperMethodsForEvents.checkEventName(
+      name,
+      "Event Name"
+    );
+    let edescription = validation.helperMethodsForEvents.checkEventName(
+      description,
+      "Description"
+    );
+    let esport = validation.helperMethodsForEvents.checkString(
+      sport,
+      "Sport Name"
+    );
+    let esportPlace = validation.helperMethodsForEvents.checkString(
+      sportPlace,
+      "SportPlace"
+    );
+    let ecapacity = validation.helperMethodsForEvents.checkCapacity(
+      capacity,
+      "Capacity"
+    );
+    let edate = validation.helperMethodsForEvents.checkDate(date, "Event Date");
+    let estartTime = validation.helperMethodsForEvents.checkEventTime(
+      startTime,
+      "Event Start Time"
+    );
+    let eendTime = validation.helperMethodsForEvents.checkEventTime(
+      endTime,
+      "Event End time"
+    );
+    let ethumbnail = validation.helperMethodsForEvents.checkURL(
+      thumbnail,
+      "Thumbnail URL"
+    );
+    let timerange = validation.helperMethodsForEvents.checkTimeRange(
+      startTime,
+      endTime
+    );
+    // add valid event to db
+    let newEvent = {
+      userID: euserID,
+      name: ename,
+      description: edescription,
+      sport: esport,
+      sportPlace: esportPlace,
+      capacity: ecapacity,
+      date: edate,
+      startTime: estartTime,
+      endTime: eendTime,
+      approved: false,
+      participants: [],
+      image: ethumbnail,
+    };
 
-  // add valid event to db
-  let newEvent = {
-    userID: userID,
-    name: name,
-    description: description,
-    sport: sport,
-    sportPlace: sportPlace,
-    capacity: capacity,
-    date: date,
-    startTime: startTime,
-    endTime: endTime,
-    approved: false,
-    participants: [],
-  };
+    const eventCollection = await events();
+    const newInsertInformation = await eventCollection.insertOne(newEvent);
+    const newId = newInsertInformation.insertedId;
+    await get(newId.toString());
 
-  const eventCollection = await events();
-  const newInsertInformation = await eventCollection.insertOne(newEvent);
-  const newId = newInsertInformation.insertedId;
-  await get(newId.toString());
-
-  return { insertedEvent: true };
+    return { insertedEvent: true };
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 const getAll = async () => {

@@ -2,6 +2,26 @@ import bcrypt from "bcrypt";
 import { users } from "../../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 
+const checkString = (strVal, varName) => {
+  if (!strVal) throw `Error: You must supply a ${varName}!`;
+  if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
+  strVal = strVal.trim();
+  if (strVal.length === 0)
+    throw `Error: ${varName} cannot be an empty string or string with just spaces`;
+  return strVal;
+};
+const checkNumber = (numVal, varName) => {
+  if (!numVal && numVal !== 0) throw `Error: You must supply a ${varName}!`;
+  if (typeof numVal !== "number") {
+    try {
+      numVal = Number.parseInt(numVal);
+    } catch (e) {
+      throw `Error: Unable to convert ${varName} to number`;
+    }
+  }
+  if (isNaN(numVal)) throw `Error: ${varName} is not a number.`;
+  return numVal;
+};
 const helperMethodsForSports = {
   checkString(strVal, varName) {
     if (!strVal) throw `Error: You must supply a ${varName}!`;
@@ -24,6 +44,19 @@ const helperMethodsForEvents = {
       throw `Error: ${varName} cannot be an empty string or string with just spaces`;
     return strVal;
   },
+  checkNumber(numVal, varName) {
+    if (!numVal && numVal !== 0) throw `Error: You must supply a ${varName}!`;
+    if (typeof numVal !== "number") {
+      try {
+        numVal = Number.parseInt(numVal);
+      } catch (e) {
+        throw `Error: Unable to convert ${varName} to number`;
+      }
+    }
+    if (isNaN(numVal)) throw `Error: ${varName} is not a number.`;
+    return numVal;
+  },
+
   checkId(id, varName) {
     if (!id) throw `Error: You must provide a ${varName}`;
     if (typeof id !== "string") throw `Error:${varName} must be a string`;
@@ -32,6 +65,61 @@ const helperMethodsForEvents = {
       throw `Error: ${varName} cannot be an empty string or just spaces`;
     if (!ObjectId.isValid(id)) throw `Error: ${varName} invalid object ID`;
     return id;
+  },
+  checkEventName(name, varName) {
+    name = checkString(name, varName);
+    let newname = name;
+    newname = newname.replace(/\s+/g, "");
+
+    if (!/\D/.test(newname))
+      throw `Error: ${varName} cannot only contain numbers`;
+
+    return name;
+  },
+  checkCapacity(capacity, varName) {
+    capacity = checkNumber(capacity, varName);
+    if (capacity < 1) throw `Error: ${varName} should be greater than 1.`;
+    return capacity;
+  },
+
+  checkDate(date, varName) {
+    date = checkString(date, varName);
+
+    const d = new Date(date);
+    if (!d) throw `Error: Invalid ${varName}.`;
+
+    const today = new Date();
+    if (d < today) throw `Error: Date shouldn't be less than today.`;
+
+    return date;
+  },
+  checkEventTime(time, varName) {
+    time = checkString(time, varName);
+    const hr_min = time.split(":");
+    if (!hr_min || hr_min.length !== 2) throw `Error: Invalid ${varName}`;
+
+    const hr = Number.parseInt(hr_min[0]);
+    const min = Number.parseInt(hr_min[1]);
+    if (isNaN(hr) || hr < 0 || hr > 24)
+      throw `Error: Invalid hr for ${varName}`;
+    if (isNaN(min) || min < 0 || min > 59)
+      throw `Error: Invalid min for ${varName}`;
+
+    return time;
+  },
+  checkTimeRange(start, end) {
+    const s = new Date(`2000-01-01 ${start}`);
+    const e = new Date(`2000-01-01 ${end}`);
+    if (e <= s)
+      throw `Error: Invalid Time Range. Start time cannot exceed end time.`;
+  },
+  checkURL(url, varName) {
+    url = checkString(url, varName);
+
+    const re_url = /[\/\S]+/g;
+    if (!url.match(re_url))
+      throw `Error: ${varName} is and invalid url or contains spaces.`;
+    return url;
   },
 };
 

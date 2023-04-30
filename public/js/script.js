@@ -1,6 +1,14 @@
-console.log("This is Sportify");
-
 // client side validation function
+
+const checkId = (id, varName) => {
+  if (!id) throw `Error: You must provide a ${varName}`;
+  if (typeof id !== "string") throw `Error:${varName} must be a string`;
+  id = id.trim();
+  if (id.length === 0)
+    throw `Error: ${varName} cannot be an empty string or just spaces`;
+  return id;
+};
+
 const checkString = (strVal, varName) => {
   if (!strVal) throw `Error: You must supply a ${varName}!`;
   if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
@@ -16,6 +24,16 @@ const checkName = (name, varName) => {
   const re_name = /[a-zA-Z ]{2,25}/g;
   if (!name.match(re_name))
     throw `Error: ${varName} should be at least 2 characters long with a max of 25 characters`;
+
+  return name;
+};
+const checkEventName = (name, varName) => {
+  name = checkString(name, varName);
+  let newname = name;
+  newname = newname.replace(/\s+/g, "");
+
+  if (!/\D/.test(newname))
+    throw `Error: ${varName} cannot only contain numbers`;
 
   return name;
 };
@@ -167,10 +185,25 @@ const checkTime = (time, varName) => {
   return time;
 };
 
+const checkEventTime = (time, varName) => {
+  time = checkString(time, varName);
+  const hr_min = time.split(":");
+  if (!hr_min || hr_min.length !== 2) throw `Error: Invalid ${varName}`;
+
+  const hr = Number.parseInt(hr_min[0]);
+  const min = Number.parseInt(hr_min[1]);
+  if (isNaN(hr) || hr < 0 || hr > 24) throw `Error: Invalid hr for ${varName}`;
+  if (isNaN(min) || min < 0 || min > 59)
+    throw `Error: Invalid min for ${varName}`;
+
+  return time;
+};
+
 const checkTimeRange = (start, end) => {
   const s = new Date(`2000-01-01 ${start}`);
   const e = new Date(`2000-01-01 ${end}`);
-  if (e <= s) throw `Error: Invalid Time Range`;
+  if (e <= s)
+    throw `Error: Invalid Time Range. Start time cannot exceed end time.`;
 };
 
 // maximum date
@@ -461,6 +494,44 @@ else {
       error.textContent = "Please Log-In or SignUp to see next page.";
     });
   });
+
+  //addeventsform
+  let eventform = document.getElementById("addeventform");
+  if (eventform) {
+    eventform.addEventListener("submit", (event) => {
+      let errorDiv = document.getElementById("errors");
+      let userID = document.getElementById("owner").value;
+      let eventname = document.getElementById("eventname").value;
+      let description = document.getElementById("desc").value;
+      let sports = document.getElementById("sportname").value;
+      let place = document.getElementById("sportPlace").value;
+      let capacity = document.getElementById("CapacityInput").value;
+      let date = document.getElementById("dateinput").value;
+      let startTime = document.getElementById("startTime").value;
+      let endTime = document.getElementById("endTime").value;
+      let url = document.getElementById("thumbnail").value;
+      try {
+        // hide containers by default
+        errorDiv.hidden = true;
+        userID = checkId(userID, "UserID");
+        eventname = checkEventName(eventname, "EventName");
+        description = checkEventName(description, "Description");
+        sports = checkString(sports, "Sports");
+        place = checkString(place, "Event Place");
+        capacity = checkCapacity(capacity, "Event Capacity");
+        date = checkDate(date, "Event Date");
+        startTime = checkEventTime(startTime, "Start Time of Event");
+        endTime = checkEventTime(endTime, "End Time of Event");
+        url = checkURL(url, "Thumbnail Url");
+        let correcttime = checkTimeRange(startTime, endTime);
+      } catch (e) {
+        event.preventDefault();
+        errorDiv.textContent = e;
+        errorDiv.hidden = false;
+      }
+    });
+  }
+
   // error showing function
   const show_error = (err_msg) => {
     let errorDiv = document.getElementById("error");
