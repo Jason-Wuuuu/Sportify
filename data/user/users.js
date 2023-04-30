@@ -47,7 +47,7 @@ const create = async (
   const newId = newInsertInformation.insertedId;
   await get(newId.toString());
 
-  return { insertedUser: true };
+  return { userID: newId.toString(), insertedUser: true };
 };
 
 const get = async (userID) => {

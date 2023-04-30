@@ -346,6 +346,31 @@ if (document.URL.includes("/admin")) {
   // sports and sportInfo
   let sportInfo = document.getElementById("sport-form");
   if (sportInfo) {
+    /*
+    (function ($) {
+      let mySportForm = $("#sport-form"),
+        newNameInput = $("#nameInput");
+
+      // sport form submission event
+      mySportForm.submit(function (event) {
+        let newName = newNameInput.val();
+        if (newName) {
+          //set up AJAX request config
+          let requestConfig = {
+            method: "POST",
+            url: "/admin/sports",
+            data: {
+              nameInput: newName,
+            },
+          };
+
+          //AJAX Call. Gets the returned HTML data, binds the click event to the link and appends the new todo to the page
+          $.ajax(requestConfig);
+        }
+      });
+    })(window.jQuery);
+
+    */
     // get elements
     let nameInput = document.getElementById("nameInput");
     let thumbnailInput = document.getElementById("thumbnailInput");
