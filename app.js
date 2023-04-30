@@ -215,7 +215,7 @@ app.use(async (req, res, next) => {
   if (req.session.admin) authenticated = "Admin";
 
   const log_msg = `[${currentTime}]: ${req_method} ${req_route} (${authenticated})`;
-  console.log(log_msg);
+  // console.log(log_msg);
 
   next();
 });

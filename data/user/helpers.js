@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { users } from "../../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 
-const checkString = (strVal, varName) => {
+let checkString = (strVal, varName) => {
   if (!strVal) throw `Error: You must supply a ${varName}!`;
   if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
   strVal = strVal.trim();
@@ -10,7 +10,17 @@ const checkString = (strVal, varName) => {
     throw `Error: ${varName} cannot be an empty string or string with just spaces`;
   return strVal;
 };
-const checkNumber = (numVal, varName) => {
+
+let checkId = (id, varName) => {
+  if (!id) throw `Error: You must provide a ${varName}`;
+  if (typeof id !== "string") throw `Error:${varName} must be a string`;
+  id = id.trim();
+  if (id.length === 0)
+    throw `Error: ${varName} cannot be an empty string or just spaces`;
+  if (!ObjectId.isValid(id)) throw `Error: ${varName} invalid object ID`;
+  return id;
+};
+let checkNumber = (numVal, varName) => {
   if (!numVal && numVal !== 0) throw `Error: You must supply a ${varName}!`;
   if (typeof numVal !== "number") {
     try {
@@ -120,6 +130,28 @@ const helperMethodsForEvents = {
     if (!url.match(re_url))
       throw `Error: ${varName} is and invalid url or contains spaces.`;
     return url;
+  },
+  determineSlots(startTime, endTime) {
+    const Slot1 = { start: "00:00", end: "08:00" };
+    const Slot2 = { start: "08:00", end: "16:00" };
+    const Slot3 = { start: "16:00", end: "23:59" };
+
+    let slots = [];
+
+    if (startTime >= endTime) {
+      return slots;
+    }
+    if (endTime > Slot1.start && startTime < Slot1.end) {
+      slots.push(1);
+    }
+    if (endTime > Slot2.start && startTime < Slot2.end) {
+      slots.push(2);
+    }
+    if (endTime > Slot3.start && startTime < Slot3.end) {
+      slots.push(3);
+    }
+
+    return slots;
   },
 };
 
@@ -260,4 +292,7 @@ export {
   helperMethodsForEvents,
   helperMethodsForSportPlaces,
   helperMethodsForSports,
+  checkId,
+  checkString,
+  checkNumber,
 };

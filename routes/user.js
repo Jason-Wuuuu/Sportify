@@ -5,6 +5,7 @@ import * as sportsData from "../data/user/sports.js";
 import { helperMethodsForUsers } from "../data/user/helpers.js";
 import * as validation from "../data/user/helpers.js";
 import * as sportsplaceData from "../data/user/sportPlaces.js";
+import * as slotsData from "../data/user/timeSlots.js";
 import xss from "xss";
 
 const router = Router();
@@ -408,6 +409,38 @@ router
         startTime,
         endTime
       );
+      let sportsplaceId = await sportsplaceData.getSportPlaceId(sportPlace);
+      let slotarray = validation.helperMethodsForEvents.determineSlots(
+        startTime,
+        endTime
+      );
+      let slots = await slotsData.getslotsByDate(
+        sportsplaceId,
+        dateinput,
+        slotarray
+      );
+
+      if (slots.length !== 0) {
+        for (let item of slots) {
+          if (item.availability == 1) {
+            throw `SportPlace time slot ${item.slotID} already booked on for ${item.Date}`;
+          } else {
+            let deleted = await slotsData.remove(item._id.toString());
+          }
+        }
+      }
+
+      let sportId = await sportsData.getID(sportname);
+      for (let i in slotarray) {
+        let slotinfo = await slotsData.create(
+          sportId,
+          sportsplaceId,
+          dateinput,
+          slotarray[i],
+          owner,
+          "2"
+        );
+      }
 
       let event = await eventsData.create(
         owner,
