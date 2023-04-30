@@ -502,6 +502,40 @@ router.route("/events/:sports/register/:eventid").get(async (req, res) => {
   }
 });
 
+router.route("/events/:sports/deregister/:eventid").get(async (req, res) => {
+  try {
+    let eventid = req.params.eventid;
+    if (req.session.user) {
+      let uid = req.session.user.userID;
+      let updateParticipantlist = await eventsData.quit(eventid, uid);
+      if (updateParticipantlist.updatedEventParticipants == true) {
+        let eventList = await eventsData.getEventsBySport(req.params.sports);
+        for (let item of eventList) {
+          if (item.participants.includes(uid)) {
+            item.registered = true;
+          } else {
+            item.registered = false;
+          }
+        }
+        return res.render("events", {
+          title: "events",
+          sport: req.params.sports,
+          events: eventList,
+        });
+      } else {
+        throw "Failed to remove User in Participant list.";
+      }
+    } else {
+      throw "Only authenticated USER can use this feature!";
+    }
+  } catch (e) {
+    return res.status(400).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
+
 router.route("/venue/:sports").get(async (req, res) => {
   try {
     req.params.sports = helperMethodsForUsers.checkString(

@@ -37,6 +37,12 @@
           {{#if this.registered}}
             <a style="color: green;">
               Event Joined! ✅
+            </a><br />
+            <a
+              style="color: rgb(241, 15, 15);"
+              href="/events/{{sport}}/deregister/{{this._id}}"
+            >
+              Deregister Event!
             </a>
           {{else}}
             <a href="/events/{{sport}}/register/{{this._id}}">
