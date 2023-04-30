@@ -30,7 +30,7 @@ const getGenderOptions = (selected) => {
   return options;
 };
 
-const getSportOptions = async () => {
+const getSportOptions = async (sportID) => {
   const sportList = await sportData.getAll();
   let sports = [];
   if (sportList) {
@@ -38,16 +38,28 @@ const getSportOptions = async () => {
       Object({ sportID: sport._id, name: sport.name })
     );
   }
+  if (sportID) {
+    const i = sports.findIndex((object) => {
+      return object.sportID.toString() === sportID.toString();
+    });
+    sports.splice(i, 1);
+  }
   return sports;
 };
 
-const getSportPlaceOptions = async () => {
+const getSportPlaceOptions = async (sportPlaceID) => {
   const sportPlacetList = await sportPlaceData.getAll();
   let sportPlaces = [];
   if (sportPlacetList) {
     sportPlaces = sportPlacetList.map((sportPlace) =>
       Object({ sportPlaceID: sportPlace._id, name: sportPlace.name })
     );
+  }
+  if (sportPlaceID) {
+    const i = sportPlaces.findIndex((object) => {
+      return object.sportPlaceID.toString() === sportPlaceID.toString();
+    });
+    sportPlaces.splice(i, 1);
   }
   return sportPlaces;
 };
@@ -946,11 +958,11 @@ router
 
     try {
       let classInfo = await classData.get(req.params.id);
-      const sports = await getSportOptions(classInfo.sport);
-      const sportPlaces = await getSportPlaceOptions(classInfo.sportPlace);
-
       const sportInfo = await sportData.get(classInfo.sportID);
       const sportPlaceInfo = await sportPlaceData.get(classInfo.sportPlaceID);
+
+      const sports = await getSportOptions(sportInfo._id);
+      const sportPlaces = await getSportPlaceOptions(sportPlaceInfo._id);
 
       return res.render("admin/classInfo", {
         title: "Class Info",
@@ -972,6 +984,10 @@ router
         n: classInfo.students.length,
         users: classInfo.students,
         classTitle: classInfo.title,
+        sportID: sportInfo._id,
+        sportName: sportInfo.name,
+        sportPlaceID: sportPlaceInfo._id,
+        sportPlaceName: sportPlaceInfo.name,
         newCapacity: classInfo.capacity,
         newInstructor: classInfo.instructor,
         newPrice: classInfo.price,
@@ -1202,9 +1218,12 @@ router
     }
     try {
       let sportPlace = await sportPlaceData.get(req.params.id);
-
       const sportInfo = await sportData.get(sportPlace.sportID);
-      const sports = await getSportOptions(sportPlace.sport);
+
+      const sports = await getSportOptions({
+        sportID: sportInfo._id,
+        name: sportInfo.name,
+      });
       return res.render("admin/sportPlaceInfo", {
         title: "SportPlace Info",
         hidden: "hidden",
@@ -1220,6 +1239,8 @@ router
         rating: sportPlace.rating,
         n: sportPlace.users.length,
         users: sportPlace.users,
+        sportID: sportInfo._id,
+        sportName: sportInfo.name,
         newName: sportPlace.name,
         newAddress: sportPlace.address,
         newDescription: sportPlace.description,
@@ -1284,7 +1305,7 @@ router
           "Thumbnail"
         );
     } catch (e) {
-      const sports = await getSportOptions(sportPlaceInfo.sportInput);
+      const sports = await getSportOptions();
 
       let origSportPlace = await sportPlaceData.get(req.params.id);
 
@@ -1328,7 +1349,7 @@ router
       if (!newSportPlace.updatedSportPlace) throw "Internal Server Error";
       return res.redirect(`${sportPlaceID}`);
     } catch (e) {
-      const sports = await getSportOptions(sportPlaceInfo.sportInput);
+      const sports = await getSportOptions();
     }
   });
 
