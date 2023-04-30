@@ -39,6 +39,7 @@
 
         <label for="sportIDInput">Sport:</label><br>
         <select id="sportIDInput" name="sportIDInput">
+            <option value="{{sportID}}">{{sportName}}</option>
             <option value="">-</option>
             {{#each sports}}
             <option value="{{sportID}}">{{name}}</option>
@@ -47,7 +48,8 @@
         <br>
 
         <label for="sportPlaceIDInput">Sport Places:</label><br>
-        <select id="sportPlaceIDInput" name="sportPlaceIDInput">
+        <select id="sportPlaceIDInput" name="sportPlaceIDInput">\
+            <option value="{{sportPlaceID}}">{{sportPlaceName}}</option>
             <option value="">-</option>
             {{#each sportPlaces}}
             <option value="{{sportPlaceID}}">{{name}}</option>

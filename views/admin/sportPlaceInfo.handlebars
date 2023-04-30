@@ -36,6 +36,7 @@
 
         <label for="sportIDInput">Sport:</label><br>
         <select id="sportIDInput" name="sportIDInput">
+            <option value="{{sportID}}">{{sportName}}</option>
             <option value="">-</option>
             {{#each sports}}
             <option value="{{sportID}}">{{name}}</option>
