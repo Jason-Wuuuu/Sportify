@@ -52,7 +52,7 @@ const getSportPlaceOptions = async (sportPlaceID) => {
   let sportPlaces = [];
   if (sportPlacetList) {
     sportPlaces = sportPlacetList.map((sportPlace) =>
-      Object({ sportPlaceID: sportPlace._id, name: sportPlace.name })
+      Object({ sportPlaceID: sportPlace._id, name: sportPlace.name, sportId1: sportPlace.sportID})
     );
   }
   if (sportPlaceID) {
@@ -415,8 +415,8 @@ router
         classInfo.sportIDInput,
         "SportID"
       );
-      classInfo.sportPlaceIDInput = validation.checkId(
-        classInfo.sportPlaceIDInput,
+      classInfo.sportplaceIDInput1 = validation.checkId(
+        classInfo.sportplaceIDInput1,
         "Sport PlaceID"
       );
       classInfo.capacityInput = validation.checkCapacity(
@@ -431,7 +431,7 @@ router
         classInfo.priceInput,
         "Price"
       );
-      classInfo.dateInput = validation.checkDate(classInfo.dateInput, "Date");
+     classInfo.dateInput = validation.checkDate(classInfo.dateInput, "Date");
       classInfo.startTimeInput = validation.checkTime(
         classInfo.startTimeInput,
         "Start Time"
@@ -479,7 +479,7 @@ router
       const newClass = await classData.create(
         classInfo.titleInput,
         classInfo.sportIDInput,
-        classInfo.sportPlaceIDInput,
+        classInfo.sportplaceIDInput1,
         classInfo.capacityInput,
         classInfo.instructorInput,
         classInfo.priceInput,
@@ -1130,7 +1130,7 @@ router
       );
       if (!newClass.updatedClass) throw "Internal Server Error";
       return res.redirect(`${classID}`);
-    } catch (e) {}
+    } catch (e) { }
   });
 
 router
@@ -1212,7 +1212,7 @@ router
       );
       if (!newSport.updatedSport) throw "Internal Server Error";
       return res.redirect(`${sportID}`);
-    } catch (e) {}
+    } catch (e) { }
   });
 
 router
@@ -1416,6 +1416,7 @@ router
       Object({
         sportPlaceID: sportPlace._id,
         sportPlaceName: sportPlace.name,
+        sportId1: sportPlace.sportID,
       })
     );
 
@@ -1441,8 +1442,8 @@ router
         timeSlotInfo.sportIDInput,
         "sportID"
       );
-      timeSlotInfo.sportplaceIDInput = validation.checkId(
-        timeSlotInfo.sportplaceIDInput,
+      timeSlotInfo.sportplaceIDInput1 = validation.checkId(
+        timeSlotInfo.sportplaceIDInput1,
         "sportPlaceID"
       );
       timeSlotInfo.dateInput = validation.checkString(
@@ -1484,7 +1485,7 @@ router
     try {
       const newSlot = await timeSlot.create(
         timeSlotInfo.sportIDInput,
-        timeSlotInfo.sportplaceIDInput,
+        timeSlotInfo.sportplaceIDInput1,
         timeSlotInfo.dateInput,
         timeSlotInfo.slotInput
       );
