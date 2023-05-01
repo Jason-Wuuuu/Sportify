@@ -8,9 +8,9 @@
 
 <div>
     {{#if thumbnail}}
-    <img class="thumbnail" src="{{thumbnail}}">
+    <img class="thumbnail" src="{{thumbnail}}" alt="{{name}}">
     {{else}}
-    <img class="thumbnail" src="/public/images/No_Image_Available.jpg">
+    <img class="thumbnail" src="/public/images/No_Image_Available.jpg" alt="{{name}}">
     {{/if}}
 </div>
 
@@ -27,7 +27,7 @@
     <li>Number of Student: {{n}}</li>
 </ul>
 
-<label for="edit">Edit Class:</label>
+<label>Edit Class:</label>
 <button type="button" id="expand">Edit</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
@@ -38,7 +38,8 @@
         <br>
 
         <label for="sportIDInput">Sport:</label><br>
-        <select id="sportIDInput" , name="sportIDInput">
+        <select id="sportIDInput" name="sportIDInput">
+            <option value="{{sportID}}">{{sportName}}</option>
             <option value="">-</option>
             {{#each sports}}
             <option value="{{sportID}}">{{name}}</option>
@@ -47,7 +48,8 @@
         <br>
 
         <label for="sportPlaceIDInput">Sport Places:</label><br>
-        <select id="sportPlaceIDInput" , name="sportPlaceIDInput">
+        <select id="sportPlaceIDInput" name="sportPlaceIDInput">\
+            <option value="{{sportPlaceID}}">{{sportPlaceName}}</option>
             <option value="">-</option>
             {{#each sportPlaces}}
             <option value="{{sportPlaceID}}">{{name}}</option>
@@ -94,15 +96,15 @@
 </form>
 
 <h3>List of Student:</h3>
-<dl>
-    <div id="userList">
-        {{#if n}}
+<div id="userList">
+    {{#if n}}
+    <dl>
         {{#each users}}
         <dt>ID: {{userID}}</dt>
         <dd>Name: {{userFirstName}}, {{userLastName}}</dd>
         {{/each}}
-        {{else}}
-        <p>There are no student for this class...</p>
-        {{/if}}
-    </div>
-</dl>
+    </dl>
+    {{else}}
+    There are no student for this class...
+    {{/if}}
+</div>

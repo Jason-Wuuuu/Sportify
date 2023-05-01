@@ -1,4 +1,14 @@
 // client side validation function
+
+const checkId = (id, varName) => {
+  if (!id) throw `Error: You must provide a ${varName}`;
+  if (typeof id !== "string") throw `Error:${varName} must be a string`;
+  id = id.trim();
+  if (id.length === 0)
+    throw `Error: ${varName} cannot be an empty string or just spaces`;
+  return id;
+};
+
 const checkString = (strVal, varName) => {
   if (!strVal) throw `Error: You must supply a ${varName}!`;
   if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
@@ -14,6 +24,16 @@ const checkName = (name, varName) => {
   const re_name = /[a-zA-Z ]{2,25}/g;
   if (!name.match(re_name))
     throw `Error: ${varName} should be at least 2 characters long with a max of 25 characters`;
+
+  return name;
+};
+const checkEventName = (name, varName) => {
+  name = checkString(name, varName);
+  let newname = name;
+  newname = newname.replace(/\s+/g, "");
+
+  if (!/\D/.test(newname))
+    throw `Error: ${varName} cannot only contain numbers`;
 
   return name;
 };
@@ -145,7 +165,7 @@ const checkDate = (date, varName) => {
   if (!d) throw `Error: Invalid ${varName}.`;
 
   const today = new Date();
-  if (d < today) throw `Error: Date shouldn't be less than today.`;
+  if (d < today) throw `Error: Valid date starts from tomorrow.`;
 
   return date;
 };
@@ -165,10 +185,25 @@ const checkTime = (time, varName) => {
   return time;
 };
 
+const checkEventTime = (time, varName) => {
+  time = checkString(time, varName);
+  const hr_min = time.split(":");
+  if (!hr_min || hr_min.length !== 2) throw `Error: Invalid ${varName}`;
+
+  const hr = Number.parseInt(hr_min[0]);
+  const min = Number.parseInt(hr_min[1]);
+  if (isNaN(hr) || hr < 0 || hr > 24) throw `Error: Invalid hr for ${varName}`;
+  if (isNaN(min) || min < 0 || min > 59)
+    throw `Error: Invalid min for ${varName}`;
+
+  return time;
+};
+
 const checkTimeRange = (start, end) => {
   const s = new Date(`2000-01-01 ${start}`);
   const e = new Date(`2000-01-01 ${end}`);
-  if (e <= s) throw `Error: Invalid Time Range`;
+  if (e <= s)
+    throw `Error: Invalid Time Range. Start time cannot exceed end time.`;
 };
 
 // maximum date
@@ -311,6 +346,31 @@ if (document.URL.includes("/admin")) {
   // sports and sportInfo
   let sportInfo = document.getElementById("sport-form");
   if (sportInfo) {
+    /*
+    (function ($) {
+      let mySportForm = $("#sport-form"),
+        newNameInput = $("#nameInput");
+
+      // sport form submission event
+      mySportForm.submit(function (event) {
+        let newName = newNameInput.val();
+        if (newName) {
+          //set up AJAX request config
+          let requestConfig = {
+            method: "POST",
+            url: "/admin/sports",
+            data: {
+              nameInput: newName,
+            },
+          };
+
+          //AJAX Call. Gets the returned HTML data, binds the click event to the link and appends the new todo to the page
+          $.ajax(requestConfig);
+        }
+      });
+    })(window.jQuery);
+
+    */
     // get elements
     let nameInput = document.getElementById("nameInput");
     let thumbnailInput = document.getElementById("thumbnailInput");
@@ -449,12 +509,98 @@ if (document.URL.includes("/admin")) {
 }
 //client side js for user
 else {
+  //myeventspage
+  const participantlinks = document.querySelectorAll("a.togglelist");
+
+  participantlinks.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      let curElement = event.target;
+      console.log(curElement);
+      let nextDiv =
+        curElement.parentNode.parentNode.parentNode.parentNode
+          .nextElementSibling;
+
+      if (nextDiv.style.display === "none") {
+        nextDiv.style.display = "block";
+        curElement.innerHTML = "Hide Participants List";
+      } else {
+        nextDiv.style.display = "none";
+        curElement.innerHTML = "See Participants List";
+      }
+    });
+  });
+
+  //homepage
+  const links = document.querySelectorAll("a.err");
+
+  links.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      let error = document.getElementById("error-msg");
+      error.textContent = "Please Log-In or SignUp to see next page.";
+    });
+  });
+
+  //addeventsform
+  let eventform = document.getElementById("addeventform");
+  if (eventform) {
+    eventform.addEventListener("submit", (event) => {
+      let errorDiv = document.getElementById("errors");
+      let userID = document.getElementById("owner").value;
+      let eventname = document.getElementById("eventname").value;
+      let description = document.getElementById("desc").value;
+      let sports = document.getElementById("sportname").value;
+      let place = document.getElementById("sportPlace").value;
+      let capacity = document.getElementById("CapacityInput").value;
+      let date = document.getElementById("dateinput").value;
+      let startTime = document.getElementById("startTime").value;
+      let endTime = document.getElementById("endTime").value;
+      let url = document.getElementById("thumbnail").value;
+      try {
+        // hide containers by default
+        errorDiv.hidden = true;
+        userID = checkId(userID, "UserID");
+        eventname = checkEventName(eventname, "EventName");
+        description = checkEventName(description, "Description");
+        sports = checkString(sports, "Sports");
+        place = checkString(place, "Event Place");
+        capacity = checkCapacity(capacity, "Event Capacity");
+        date = checkDate(date, "Event Date");
+        startTime = checkEventTime(startTime, "Start Time of Event");
+        endTime = checkEventTime(endTime, "End Time of Event");
+        url = checkURL(url, "Thumbnail Url");
+        let correcttime = checkTimeRange(startTime, endTime);
+      } catch (e) {
+        event.preventDefault();
+        errorDiv.textContent = e;
+        errorDiv.hidden = false;
+      }
+    });
+  }
+
   // error showing function
   const show_error = (err_msg) => {
     let errorDiv = document.getElementById("error");
     errorDiv.hidden = false;
     errorDiv.innerHTML = err_msg;
   };
+
+  // Edit Button
+  let expand = document.getElementById("expand");
+  if (expand) {
+    expand.addEventListener("click", (event) => {
+      let formDiv = document.getElementById("form");
+      let errorDiv = document.getElementById("error");
+
+      if (formDiv.hidden) {
+        formDiv.hidden = false;
+        errorDiv.hidden = false;
+      } else {
+        formDiv.hidden = true;
+        errorDiv.hidden = true;
+      }
+    });
+  }
 
   // login-form
   let loginForm = document.getElementById("user-login-form");

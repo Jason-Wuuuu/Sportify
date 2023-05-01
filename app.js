@@ -170,6 +170,40 @@ app.use("/admin/logout", (req, res, next) => {
 });
 
 // middleware for users
+app.use("/events/:sports", (req, res, next) => {
+  if (!req.session.user && !req.session.admin) {
+    return res.redirect("/");
+  }
+  next();
+});
+
+app.use("/addevent/:sports", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
+app.use("/myevents", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
+app.use("/events/:sports/register/:eventid", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+app.use("/events/:sports/deregister/:eventid", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
 app.use("/login", (req, res, next) => {
   if (req.session.user) {
     return res.redirect("/");
@@ -184,6 +218,14 @@ app.use("/register", (req, res, next) => {
   next();
 });
 
+app.use("/profile", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/login");
+  }
+  if (req.method === "POST") req.method = "PUT";
+  next();
+});
+
 app.use(async (req, res, next) => {
   const currentTime = new Date().toUTCString();
   const req_method = req.method;
@@ -193,7 +235,7 @@ app.use(async (req, res, next) => {
   if (req.session.admin) authenticated = "Admin";
 
   const log_msg = `[${currentTime}]: ${req_method} ${req_route} (${authenticated})`;
-  console.log(log_msg);
+  //console.log(log_msg);
 
   next();
 });

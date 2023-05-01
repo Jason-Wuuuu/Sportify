@@ -2,10 +2,10 @@
   <nav class="navbar">
     <a href="/" class="logo">Sportify</a>
 
-    <a href="/events/{{sport}}">Events</a>
-    <a href="/classes/{{sport}}">Classes</a>
-    <a href="/venue/{{sport}}">Reserve Venue</a>
-    <a href="*">Places</a>
+    <a class="active" href="/events/{{sport}}">Events</a>
+    <a href="/myevents">MyEvents</a>
+   <a href="/classes/{{sport}}">Classes</a>
+    <a href="/venue/{{sport}}">SportFacilities</a>
 
     <a href="/profile">Profile</a>
     <a href="/logout">Logout</a>
@@ -14,27 +14,47 @@
 </header>
 
 <h2>Latest Events For : {{sport}}</h2>
+<div>
+  <a href="/addevent/{{sport}}" class="addevent">Create New Event!</a>
+</div>
 
 {{#each events}}
-  <div class="blog-card">
-    <div class="meta">
-      <div class="photo" style="background-image: url({{this.image}})"></div>
-      <ul class="details">
+  <div class="bgcard">
+    <div class="info">
+      <div class="bgimg" style="background-image: url({{this.image}})"></div>
+      <ul class="info-list">
         <li class="author">Event By : {{this.username}}</li>
         <li class="date">Date : {{this.date}}</li>
         <li class="location">Location : {{this.sportPlace}}</li>
         <li class="time"> Time : {{this.startTime}} to {{this.endTime}}</li>
       </ul>
     </div>
-    <div class="description">
+    <div class="textDetails">
       <h1>{{this.name}}</h1>
       <p>{{this.description}}</p>
-      <p class="read-more">
+      {{#if this.registered}}
+        <p style="color: green;">
+          Event Joined! ✅
+        </p>
+        <a style="color: rgb(139, 15, 241);">
+          Chat With Participants! 💬
+        </a>
+      {{/if}}
+      <p class="joinLink">
         {{#if this.available}}
-          <a href="#">
-            RSVP Event! [
-            {{this.participants.length}}/{{this.capacity}}]
-          </a>
+          {{#if this.registered}}
+            <a
+              style="color: rgb(241, 15, 15);"
+              href="/events/{{sport}}/deregister/{{this._id}}"
+            >
+              Deregister Event? ⚠️
+            </a>
+          {{else}}
+            <a href="/events/{{sport}}/register/{{this._id}}">
+              RSVP Event! [
+              {{this.participants.length}}/{{this.capacity}}]
+            </a>
+          {{/if}}
         {{else}}
           <a style="color: red;">Event Full! 😢 [
             {{this.participants.length}}/{{this.capacity}}]

@@ -8,20 +8,22 @@
 
 <form id="venueInfo-form">
     <div id="error" class="error" {{hidden}}>{{error}}</div>
-    <div>
+    <div class="screen left">
         {{#if thumbnail}}
         <img class="thumbnail" src="{{thumbnail}}">
         {{else}}
         <img class="thumbnail" src="/public/images/No_Image_Available.jpg">
         {{/if}}
     </div>
-    <ul>
-        <li>Sport: {{venueinfo.sportname}}</li>
-        <li>Venue name: {{venueinfo.name}}</li>
-         <li>Description: {{venueinfo.description}}</li>
-        <li>Address: {{venueinfo.address}}</li>       
-        <li>price: {{venueinfo.price}}</li>
-        <li>capacity: {{venueinfo.capacity}}</li>
-        <li>Rating: {{venueinfo.rating}}</li>
-    </ul>
+    <div class="screen right">
+        <ul>
+            <li>Sport: {{venueinfo.sportname}}</li>
+            <li>Venue name: {{venueinfo.name}}</li>
+            <li>Description: {{venueinfo.description}}</li>
+            <li>Address: {{venueinfo.address}}</li>
+            <li>price: {{venueinfo.price}}</li>
+            <li>capacity: {{venueinfo.capacity}}</li>
+            <li>Rating: {{venueinfo.rating}}</li>
+        </ul>
+    </div>
 </form>

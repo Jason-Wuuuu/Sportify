@@ -99,7 +99,8 @@ for (let i = 1; i <= number_of_data; i++) {
       `${(i + 5) * 3}`,
       `2023-05-${i + 10}`,
       `0${i}:00`,
-      `0${i}:45`
+      `0${i}:45`,
+      "/public/images/No_Image_Available.jpg"
     );
   } catch (e) {
     console.log(e);
@@ -108,9 +109,10 @@ for (let i = 1; i <= number_of_data; i++) {
   try {
     const newslot = await timeSlot.create(
       sportID,
-      sportPlaceID,      
+      sportPlaceID,
       `2023-06-${i + 10}`,
-      2
+      2,
+      0
     );
   } catch (e) {
     console.log(e);
@@ -123,7 +125,7 @@ console.log(`${number_of_data} new valid sports added.`);
 console.log(`${number_of_data} new valid sport places added.`);
 console.log(`${number_of_data} new valid classes added.`);
 console.log(`${number_of_data} new valid events added.`);
-console.log(`${number_of_data} new valid timeSlot added.`);
+console.log(`${number_of_data} new valid slot added.`);
 
 await closeConnection();
 console.log("Done!");
