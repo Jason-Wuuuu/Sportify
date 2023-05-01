@@ -346,31 +346,46 @@ if (document.URL.includes("/admin")) {
   // sports and sportInfo
   let sportInfo = document.getElementById("sport-form");
   if (sportInfo) {
-    /*
     (function ($) {
       let mySportForm = $("#sport-form"),
-        newNameInput = $("#nameInput");
+        newNameInput = $("#nameInput"),
+        newThumbnailInput = $("#thumbnailInput"),
+        url = window.location.href;
 
       // sport form submission event
       mySportForm.submit(function (event) {
-        let newName = newNameInput.val();
-        if (newName) {
-          //set up AJAX request config
-          let requestConfig = {
-            method: "POST",
-            url: "/admin/sports",
-            data: {
-              nameInput: newName,
-            },
-          };
+        event.preventDefault();
 
-          //AJAX Call. Gets the returned HTML data, binds the click event to the link and appends the new todo to the page
-          $.ajax(requestConfig);
+        let newName = newNameInput.val();
+        let newThumbnail = newThumbnailInput.val();
+        //validation
+        try {
+          newName = checkTitle(newName, "Name");
+          if (newThumbnail) newThumbnail = checkURL(newThumbnail, "Thumbnail");
+
+          if (newName) {
+            //set up AJAX request config
+            $.ajax({
+              method: "POST",
+              url: url,
+              contentType: "application/json",
+              data: JSON.stringify({
+                nameInput: newName,
+                thumbnailInput: newThumbnail,
+              }),
+              success: function (res) {
+                window.location.href = url;
+              },
+            });
+          }
+        } catch (e) {
+          event.preventDefault();
+          show_error(e);
         }
       });
     })(window.jQuery);
 
-    */
+    /*
     // get elements
     let nameInput = document.getElementById("nameInput");
     let thumbnailInput = document.getElementById("thumbnailInput");
@@ -393,6 +408,7 @@ if (document.URL.includes("/admin")) {
         show_error(e);
       }
     });
+    */
   }
 
   // sportPlaces and sportPlaceInfo
