@@ -3,9 +3,9 @@
     <a href="/" class="logo">Sportify</a>
 
     <a class="active" href="/events/{{sport}}">Events</a>
+    <a href="/myevents">MyEvents</a>
     <a href="*">Classes</a>
-    <a href="/venue/{{sport}}">Reserve Venue</a>
-    <a href="*">Places</a>
+    <a href="/venue/{{sport}}">SportFacilities</a>
 
     <a href="/profile">Profile</a>
     <a href="/logout">Logout</a>
@@ -32,17 +32,22 @@
     <div class="textDetails">
       <h1>{{this.name}}</h1>
       <p>{{this.description}}</p>
+      {{#if this.registered}}
+        <p style="color: green;">
+          Event Joined! ✅
+        </p>
+        <a style="color: rgb(139, 15, 241);">
+          Chat With Participants! 💬
+        </a>
+      {{/if}}
       <p class="joinLink">
         {{#if this.available}}
           {{#if this.registered}}
-            <a style="color: green;">
-              Event Joined! ✅
-            </a><br />
             <a
               style="color: rgb(241, 15, 15);"
               href="/events/{{sport}}/deregister/{{this._id}}"
             >
-              Deregister Event!
+              Deregister Event? ⚠️
             </a>
           {{else}}
             <a href="/events/{{sport}}/register/{{this._id}}">

@@ -509,6 +509,27 @@ if (document.URL.includes("/admin")) {
 }
 //client side js for user
 else {
+  //myeventspage
+  const participantlinks = document.querySelectorAll("a.togglelist");
+
+  participantlinks.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      let curElement = event.target;
+      console.log(curElement);
+      let nextDiv =
+        curElement.parentNode.parentNode.parentNode.parentNode
+          .nextElementSibling;
+
+      if (nextDiv.style.display === "none") {
+        nextDiv.style.display = "block";
+        curElement.innerHTML = "Hide Participants List";
+      } else {
+        nextDiv.style.display = "none";
+        curElement.innerHTML = "See Participants List";
+      }
+    });
+  });
+
   //homepage
   const links = document.querySelectorAll("a.err");
 

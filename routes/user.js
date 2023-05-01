@@ -201,15 +201,60 @@ router.route("/logout").get(async (req, res) => {
   return res.render("logout", { title: "Logout" });
 });
 
+router.route("/myevents").get(async (req, res) => {
+  let userInfo = await userData.get(req.session.user.userID);
+
+  let uid = req.session.user.userID;
+  let eventList = await eventsData.getEventsByUser(uid);
+  if (eventList.length !== 0) {
+    for (let item of eventList) {
+      let memberdetailsList = [];
+      for (let member of item.participants) {
+        let memberdetails = await userData.get(member);
+        memberdetailsList.push(memberdetails);
+      }
+      item.memberdetails = memberdetailsList;
+      item.members = item.participants.length != 0 ? true : false;
+    }
+  }
+  eventList = eventList.reverse();
+  let empty = eventList.length == 0 ? true : false;
+
+  return res.render("myevents", {
+    title: "My Events",
+    myevents: eventList,
+    hidden: "hidden",
+    isempty: empty,
+  });
+});
+
 router
   .route("/profile")
   .get(async (req, res) => {
     let userInfo = await userData.get(req.session.user.userID);
 
+    let uid = req.session.user.userID;
+    let eventList = await eventsData.getEventsByUser(uid);
+    if (eventList.length !== 0) {
+      for (let item of eventList) {
+        let memberdetailsList = [];
+        for (let member of item.participants) {
+          let memberdetails = await userData.get(member);
+          memberdetailsList.push(memberdetails);
+        }
+        item.memberdetails = memberdetailsList;
+        item.members = item.participants.length != 0 ? true : false;
+      }
+    }
+    eventList = eventList.reverse();
+    let empty = eventList.length == 0 ? true : false;
+
     const options = getGenderOptions(userInfo.gender);
     return res.render("profile", {
       title: "Profile",
+      myevents: eventList,
       hidden: "hidden",
+      isempty: empty,
       firstName: userInfo.firstName,
       lastName: userInfo.lastName,
       email: userInfo.email,
@@ -337,6 +382,20 @@ router.route("/events/:sports").get(async (req, res) => {
     sport: sport,
     events: eventList,
   });
+});
+
+router.route("/removeevents/:eventid").get(async (req, res) => {
+  try {
+    let eventID = req.params.eventid.toString();
+    eventID = validation.checkId(eventID, "Event ID");
+    let removeinfo = await eventsData.remove(eventID);
+    return res.redirect("/profile");
+  } catch (e) {
+    return res.status(400).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
 });
 
 router
@@ -535,6 +594,27 @@ router.route("/events/:sports/deregister/:eventid").get(async (req, res) => {
     });
   }
 });
+
+router
+  .route("/events/:eventid/deregisteruser/:userid")
+  .get(async (req, res) => {
+    try {
+      let eventid = req.params.eventid.toString();
+      let uid = req.params.userid.toString();
+
+      let updateParticipantlist = await eventsData.quit(eventid, uid);
+      if (updateParticipantlist.updatedEventParticipants == true) {
+        return res.redirect("/myevents");
+      } else {
+        throw "Failed to remove User in Participant list.";
+      }
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
 
 router.route("/venue/:sports").get(async (req, res) => {
   try {

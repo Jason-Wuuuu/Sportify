@@ -98,7 +98,17 @@ const get = async (eventID) => {
   return event;
 };
 
-const remove = async (eventID) => {}; // ?
+const remove = async (eventID) => {
+  eventID = validation.checkId(eventID, "eventID");
+  const eventCollection = await events();
+  const deletionInfo = await eventCollection.findOneAndDelete({
+    _id: new ObjectId(eventID),
+  });
+  if (deletionInfo.lastErrorObject.n === 0)
+    throw `Error: Could not delete sport place with id of ${eventID}`;
+
+  return { deleted: true };
+};
 
 const update = async (
   eventID,
@@ -146,7 +156,15 @@ const quit = async (eventID, userID) => {
 
 const getAllParticipants = async (eventID) => {};
 
-const getEventsByUser = async (userID) => {};
+const getEventsByUser = async (userID) => {
+  const eventCollection = await events();
+  const eventList = await eventCollection
+    .find({
+      userID: userID,
+    })
+    .toArray();
+  return eventList;
+};
 
 const getEventsBySport = async (sport) => {
   sport = validation.helperMethodsForEvents.checkString(sport, "Sport");
@@ -192,5 +210,14 @@ const getAvailableEvents = async () => {}; // events that the capacity is not fu
 
 // sorting ?
 
-export { create, get, getAll, getEventsBySport, join, quit };
+export {
+  create,
+  get,
+  getAll,
+  getEventsBySport,
+  join,
+  quit,
+  getEventsByUser,
+  remove,
+};
 //testing my local branch repo connection to github repo via test commit
