@@ -13,26 +13,31 @@
   </nav>
 </header>
 
-
+{{#if message}}
+ <h3  style="color:rgb(226, 169, 12);"> {{message}} </h3>
+{{/if}} 
 <h2>Classes for : {{sport}}</h2>
 
-{{#each classList}}
+{{#each classList}} 
   <div class="blog-card">
     <div class="meta">
       <ul class="details">
         <li class="author">Instructor : {{this.instructor}}</li>
-        <li class="date">Date : {{this.date}}</li>
+        <li class="date">Date : {{this.date}}</li>    
         <li class="time"> Time : {{this.startTime}} to {{this.endTime}}</li>
       </ul>
     </div>
-   <div class="description">
+   <div class="description">  
       <h1>{{this.title}}</h1>
       <p>Rating: {{this.rating}}</p>
       <p>Price: {{this.price}}</p>
-      <p class="read-more">
-       Capacity: {{this.capacity}}
-      </p>
-    </div>
+      <p> Capacity: {{this.capacity}}</p>  
+      {{!-- <input type="submit" value="Add Me" id="{{this._id}}" class="add-user-in-class"/>  --}}
+      <form action="/classes/{{../sport}}" method="post" id="{{this._id}}" class="add-user-in-class"> 
+        <input name="classId" value="{{this._id}}" type="hidden"/>
+        <input type="submit" value="Add Me"/>
+      </form>
+  </div>
   </div>
 {{else}}
   <p>Sorry!<br /> No classes found for {{sport}}.</p>

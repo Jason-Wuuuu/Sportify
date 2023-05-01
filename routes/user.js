@@ -200,12 +200,24 @@ router.route("/events/:sports").get(async (req, res) => {
   return res.render("events", { sport: sport, events: eventList });
 });
 
-router.route("/classes/:sports").get(async (req, res) => {
+router.route("/classes/:sports")
+.get(async (req, res) => {    
   let sportName = req.params.sports;
-  let sport = await sportsData.getByName(sportName);
-  let sportObjectId = sport._id.toString();
+  let sportObj = await sportsData.getByName(sportName);
+  let sportObjectId = sportObj._id.toString();
   let classList = await classesData.getClassesBySport(sportObjectId);
-  return res.render("classes", { sport: sport.name, classList : classList });
+  return res.render("classes", { sport: sportObj.name, classList : classList});
+})
+.post(async (req, res) => {
+  let sport = req.params.sports;
+  let classID = req.body.classId;
+  let userID = req.session.user.userID;   
+  let result = await classesData.reserve(classID, userID);
+  let sportName = req.params.sports;
+  let sportObj = await sportsData.getByName(sportName);
+  let sportObjectId = sportObj._id.toString();
+  let classList = await classesData.getClassesBySport(sportObjectId); 
+  return res.render("classes", { sport: sportObj.name, classList : classList, message : result.msg });
 });
 
 router.route("/venue/:sports").get(async (req, res) => {
@@ -215,7 +227,7 @@ router.route("/venue/:sports").get(async (req, res) => {
       "sports Param"
     );
   } catch (e) {
-    return res.status(400).render("error", {
+    return res.status(400).render("error", {    
       title: "Error",
       error: e,
     });
