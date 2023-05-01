@@ -10,12 +10,33 @@
         <a href="/admin/logout">Logout</a>
     </nav>
 </header>
+<script>
+    function filterplaces(id) {
+        //  alert(sportPlaces[0]["sportPlaceName"]);
+        //var temp = [];
+        var sportsPlacesArr = document.getElementById("sportplaceIDInput");
+        var sportsPlacesArrFiltered = document.getElementById("sportplaceIDInput1");
+       debugger;
+        for (var i = 0; i < sportsPlacesArr.options.length; i++) {
+            if (id == sportsPlacesArr.options[i].className) {
+                //temp.push({ "Id": sportsPlacesArr.options[i].value, "Name": sportsPlacesArr.options[i].innerText });
+                var myoption = document.createElement('option');
+                myoption.value =  sportsPlacesArr.options[i].value;
+                myoption.innerHTML = sportsPlacesArr.options[i].innerText;
+                sportsPlacesArrFiltered.appendChild(myoption);
+            }
+        }
+        //console.log(temp);
+        //sportsPlacesArrFiltered.options = temp;
+        // for(var i=0;i<)
+    }
+</script>
 
 <h1>{{title}}</h1>
 
 <h2>We have {{n}} classes.</h2>
 
-<label for="add">Add New Class:</label>
+<label>Add New Class:</label>
 <button type="button" id="expand">Add</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
@@ -28,7 +49,7 @@
 
         <label for="sportIDInput">Sport:</label>
         <br>
-        <select id="sportIDInput" , name="sportIDInput">
+        <select id="sportIDInput" name="sportIDInput" onchange="filterplaces(this.value)">
             <option value="">-</option>
             {{#each sports}}
             <option value="{{sportID}}">{{name}}</option>
@@ -38,12 +59,23 @@
 
         <label for="sportPlaceIDInput">Sport Places:</label>
         <br>
-        <select id="sportPlaceIDInput" , name="sportPlaceIDInput">
+        <select id="sportplaceIDInput" , name="sportplaceIDInput" hidden>
+            <option value="">-</option>
+            {{#each sportPlaces}}
+            <option value="{{sportPlaceID}}" class="{{sportId1}}">{{name}}</option>
+            {{/each}}
+        </select>
+        <select id="sportplaceIDInput1" , name="sportplaceIDInput1" >
+            <option value="">-</option>
+
+        </select>
+
+        {{!-- <select id="sportPlaceIDInput" name="sportPlaceIDInput">
             <option value="">-</option>
             {{#each sportPlaces}}
             <option value="{{sportPlaceID}}">{{name}}</option>
             {{/each}}
-        </select>
+        </select> --}}
         <br>
 
         <label for="instructorInput">Instructor:</label>

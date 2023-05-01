@@ -26,7 +26,9 @@ const create = async (
         Date: Date,
         slotID: slotID,
         availability: 0,
-        userID: ""
+        userID: "",
+        bookingType: 0
+        //pass booking type for ground booking 1, event:2, class:3
     };
     const slotCollection = await timeSlot();
     const newdata = await slotCollection.insertOne(newTimeslot);
