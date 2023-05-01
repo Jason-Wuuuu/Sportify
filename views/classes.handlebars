@@ -32,7 +32,6 @@
       <p>Rating: {{this.rating}}</p>
       <p>Price: {{this.price}}</p>
       <p> Capacity: {{this.capacity}}</p>  
-      {{!-- <input type="submit" value="Add Me" id="{{this._id}}" class="add-user-in-class"/>  --}}
       <form action="/classes/{{../sport}}" method="post" id="{{this._id}}" class="add-user-in-class"> 
         <input name="classId" value="{{this._id}}" type="hidden"/>
         <input type="submit" value="Add Me"/>

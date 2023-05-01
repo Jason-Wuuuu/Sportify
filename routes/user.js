@@ -1,4 +1,4 @@
-import { Router } from "express";
+    import { Router } from "express";
 import * as userData from "../data/user/users.js";
 import * as eventsData from "../data/user/events.js";
 import * as sportsData from "../data/user/sports.js";
@@ -194,6 +194,28 @@ router.route("/profile").get(async (req, res) => {
   });
 });
 
+router.route("/myclasses").get(async (req, res) => {
+  let userID = req.session.user.userID;        
+  let myClassList = await classesData.getClassesByUserID(userID);
+  return res.render("myclasses", {classList : myClassList});
+}); 
+
+router.route("/myclasses/:classID")
+.get(async (req, res) => {
+  let classID = req.params.classID;
+  let classObj = await classesData.getClass(classID);
+  return res.render("classInfo", {class : classObj});
+});
+
+router.route("/myclasses/remove/:classID")
+.get(async (req, res) => {
+  let userID = req.session.user.userID; 
+  let classID = req.params.classID;
+  await classesData.removeStudent(classID, userID);
+  return res.redirect("/myclasses")
+});
+
+
 router.route("/events/:sports").get(async (req, res) => {
   let sport = req.params.sports;
   let eventList = await eventsData.getEventsBySport(sport);
@@ -208,8 +230,7 @@ router.route("/classes/:sports")
   let classList = await classesData.getClassesBySport(sportObjectId);
   return res.render("classes", { sport: sportObj.name, classList : classList});
 })
-.post(async (req, res) => {
-  let sport = req.params.sports;
+.post(async (req, res) => { 
   let classID = req.body.classId;
   let userID = req.session.user.userID;   
   let result = await classesData.reserve(classID, userID);

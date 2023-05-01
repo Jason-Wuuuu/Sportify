@@ -1,0 +1,24 @@
+<header>
+    <nav class="navbar">
+        <a href="/myclasses">Back</a>
+    </nav>
+</header>
+
+<div>
+  <h1>{{class.title}}</h1>
+  <ul>
+    <li>Title: {{class.title}}</li>
+    <li>Capacity: {{class.capacity}}</li>
+    <li>Instructor: {{class.instructor}}</li> 
+    <li>Price: {{class.price}}</li>
+    <li>Date: {{class.date}}</li>
+    <li>Start Time: {{class.startTime}}</li>
+    <li>End Time: {{class.endTime}}</li>
+    <li>Rating: {{class.rating}}</li> 
+  </ul>   
+
+  <form action="/myclasses/remove/{{class._id}}" method="get">    
+      <label for="remove">Remove Class:</label>
+      <button type="submit" id="remove">Remove</button>
+  </form>
+</div>
