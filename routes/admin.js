@@ -1376,6 +1376,7 @@ router.route("/events/:id").get(async (req, res) => {
   }
   try {
     let event = await eventData.get(req.params.id);
+
     return res.render("admin/eventInfo", {
       title: "Event Info",
       id: event._id,
