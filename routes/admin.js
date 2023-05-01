@@ -958,8 +958,18 @@ router
 
     try {
       let classInfo = await classData.get(req.params.id);
-      const sportInfo = await sportData.get(classInfo.sportID);
-      const sportPlaceInfo = await sportPlaceData.get(classInfo.sportPlaceID);
+      let sportInfo = {};
+      try {
+        sportInfo = await sportData.get(classInfo.sportID);
+      } catch (e) {
+        sportInfo.name = "Please reselect";
+      }
+      let sportPlaceInfo = {};
+      try {
+        sportPlaceInfo = await sportPlaceData.get(classInfo.sportPlaceID);
+      } catch (e) {
+        sportPlaceInfo.name = "Please reselect";
+      }
 
       const sports = await getSportOptions(sportInfo._id);
       const sportPlaces = await getSportPlaceOptions(sportPlaceInfo._id);
@@ -1218,12 +1228,14 @@ router
     }
     try {
       let sportPlace = await sportPlaceData.get(req.params.id);
-      const sportInfo = await sportData.get(sportPlace.sportID);
+      let sportInfo = {};
+      try {
+        sportInfo = await sportData.get(sportPlace.sportID);
+      } catch (e) {
+        sportInfo.name = "Please reselect";
+      }
 
-      const sports = await getSportOptions({
-        sportID: sportInfo._id,
-        name: sportInfo.name,
-      });
+      const sports = await getSportOptions(sportInfo._id);
       return res.render("admin/sportPlaceInfo", {
         title: "SportPlace Info",
         hidden: "hidden",
