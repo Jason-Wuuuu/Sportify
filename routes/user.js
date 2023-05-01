@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-    import { Router } from "express";
-=======
 import e, { Router } from "express";
->>>>>>> dev
 import * as userData from "../data/user/users.js";
 import * as eventsData from "../data/user/events.js";
 import * as sportsData from "../data/user/sports.js";
