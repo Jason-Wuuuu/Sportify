@@ -78,12 +78,12 @@
 <h3>List of Users:</h3>
 <div id="userList">
     {{#if n}}
-    <dl>
+    <ul>
         {{#each users}}
         <dt>ID: {{userID}}</dt>
-        <dd>Name: {{userFirstName}}, {{userLastName}}</dd>
+        <li>Name: {{userFirstName}}, {{userLastName}}</li>
         {{/each}}
-    </dl>
+    </ul>
     {{else}}
     There are no users for this sport place...
     {{/if}}
