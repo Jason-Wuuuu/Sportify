@@ -26,12 +26,11 @@
 <h3>List of Participants:</h3>
 <div id="userList">
     {{#if n}}
-    <dl>
-        {{#each users}}
-        <dt>ID: {{userID}}</dt>
-        <dd>Name: {{userFirstName}}, {{userLastName}}</dd>
+    <ul>
+        {{#each participants}}
+        <li><a href="/admin/users/{{this}}">{{this}}</a></li>
         {{/each}}
-    </dl>
+    </ul>
     {{else}}
     There are no participants for this event...
     {{/if}}

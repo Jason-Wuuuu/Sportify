@@ -30,7 +30,7 @@ const getGenderOptions = (selected) => {
   return options;
 };
 
-const getSportOptions = async () => {
+const getSportOptions = async (sportID) => {
   const sportList = await sportData.getAll();
   let sports = [];
   if (sportList) {
@@ -38,16 +38,28 @@ const getSportOptions = async () => {
       Object({ sportID: sport._id, name: sport.name })
     );
   }
+  if (sportID) {
+    const i = sports.findIndex((object) => {
+      return object.sportID.toString() === sportID.toString();
+    });
+    sports.splice(i, 1);
+  }
   return sports;
 };
 
-const getSportPlaceOptions = async () => {
+const getSportPlaceOptions = async (sportPlaceID) => {
   const sportPlacetList = await sportPlaceData.getAll();
   let sportPlaces = [];
   if (sportPlacetList) {
     sportPlaces = sportPlacetList.map((sportPlace) =>
-      Object({ sportPlaceID: sportPlace._id, name: sportPlace.name })
+      Object({ sportPlaceID: sportPlace._id, name: sportPlace.name, sportId1: sportPlace.sportID})
     );
+  }
+  if (sportPlaceID) {
+    const i = sportPlaces.findIndex((object) => {
+      return object.sportPlaceID.toString() === sportPlaceID.toString();
+    });
+    sportPlaces.splice(i, 1);
   }
   return sportPlaces;
 };
@@ -403,8 +415,8 @@ router
         classInfo.sportIDInput,
         "SportID"
       );
-      classInfo.sportPlaceIDInput = validation.checkId(
-        classInfo.sportPlaceIDInput,
+      classInfo.sportplaceIDInput1 = validation.checkId(
+        classInfo.sportplaceIDInput1,
         "Sport PlaceID"
       );
       classInfo.capacityInput = validation.checkCapacity(
@@ -419,7 +431,7 @@ router
         classInfo.priceInput,
         "Price"
       );
-      classInfo.dateInput = validation.checkDate(classInfo.dateInput, "Date");
+     classInfo.dateInput = validation.checkDate(classInfo.dateInput, "Date");
       classInfo.startTimeInput = validation.checkTime(
         classInfo.startTimeInput,
         "Start Time"
@@ -467,7 +479,7 @@ router
       const newClass = await classData.create(
         classInfo.titleInput,
         classInfo.sportIDInput,
-        classInfo.sportPlaceIDInput,
+        classInfo.sportplaceIDInput1,
         classInfo.capacityInput,
         classInfo.instructorInput,
         classInfo.priceInput,
@@ -946,11 +958,21 @@ router
 
     try {
       let classInfo = await classData.get(req.params.id);
-      const sports = await getSportOptions(classInfo.sport);
-      const sportPlaces = await getSportPlaceOptions(classInfo.sportPlace);
+      let sportInfo = {};
+      try {
+        sportInfo = await sportData.get(classInfo.sportID);
+      } catch (e) {
+        sportInfo.name = "Please reselect";
+      }
+      let sportPlaceInfo = {};
+      try {
+        sportPlaceInfo = await sportPlaceData.get(classInfo.sportPlaceID);
+      } catch (e) {
+        sportPlaceInfo.name = "Please reselect";
+      }
 
-      const sportInfo = await sportData.get(classInfo.sportID);
-      const sportPlaceInfo = await sportPlaceData.get(classInfo.sportPlaceID);
+      const sports = await getSportOptions(sportInfo._id);
+      const sportPlaces = await getSportPlaceOptions(sportPlaceInfo._id);
 
       return res.render("admin/classInfo", {
         title: "Class Info",
@@ -972,6 +994,10 @@ router
         n: classInfo.students.length,
         users: classInfo.students,
         classTitle: classInfo.title,
+        sportID: sportInfo._id,
+        sportName: sportInfo.name,
+        sportPlaceID: sportPlaceInfo._id,
+        sportPlaceName: sportPlaceInfo.name,
         newCapacity: classInfo.capacity,
         newInstructor: classInfo.instructor,
         newPrice: classInfo.price,
@@ -1104,7 +1130,7 @@ router
       );
       if (!newClass.updatedClass) throw "Internal Server Error";
       return res.redirect(`${classID}`);
-    } catch (e) {}
+    } catch (e) { }
   });
 
 router
@@ -1186,7 +1212,7 @@ router
       );
       if (!newSport.updatedSport) throw "Internal Server Error";
       return res.redirect(`${sportID}`);
-    } catch (e) {}
+    } catch (e) { }
   });
 
 router
@@ -1202,9 +1228,14 @@ router
     }
     try {
       let sportPlace = await sportPlaceData.get(req.params.id);
+      let sportInfo = {};
+      try {
+        sportInfo = await sportData.get(sportPlace.sportID);
+      } catch (e) {
+        sportInfo.name = "Please reselect";
+      }
 
-      const sportInfo = await sportData.get(sportPlace.sportID);
-      const sports = await getSportOptions(sportPlace.sport);
+      const sports = await getSportOptions(sportInfo._id);
       return res.render("admin/sportPlaceInfo", {
         title: "SportPlace Info",
         hidden: "hidden",
@@ -1220,6 +1251,8 @@ router
         rating: sportPlace.rating,
         n: sportPlace.users.length,
         users: sportPlace.users,
+        sportID: sportInfo._id,
+        sportName: sportInfo.name,
         newName: sportPlace.name,
         newAddress: sportPlace.address,
         newDescription: sportPlace.description,
@@ -1284,7 +1317,7 @@ router
           "Thumbnail"
         );
     } catch (e) {
-      const sports = await getSportOptions(sportPlaceInfo.sportInput);
+      const sports = await getSportOptions();
 
       let origSportPlace = await sportPlaceData.get(req.params.id);
 
@@ -1328,7 +1361,7 @@ router
       if (!newSportPlace.updatedSportPlace) throw "Internal Server Error";
       return res.redirect(`${sportPlaceID}`);
     } catch (e) {
-      const sports = await getSportOptions(sportPlaceInfo.sportInput);
+      const sports = await getSportOptions();
     }
   });
 
@@ -1343,6 +1376,7 @@ router.route("/events/:id").get(async (req, res) => {
   }
   try {
     let event = await eventData.get(req.params.id);
+
     return res.render("admin/eventInfo", {
       title: "Event Info",
       id: event._id,
@@ -1382,6 +1416,7 @@ router
       Object({
         sportPlaceID: sportPlace._id,
         sportPlaceName: sportPlace.name,
+        sportId1: sportPlace.sportID,
       })
     );
 
@@ -1407,8 +1442,8 @@ router
         timeSlotInfo.sportIDInput,
         "sportID"
       );
-      timeSlotInfo.sportplaceIDInput = validation.checkId(
-        timeSlotInfo.sportplaceIDInput,
+      timeSlotInfo.sportplaceIDInput1 = validation.checkId(
+        timeSlotInfo.sportplaceIDInput1,
         "sportPlaceID"
       );
       timeSlotInfo.dateInput = validation.checkString(
@@ -1450,7 +1485,7 @@ router
     try {
       const newSlot = await timeSlot.create(
         timeSlotInfo.sportIDInput,
-        timeSlotInfo.sportplaceIDInput,
+        timeSlotInfo.sportplaceIDInput1,
         timeSlotInfo.dateInput,
         timeSlotInfo.slotInput
       );

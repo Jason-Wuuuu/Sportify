@@ -51,6 +51,16 @@ const get = async (sportPlaceID) => {
   return sportPlace;
 };
 
+const getSportPlaceFromSport = async (sportID) => {
+  sportID = validation.checkId(sportID,"sportID");
+  const sportPlaceCollection = await sportPlaces();
+  const sportPlace = await sportPlaceCollection.findOne({
+    sportID: sportID,
+  });
+  if (!sportPlace) throw "Error: sportPlace not found";
+  return sportPlace;
+};
+
 const remove = async (sportPlaceID) => {
   sportPlaceID = validation.checkId(sportPlaceID,"sportPlaceID");
   const sportPlaceCollection = await sportPlaces();
@@ -109,4 +119,4 @@ const update = async (
 
 // const getAllUsers = async (sportPlaceID) => {};
 
-export { create, getAll, get, remove, update };
+export { create, getAll, get, remove, update,getSportPlaceFromSport };

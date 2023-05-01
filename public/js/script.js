@@ -165,7 +165,7 @@ const checkDate = (date, varName) => {
   if (!d) throw `Error: Invalid ${varName}.`;
 
   const today = new Date();
-  if (d < today) throw `Error: Date shouldn't be less than today.`;
+  if (d < today) throw `Error: Valid date starts from tomorrow.`;
 
   return date;
 };
