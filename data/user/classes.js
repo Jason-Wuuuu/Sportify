@@ -25,9 +25,33 @@ const reserve = async (classID, userID) => {
   return { reserved: true, msg: "Sucessfully reserved" };
 };
 
-const quit = async (classID, userID) => {};
+const quit = async (classID, userID) => {
+  classID = helperMethodsForClasses.checkId(classID, "classID");
+  userID = helperMethodsForUsers.checkId(userID, "userID");
+  const classCollection = await classes();
+  const updatedClass = await classCollection.findOneAndUpdate(
+    { _id: new ObjectId(classID) },
+    { $pull: { students: { $in: [ userID ] } } }
+  );
+  await classCollection.findOneAndUpdate(
+    { _id: new ObjectId(classID) },   
+    { $set: { capacity: updatedClass.value.capacity+1 } }
+  );  
+};
 
-const rate = async (classID, userID, rate) => {};
+const rate = async (classID, userID, rate) => {
+  classID = helperMethodsForClasses.checkId(classID, "classID");
+  userID = helperMethodsForClasses.checkId(userID, "userID");
+  const classCollection = await classes();
+  const updateInfo = await classCollection.findOneAndUpdate(
+    { _id: new ObjectId(classID) },
+    { $set: { rating: rate } },
+    { returnDocument: "after" }
+  );
+  if (updateInfo.lastErrorObject.n === 0)
+    throw `Error: Update failed, could not find a class with id of ${classID}`;
+  return { rated: true };
+};
 
 const getClass = async (classID) => {
   classID = helperMethodsForClasses.checkId(classID, "classID");
@@ -38,9 +62,25 @@ const getClass = async (classID) => {
   return classData;
 };
 
-const getAllClasses = async () => {};
+const getAllClasses = async () => {
+  const classCollection = await classes();
+  const allClasses = await classCollection.find({}).project({title:1}).toArray();
+  if (!allClasses) throw "Error: No Classes not found";
+  allClasses=allClasses.map((element)=>{
+    element._id = element._id.toString();
+      return element;
+  });
+};
 
-const getAllStudents = async (classID) => {};
+const getAllStudents = async (classID) => {
+  classID = helperMethodsForClasses.checkId(classID, "classID");
+  const classCollection = await classes();
+  const classData = await classCollection.findOne({ _id: new ObjectId(classID) });
+  if (!classData)
+    throw `Error: Could not find a class with id of ${classID}`;
+  const students = classData.students;
+  return students;
+};
 
 const getClassesBySport = async (sportID) => {
   sportID = helperMethodsForClasses.checkId(sportID, "sportID");
@@ -56,22 +96,32 @@ const getClassesByUserID = async (userID) => {
   return allClasses.filter(obj => obj.students.includes(userID));
 };   
 
-const getClassesBySportPlace = async (sportPlaceID) => {};
-
-const getClassesByInstructor = async (instructor) => {};
-
-const getClassesByTime = async (time) => {};
-
-const getAvailableClasses = async () => {}; // classes that the capacity is not full
-
-const removeStudent = async (classID, userID) => {
-  classID = helperMethodsForClasses.checkId(classID, "classID");
-  userID = helperMethodsForUsers.checkId(userID, "userID");
+const getClassesBySportPlace = async (sportPlaceID) => {
+  sportPlaceID = helperMethodsForClasses.checkId(sportPlaceID, "sportPlaceID");
   const classCollection = await classes();
-  const updatedClass = await classCollection.findOneAndUpdate(
-    { _id: new ObjectId(classID) },
-    { $pull: { students: { $in: [ userID ] } } }
-  );  
-}
+  const classesBySportPlace = await classCollection.find({ sportPlaceID }).toArray();
+  return classesBySportPlace;
+};
 
-export {reserve, getClassesBySport, getClassesByUserID, getClass, removeStudent};
+const getClassesByInstructor = async (instructor) => {
+  instructor = helperMethodsForUsers.checkString(instructor, "Instructor");
+  const classCollection = await classes();
+  const classesByInstructor = await classCollection.find({ instructor: instructor }).toArray();
+  return classesByInstructor;
+};
+
+const getClassesByTime = async (time) => {
+    // Validate time input
+    time = helperMethodsForClasses.checkTime(time, "Time");
+    const classCollection = await classes();
+    const classesByTime = await classCollection.find({ time: time }).toArray();
+    return classesByTime;
+};
+
+const getAvailableClasses = async () => {
+  const classCollection = await classes();
+  const availableClasses = await classCollection.find({ $expr: { $lt: ["$students.length", "$capacity"] } }).toArray();
+  return availableClasses;
+}; // classes that the capacity is not full
+
+export {reserve, getClassesBySport, getClassesByUserID, getClass, quit};
