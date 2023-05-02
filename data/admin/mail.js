@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
 // async..await is not allowed in global scope, must use a wrapper
-async function sendMail(emailAddress, msg) {
+async function sendEmail(emailAddress, msg) {
   /*
   let transporter = nodemailer.createTransport({
     host: "sandbox.smtp.mailtrap.io",
@@ -30,8 +30,8 @@ async function sendMail(emailAddress, msg) {
     html: `<h1>Sportify</h1><h2>${msg}</h2>`, // html body
   });
 
-  console.log(`Mail successfully sent to ${emailAddress}!`);
+  //console.log(`Mail successfully sent to ${emailAddress}!`);
 }
 
 // await sendMail("You are now an admin of Sportify!", "test@email.com");
-export { sendMail };
+export { sendEmail };
