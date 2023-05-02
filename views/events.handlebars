@@ -33,7 +33,7 @@
       <h1>{{this.name}}</h1>
       <p>{{this.description}}</p>
       {{#if this.registered}}
-        <p style="color: green;">
+        <p style="color: green; ">
           Event Joined! ✅
         </p>
         <a style="color: rgb(139, 15, 241);">
@@ -56,9 +56,18 @@
             </a>
           {{/if}}
         {{else}}
-          <a style="color: red;">Event Full! 😢 [
-            {{this.participants.length}}/{{this.capacity}}]
-          </a>
+          {{#if this.registered}}
+            <a
+              style="color: rgb(241, 15, 15);"
+              href="/events/{{sport}}/deregister/{{this._id}}"
+            >
+              Deregister Event? ⚠️
+            </a>
+          {{else}}
+            <a style="color: red;">Event Full! 😢 [
+              {{this.participants.length}}/{{this.capacity}}]
+            </a>
+          {{/if}}
         {{/if}}
       </p>
     </div>

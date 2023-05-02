@@ -191,6 +191,14 @@ app.use("/myevents", (req, res, next) => {
   next();
 });
 
+app.use("/updateevent/:eventid", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  if (req.method === "POST") req.method = "PUT";
+  next();
+});
+
 app.use("/events/:sports/register/:eventid", (req, res, next) => {
   if (!req.session.user) {
     return res.redirect("/");

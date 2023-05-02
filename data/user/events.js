@@ -112,7 +112,6 @@ const remove = async (eventID) => {
 
 const update = async (
   eventID,
-  userID,
   name,
   description,
   sport,
@@ -120,8 +119,79 @@ const update = async (
   capacity,
   date,
   startTime,
-  endTime
-) => {};
+  endTime,
+  thumbnail
+) => {
+  try {
+    // validation
+    let eeventID = validation.helperMethodsForEvents.checkId(
+      eventID,
+      "Event ID"
+    );
+    let ename = validation.helperMethodsForEvents.checkEventName(
+      name,
+      "Event Name"
+    );
+    let edescription = validation.helperMethodsForEvents.checkEventName(
+      description,
+      "Description"
+    );
+    let esport = validation.helperMethodsForEvents.checkString(
+      sport,
+      "Sport Name"
+    );
+    let esportPlace = validation.helperMethodsForEvents.checkString(
+      sportPlace,
+      "SportPlace"
+    );
+    let ecapacity = validation.helperMethodsForEvents.checkCapacity(
+      capacity,
+      "Capacity"
+    );
+    let edate = validation.helperMethodsForEvents.checkDate(date, "Event Date");
+    let estartTime = validation.helperMethodsForEvents.checkEventTime(
+      startTime,
+      "Event Start Time"
+    );
+    let eendTime = validation.helperMethodsForEvents.checkEventTime(
+      endTime,
+      "Event End time"
+    );
+    let ethumbnail = validation.helperMethodsForEvents.checkURL(
+      thumbnail,
+      "Thumbnail URL"
+    );
+    let timerange = validation.helperMethodsForEvents.checkTimeRange(
+      startTime,
+      endTime
+    );
+    // add valid event to db
+    let updatedEvent = {
+      name: ename,
+      description: edescription,
+      sport: esport,
+      sportPlace: esportPlace,
+      capacity: ecapacity,
+      date: edate,
+      startTime: estartTime,
+      endTime: eendTime,
+      image: ethumbnail,
+    };
+
+    const eventCollection = await events();
+    const updatedInfo = await eventCollection.findOneAndUpdate(
+      { _id: new ObjectId(eeventID) },
+      { $set: updatedEvent },
+      { returnDocument: "after" }
+    );
+    if (updatedInfo.lastErrorObject.n === 0) {
+      throw `Error: no Event exists with an id of ${eeventID}.`;
+    }
+    return { updateEvent: true };
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 //
 const join = async (eventID, userID) => {
@@ -219,5 +289,6 @@ export {
   quit,
   getEventsByUser,
   remove,
+  update,
 };
 //testing my local branch repo connection to github repo via test commit
