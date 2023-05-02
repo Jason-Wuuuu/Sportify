@@ -44,6 +44,13 @@ const getID = async (sportname) => {
   return sport._id.toString();
 };
 
+const getByName = async (name) => {
+  const sportCollection = await sports();
+  const sport = await sportCollection.findOne({ name: name });
+  if (!sport) throw "Error: Sport not found";
+  return sport;
+};
+
 const remove = async (sportID) => {
   sportID = validation.checkId(sportID, "sportID");
   const sportCollection = await sports();
@@ -76,4 +83,4 @@ const update = async (sportID, name) => {
   return { updatedSport: true };
 };
 
-export { create, getAll, get, remove, update, getID };
+export { create, getAll, get, remove, update, getID, getByName };

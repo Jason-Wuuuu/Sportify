@@ -2,6 +2,7 @@ import e, { Router } from "express";
 import * as userData from "../data/user/users.js";
 import * as eventsData from "../data/user/events.js";
 import * as sportsData from "../data/user/sports.js";
+import * as classesData from "../data/user/classes.js";
 import { helperMethodsForUsers } from "../data/user/helpers.js";
 import * as validation from "../data/user/helpers.js";
 import * as sportsplaceData from "../data/user/sportPlaces.js";
@@ -232,6 +233,27 @@ router.route("/myevents").get(async (req, res) => {
   });
 });
 
+router.route("/myclasses").get(async (req, res) => {
+  let userID = req.session.user.userID;        
+  let myClassList = await classesData.getClassesByUserID(userID);
+  return res.render("myclasses", {classList : myClassList});
+}); 
+
+router.route("/myclasses/:classID")
+.get(async (req, res) => {
+  let classID = req.params.classID;
+  let classObj = await classesData.getClass(classID);
+  return res.render("classInfo", {class : classObj});
+});
+
+router.route("/myclasses/remove/:classID")
+.get(async (req, res) => {
+  let userID = req.session.user.userID; 
+  let classID = req.params.classID;
+  await classesData.removeStudent(classID, userID);
+  return res.redirect("/myclasses")
+});
+
 router
   .route("/profile")
   .get(async (req, res) => {
@@ -386,6 +408,25 @@ router.route("/events/:sports").get(async (req, res) => {
     sport: sport,
     events: eventList,
   });
+});
+
+router.route("/classes/:sports")
+.get(async (req, res) => {    
+  let sportName = req.params.sports;
+  let sportObj = await sportsData.getByName(sportName);
+  let sportObjectId = sportObj._id.toString();
+  let classList = await classesData.getClassesBySport(sportObjectId);
+  return res.render("classes", { sport: sportObj.name, classList : classList});
+})
+.post(async (req, res) => { 
+  let classID = req.body.classId;
+  let userID = req.session.user.userID;   
+  let result = await classesData.reserve(classID, userID);
+  let sportName = req.params.sports;
+  let sportObj = await sportsData.getByName(sportName);
+  let sportObjectId = sportObj._id.toString();
+  let classList = await classesData.getClassesBySport(sportObjectId); 
+  return res.render("classes", { sport: sportObj.name, classList : classList, message : result.msg });
 });
 
 router.route("/removeevents/:eventid").get(async (req, res) => {
@@ -767,7 +808,7 @@ router.route("/venue/:sports").get(async (req, res) => {
       "sports Param"
     );
   } catch (e) {
-    return res.status(400).render("error", {
+    return res.status(400).render("error", {    
       title: "Error",
       error: e,
     });

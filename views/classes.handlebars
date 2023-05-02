@@ -1,0 +1,43 @@
+<header>
+  <nav class="navbar">
+    <a href="/" class="logo">Sportify</a>
+
+    <a href="/events/{{sport}}">Events</a>
+    <a href="/classes/{{sport}}">Classes</a>
+    <a href="/venue/{{sport}}">Reserve Venue</a>
+    <a href="*">Places</a>
+
+    <a href="/profile">Profile</a>
+    <a href="/logout">Logout</a>
+
+  </nav>
+</header>
+
+{{#if message}}
+ <h3  style="color:rgb(226, 169, 12);"> {{message}} </h3>
+{{/if}} 
+<h2>Classes for : {{sport}}</h2>
+
+{{#each classList}} 
+  <div class="bgcard">
+    <div class="info">
+      <ul class="info-list">
+        <li class="author">Instructor : {{this.instructor}}</li>
+        <li class="date">Date : {{this.date}}</li>    
+        <li class="time"> Time : {{this.startTime}} to {{this.endTime}}</li>
+      </ul>
+    </div>
+   <div class="textDetails">  
+      <h1>{{this.title}}</h1>
+      <p>Rating: {{this.rating}}</p>
+      <p>Price: {{this.price}}</p>
+      <p> Capacity: {{this.capacity}}</p>  
+      <form action="/classes/{{../sport}}" method="post" id="{{this._id}}" class="add-user-in-class"> 
+        <input name="classId" value="{{this._id}}" type="hidden"/>
+        <input type="submit" value="Add Me"/>
+      </form>
+  </div>
+  </div>
+{{else}}
+  <p>Sorry!<br /> No classes found for {{sport}}.</p>
+{{/each}}

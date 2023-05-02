@@ -43,7 +43,40 @@ const helperMethodsForSports = {
   },
 };
 
-const helperMethodsForClasses = {};
+const helperMethodsForClasses = {
+  checkId(id, varName) {
+    if (!id) throw `Error: You must provide a ${varName}`;
+    if (typeof id !== "string") throw `Error:${varName} must be a string`;
+    id = id.trim();
+    if (id.length === 0)
+      throw `Error: ${varName} cannot be an empty string or just spaces`;
+    if (!ObjectId.isValid(id)) throw `Error: ${varName} invalid object ID`;
+    return id;
+  },
+  checkString(strVal, varName) {
+    if (!strVal) throw `Error: You must supply a ${varName}!`;
+    if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
+    strVal = strVal.trim();
+    if (strVal.length === 0)
+      throw `Error: ${varName} cannot be an empty string or string with just spaces`;
+    return strVal;
+  },
+  checkTime(time, varName) {
+    time = this.checkString(time, varName);
+
+    const hr_min = time.split(":");
+    if (!hr_min || hr_min.length !== 2) throw `Error: Invalid ${varName}`;
+
+    const hr = Number.parseInt(hr_min[0]);
+    const min = Number.parseInt(hr_min[1]);
+    if (isNaN(hr) || hr < 0 || hr > 24)
+      throw `Error: Invalid hr for ${varName}`;
+    if (isNaN(min) || min < 0 || min > 59)
+      throw `Error: Invalid min for ${varName}`;
+
+    return time;
+  },
+};
 
 const helperMethodsForEvents = {
   checkString(strVal, varName) {
