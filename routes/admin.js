@@ -10,6 +10,7 @@ import * as sportPlaceData from "../data/admin/sportPlaces.js";
 import validation, { checkUsedEmail } from "../data/admin/helpers.js";
 import xss from "xss";
 import * as timeSlot from "../data/admin/timeSlot.js";
+import { sendMail } from "../data/admin/mail.js";
 
 const router = Router();
 
@@ -52,7 +53,11 @@ const getSportPlaceOptions = async (sportPlaceID) => {
   let sportPlaces = [];
   if (sportPlacetList) {
     sportPlaces = sportPlacetList.map((sportPlace) =>
-      Object({ sportPlaceID: sportPlace._id, name: sportPlace.name, sportId1: sportPlace.sportID})
+      Object({
+        sportPlaceID: sportPlace._id,
+        name: sportPlace.name,
+        sportId1: sportPlace.sportID,
+      })
     );
   }
   if (sportPlaceID) {
@@ -279,7 +284,19 @@ router
         adminInfo.passwordInput
       );
       if (!newAdmin.insertedAdmin) throw "Internal Server Error";
-      return res.redirect("login");
+
+      //send mail
+      try {
+        await sendMail(
+          adminInfo.emailInput,
+          "Welcome to Sportify! You are now an Admin!"
+        );
+      } catch (e) {
+        console.log(`Failed to send mail to ${adminInfo.emailInput}`);
+      } finally {
+        // redirect to login page even if the mail is not sent
+        return res.redirect("login");
+      }
     } catch (e) {
       res.status(500).render("admin/error", {
         title: "Error",
@@ -431,7 +448,7 @@ router
         classInfo.priceInput,
         "Price"
       );
-     classInfo.dateInput = validation.checkDate(classInfo.dateInput, "Date");
+      classInfo.dateInput = validation.checkDate(classInfo.dateInput, "Date");
       classInfo.startTimeInput = validation.checkTime(
         classInfo.startTimeInput,
         "Start Time"
@@ -1130,7 +1147,7 @@ router
       );
       if (!newClass.updatedClass) throw "Internal Server Error";
       return res.redirect(`${classID}`);
-    } catch (e) { }
+    } catch (e) {}
   });
 
 router
@@ -1212,7 +1229,7 @@ router
       );
       if (!newSport.updatedSport) throw "Internal Server Error";
       return res.redirect(`${sportID}`);
-    } catch (e) { }
+    } catch (e) {}
   });
 
 router
