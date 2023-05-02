@@ -246,7 +246,7 @@ router.route("/myclasses/remove/:classID")
 .get(async (req, res) => {
   let userID = req.session.user.userID; 
   let classID = req.params.classID;
-  await classesData.removeStudent(classID, userID);
+  await classesData.quit(classID, userID);
   return res.redirect("/myclasses")
 });
 

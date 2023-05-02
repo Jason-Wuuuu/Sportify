@@ -25,7 +25,19 @@ const reserve = async (classID, userID) => {
   return { reserved: true, msg: "Sucessfully reserved" };
 };
 
-const quit = async (classID, userID) => {};
+const quit = async (classID, userID) => {
+  classID = helperMethodsForClasses.checkId(classID, "classID");
+  userID = helperMethodsForUsers.checkId(userID, "userID");
+  const classCollection = await classes();
+  const updatedClass = await classCollection.findOneAndUpdate(
+    { _id: new ObjectId(classID) },
+    { $pull: { students: { $in: [ userID ] } } }
+  );
+  await classCollection.findOneAndUpdate(
+    { _id: new ObjectId(classID) },   
+    { $set: { capacity: updatedClass.value.capacity+1 } }
+  );  
+};
 
 const rate = async (classID, userID, rate) => {};
 
@@ -64,14 +76,4 @@ const getClassesByTime = async (time) => {};
 
 const getAvailableClasses = async () => {}; // classes that the capacity is not full
 
-const removeStudent = async (classID, userID) => {
-  classID = helperMethodsForClasses.checkId(classID, "classID");
-  userID = helperMethodsForUsers.checkId(userID, "userID");
-  const classCollection = await classes();
-  const updatedClass = await classCollection.findOneAndUpdate(
-    { _id: new ObjectId(classID) },
-    { $pull: { students: { $in: [ userID ] } } }
-  );  
-}
-
-export {reserve, getClassesBySport, getClassesByUserID, getClass, removeStudent};
+export {reserve, getClassesBySport, getClassesByUserID, getClass, quit};
