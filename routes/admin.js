@@ -195,7 +195,19 @@ router
         adminInfo.passwordInput
       );
       if (!newAdmin.updatedAdmin) throw "Internal Server Error";
-      return res.redirect("profile");
+
+      //send mail
+      try {
+        await sendMail(
+          adminInfo.emailInput,
+          "Your information has been successfully updated!"
+        );
+      } catch (e) {
+        console.log(`Failed to send mail to ${adminInfo.emailInput}`);
+      } finally {
+        // redirect to profile page even if the mail is not sent
+        return res.redirect("profile");
+      }
     } catch (e) {
       return res.status(500).render("admin/error", {
         title: "Error",
@@ -289,7 +301,7 @@ router
       try {
         await sendMail(
           adminInfo.emailInput,
-          "Welcome to Sportify! You are now an Admin!"
+          "Welcome to the family! You are now an admin of Sportify!"
         );
       } catch (e) {
         console.log(`Failed to send mail to ${adminInfo.emailInput}`);

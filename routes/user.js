@@ -8,6 +8,7 @@ import * as validation from "../data/user/helpers.js";
 import * as sportsplaceData from "../data/user/sportPlaces.js";
 import * as slotsData from "../data/user/timeSlots.js";
 import xss from "xss";
+import { sendMail } from "../data/admin/mail.js";
 
 const router = Router();
 
@@ -139,7 +140,19 @@ router
         userInfo.passwordInput
       );
       if (!newUser.insertedUser) throw "Internal Server Error";
-      return res.redirect("login");
+
+      //send mail
+      try {
+        await sendMail(
+          userInfo.emailInput,
+          "Welcome to the family! You are now an user of Sportify!"
+        );
+      } catch (e) {
+        console.log(`Failed to send mail to ${userInfo.emailInput}`);
+      } finally {
+        // redirect to login page even if the mail is not sent
+        return res.redirect("login");
+      }
     } catch (e) {
       res.sendStatus(500);
     }
@@ -234,24 +247,22 @@ router.route("/myevents").get(async (req, res) => {
 });
 
 router.route("/myclasses").get(async (req, res) => {
-  let userID = req.session.user.userID;        
+  let userID = req.session.user.userID;
   let myClassList = await classesData.getClassesByUserID(userID);
-  return res.render("myclasses", {classList : myClassList});
-}); 
-
-router.route("/myclasses/:classID")
-.get(async (req, res) => {
-  let classID = req.params.classID;
-  let classObj = await classesData.getClass(classID);
-  return res.render("classInfo", {class : classObj});
+  return res.render("myclasses", { classList: myClassList });
 });
 
-router.route("/myclasses/remove/:classID")
-.get(async (req, res) => {
-  let userID = req.session.user.userID; 
+router.route("/myclasses/:classID").get(async (req, res) => {
+  let classID = req.params.classID;
+  let classObj = await classesData.getClass(classID);
+  return res.render("classInfo", { class: classObj });
+});
+
+router.route("/myclasses/remove/:classID").get(async (req, res) => {
+  let userID = req.session.user.userID;
   let classID = req.params.classID;
   await classesData.quit(classID, userID);
-  return res.redirect("/myclasses")
+  return res.redirect("/myclasses");
 });
 
 router
@@ -383,7 +394,19 @@ router
         userInfo.passwordInput
       );
       if (!newUser.updatedUser) throw "Internal Server Error";
-      return res.redirect("profile");
+
+      //send mail
+      try {
+        await sendMail(
+          userInfo.emailInput,
+          "Your information has been successfully updated!"
+        );
+      } catch (e) {
+        console.log(`Failed to send mail to ${userInfo.emailInput}`);
+      } finally {
+        // redirect to profile page even if the mail is not sent
+        return res.redirect("profile");
+      }
     } catch (e) {
       return res.status(500).render("error", {
         title: "Error",
@@ -410,24 +433,32 @@ router.route("/events/:sports").get(async (req, res) => {
   });
 });
 
-router.route("/classes/:sports")
-.get(async (req, res) => {    
-  let sportName = req.params.sports;
-  let sportObj = await sportsData.getByName(sportName);
-  let sportObjectId = sportObj._id.toString();
-  let classList = await classesData.getClassesBySport(sportObjectId);
-  return res.render("classes", { sport: sportObj.name, classList : classList});
-})
-.post(async (req, res) => { 
-  let classID = req.body.classId;
-  let userID = req.session.user.userID;   
-  let result = await classesData.reserve(classID, userID);
-  let sportName = req.params.sports;
-  let sportObj = await sportsData.getByName(sportName);
-  let sportObjectId = sportObj._id.toString();
-  let classList = await classesData.getClassesBySport(sportObjectId); 
-  return res.render("classes", { sport: sportObj.name, classList : classList, message : result.msg });
-});
+router
+  .route("/classes/:sports")
+  .get(async (req, res) => {
+    let sportName = req.params.sports;
+    let sportObj = await sportsData.getByName(sportName);
+    let sportObjectId = sportObj._id.toString();
+    let classList = await classesData.getClassesBySport(sportObjectId);
+    return res.render("classes", {
+      sport: sportObj.name,
+      classList: classList,
+    });
+  })
+  .post(async (req, res) => {
+    let classID = req.body.classId;
+    let userID = req.session.user.userID;
+    let result = await classesData.reserve(classID, userID);
+    let sportName = req.params.sports;
+    let sportObj = await sportsData.getByName(sportName);
+    let sportObjectId = sportObj._id.toString();
+    let classList = await classesData.getClassesBySport(sportObjectId);
+    return res.render("classes", {
+      sport: sportObj.name,
+      classList: classList,
+      message: result.msg,
+    });
+  });
 
 router.route("/removeevents/:eventid").get(async (req, res) => {
   try {
@@ -808,7 +839,7 @@ router.route("/venue/:sports").get(async (req, res) => {
       "sports Param"
     );
   } catch (e) {
-    return res.status(400).render("error", {    
+    return res.status(400).render("error", {
       title: "Error",
       error: e,
     });
