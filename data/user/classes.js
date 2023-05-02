@@ -11,14 +11,17 @@ const reserve = async (classID, userID) => {
   if(classObj.students.includes(userID)) 
     return { reserved: true, msg: "Already reserved" };
   if(classObj.capacity <= 0)
-    return { reserved: false, msg: "No seat available" }; 
-  let newCapacity =  classObj.capacity-1;
+    return { reserved: false, msg: "No seat avail   ble" }; 
   await classCollection.findOneAndUpdate(
     { _id: new ObjectId(classID) },   
     { $push: { students: userID } },
-    { $set: { capacity: newCapacity } },
     { returnDocument: "after" }
   );    
+  await classCollection.findOneAndUpdate(
+    { _id: new ObjectId(classID) },   
+    { $set: { capacity: classObj.capacity-1 } },
+    { returnDocument: "after" }
+  );
   return { reserved: true, msg: "Sucessfully reserved" };
 };
 
