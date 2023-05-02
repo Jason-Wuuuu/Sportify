@@ -10,7 +10,7 @@ import * as sportPlaceData from "../data/admin/sportPlaces.js";
 import validation, { checkUsedEmail } from "../data/admin/helpers.js";
 import xss from "xss";
 import * as timeSlot from "../data/admin/timeSlot.js";
-import { sendMail } from "../data/admin/mail.js";
+import { sendEmail } from "../data/admin/mail.js";
 
 const router = Router();
 
@@ -198,7 +198,7 @@ router
 
       //send mail
       try {
-        await sendMail(
+        await sendEmail(
           adminInfo.emailInput,
           "Your information has been successfully updated!"
         );
@@ -299,7 +299,7 @@ router
 
       //send mail
       try {
-        await sendMail(
+        await sendEmail(
           adminInfo.emailInput,
           "Welcome to the family! You are now an admin of Sportify!"
         );

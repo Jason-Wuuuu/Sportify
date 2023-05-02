@@ -8,7 +8,7 @@ import * as validation from "../data/user/helpers.js";
 import * as sportsplaceData from "../data/user/sportPlaces.js";
 import * as slotsData from "../data/user/timeSlots.js";
 import xss from "xss";
-import { sendMail } from "../data/admin/mail.js";
+import { sendEmail } from "../data/admin/mail.js";
 
 const router = Router();
 
@@ -143,7 +143,7 @@ router
 
       //send mail
       try {
-        await sendMail(
+        await sendEmail(
           userInfo.emailInput,
           "Welcome to the family! You are now an user of Sportify!"
         );
@@ -397,7 +397,7 @@ router
 
       //send mail
       try {
-        await sendMail(
+        await sendEmail(
           userInfo.emailInput,
           "Your information has been successfully updated!"
         );
