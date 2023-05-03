@@ -728,7 +728,7 @@ router
         db: "users",
       });
     } catch (e) {
-      return res.status(400).render("admin/error", {
+      return res.status(404).render("admin/error", {
         title: "Error",
         error: e,
       });
@@ -776,7 +776,7 @@ router
         db: "classes",
       });
     } catch (e) {
-      return res.status(400).render("admin/error", {
+      return res.status(404).render("admin/error", {
         title: "Error",
         error: e,
       });
@@ -824,7 +824,7 @@ router
         db: "sports",
       });
     } catch (e) {
-      return res.status(400).render("admin/error", {
+      return res.status(404).render("admin/error", {
         title: "Error",
         error: e,
       });
@@ -872,7 +872,7 @@ router
         db: "sportPlaces",
       });
     } catch (e) {
-      return res.status(400).render("admin/error", {
+      return res.status(404).render("admin/error", {
         title: "Error",
         error: e,
       });
@@ -920,7 +920,7 @@ router
         db: "events",
       });
     } catch (e) {
-      return res.status(400).render("admin/error", {
+      return res.status(404).render("admin/error", {
         title: "Error",
         error: e,
       });
@@ -959,18 +959,25 @@ router.route("/users/:id").get(async (req, res) => {
     });
   }
 
-  let userInfo = await userData.get(req.params.id);
+  try {
+    let userInfo = await userData.get(req.params.id);
 
-  return res.render("admin/userInfo", {
-    title: "User Info",
-    id: userInfo._id,
-    firstName: userInfo.firstName,
-    lastName: userInfo.lastName,
-    email: userInfo.email,
-    gender: userInfo.gender,
-    dateOfBirth: userInfo.dateOfBirth,
-    contactNumber: userInfo.contactNumber,
-  });
+    return res.render("admin/userInfo", {
+      title: "User Info",
+      id: userInfo._id,
+      firstName: userInfo.firstName,
+      lastName: userInfo.lastName,
+      email: userInfo.email,
+      gender: userInfo.gender,
+      dateOfBirth: userInfo.dateOfBirth,
+      contactNumber: userInfo.contactNumber,
+    });
+  } catch (e) {
+    return res.status(404).render("admin/error", {
+      title: "Error",
+      error: e,
+    });
+  }
 });
 
 router
@@ -1159,7 +1166,12 @@ router
       );
       if (!newClass.updatedClass) throw "Internal Server Error";
       return res.redirect(`${classID}`);
-    } catch (e) {}
+    } catch (e) {
+      return res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
   });
 
 router
@@ -1241,7 +1253,12 @@ router
       );
       if (!newSport.updatedSport) throw "Internal Server Error";
       return res.redirect(`${sportID}`);
-    } catch (e) {}
+    } catch (e) {
+      return res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
   });
 
 router
@@ -1390,7 +1407,10 @@ router
       if (!newSportPlace.updatedSportPlace) throw "Internal Server Error";
       return res.redirect(`${sportPlaceID}`);
     } catch (e) {
-      const sports = await getSportOptions();
+      return res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
     }
   });
 
