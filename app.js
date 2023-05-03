@@ -234,6 +234,13 @@ app.use("/profile", (req, res, next) => {
   next();
 });
 
+app.use("/myVenue", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
 app.use(async (req, res, next) => {
   const currentTime = new Date().toUTCString();
   const req_method = req.method;
