@@ -14,9 +14,9 @@
   </nav>
 </header>
 <h2>Update Event Details Below:</h2>
-
-<div class="error" id="errors"></div>
-
+{{#if err}}
+  <div class="error" id="errors">{{error}}</div>
+{{/if}}
 <form action="/updateevent/{{_id}}" method="post" id="addeventform">
 
   <label for="owner">Event by User:</label><br />

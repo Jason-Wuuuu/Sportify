@@ -504,7 +504,7 @@ router
         req.body.owner,
         "userID"
       );
-      let evenntname = validation.helperMethodsForEvents.checkEventName(
+      let eventname = validation.helperMethodsForEvents.checkEventName(
         req.body.eventname,
         "Event Name"
       );
@@ -564,7 +564,6 @@ router
           }
         }
       }
-
       let sportId = await sportsData.getID(sportname);
       for (let i in slotarray) {
         let slotinfo = await slotsData.create(
@@ -579,7 +578,7 @@ router
 
       let event = await eventsData.create(
         owner,
-        evenntname,
+        eventname,
         desc,
         sportname,
         sportPlace,
@@ -596,9 +595,26 @@ router
         throw "Event could not be added!";
       }
     } catch (e) {
-      return res.status(400).render("error", {
-        title: "Error",
-        error: e,
+      let sportt = req.params.sports;
+      let uid = req.session.user.userID;
+
+      let sportplaces = await sportsplaceData.getSportPlacesBySport(sportt);
+      return res.status(400).render("addevent", {
+        error: true,
+        userID: req.body.owner.toString(),
+        places: sportplaces,
+        title: "Add Event",
+        errmsg: e,
+        _id: req.body.owner.toString(),
+        name: req.body.eventname,
+        description: req.body.desc,
+        sport: req.body.sportname,
+        sportPlace: req.body.sportPlace,
+        capacity: req.body.CapacityInput,
+        date: req.body.dateinput,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        image: req.body.thumbnail,
       });
     }
   });
@@ -736,9 +752,26 @@ router
         throw "Event could not be updated!";
       }
     } catch (e) {
-      return res.status(400).render("error", {
-        title: "Error",
+      let sportt = req.body.sportname;
+
+      let sportplaces = await sportsplaceData.getSportPlacesBySport(sportt);
+      return res.status(400).render("updateevent", {
+        _id: req.params.eventid.toString(),
+        err: true,
         error: e,
+        places: sportplaces,
+        title: "Update Event",
+        errmsg: e,
+        userID: req.body.owner.toString(),
+        name: req.body.eventname,
+        description: req.body.desc,
+        sport: req.body.sportname,
+        sportPlace: req.body.sportPlace,
+        capacity: req.body.CapacityInput,
+        date: req.body.dateinput,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        image: req.body.thumbnail,
       });
     }
   });

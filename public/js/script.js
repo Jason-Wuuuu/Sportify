@@ -554,8 +554,8 @@ else {
     });
   });
 
-  //addeventsform
-  let eventform = document.getElementById("addeventform");
+  //addevents/updateevnt forms
+  //let eventform = document.getElementById("addeventform");
   if (eventform) {
     eventform.addEventListener("submit", (event) => {
       let errorDiv = document.getElementById("errors");
