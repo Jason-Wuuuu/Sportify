@@ -8,6 +8,7 @@ import * as validation from "../data/user/helpers.js";
 import * as sportsplaceData from "../data/user/sportPlaces.js";
 import * as slotsData from "../data/user/timeSlots.js";
 import xss from "xss";
+import { sendEmail } from "../data/admin/mail.js";
 
 const router = Router();
 
@@ -139,7 +140,19 @@ router
         userInfo.passwordInput
       );
       if (!newUser.insertedUser) throw "Internal Server Error";
-      return res.redirect("login");
+
+      //send mail
+      try {
+        await sendEmail(
+          userInfo.emailInput,
+          "Welcome to the family! You are now an user of Sportify!"
+        );
+      } catch (e) {
+        console.log(`Failed to send mail to ${userInfo.emailInput}`);
+      } finally {
+        // redirect to login page even if the mail is not sent
+        return res.redirect("login");
+      }
     } catch (e) {
       res.sendStatus(500);
     }
@@ -209,7 +222,11 @@ router.route("/myevents").get(async (req, res) => {
   let eventList = await eventsData.getEventsByUser(uid);
   if (eventList.length !== 0) {
     for (let item of eventList) {
+      item.sportplaces = await sportsplaceData.getSportPlacesBySport(
+        item.sport
+      );
       let memberdetailsList = [];
+
       for (let member of item.participants) {
         let memberdetails = await userData.get(member);
         memberdetailsList.push(memberdetails);
@@ -230,24 +247,22 @@ router.route("/myevents").get(async (req, res) => {
 });
 
 router.route("/myclasses").get(async (req, res) => {
-  let userID = req.session.user.userID;        
+  let userID = req.session.user.userID;
   let myClassList = await classesData.getClassesByUserID(userID);
-  return res.render("myclasses", {classList : myClassList});
-}); 
-
-router.route("/myclasses/:classID")
-.get(async (req, res) => {
-  let classID = req.params.classID;
-  let classObj = await classesData.getClass(classID);
-  return res.render("classInfo", {class : classObj});
+  return res.render("myclasses", { classList: myClassList });
 });
 
-router.route("/myclasses/remove/:classID")
-.get(async (req, res) => {
-  let userID = req.session.user.userID; 
+router.route("/myclasses/:classID").get(async (req, res) => {
   let classID = req.params.classID;
-  await classesData.removeStudent(classID, userID);
-  return res.redirect("/myclasses")
+  let classObj = await classesData.getClass(classID);
+  return res.render("classInfo", { class: classObj });
+});
+
+router.route("/myclasses/remove/:classID").get(async (req, res) => {
+  let userID = req.session.user.userID;
+  let classID = req.params.classID;
+  await classesData.quit(classID, userID);
+  return res.redirect("/myclasses");
 });
 
 router
@@ -379,7 +394,19 @@ router
         userInfo.passwordInput
       );
       if (!newUser.updatedUser) throw "Internal Server Error";
-      return res.redirect("profile");
+
+      //send mail
+      try {
+        await sendEmail(
+          userInfo.emailInput,
+          "Your information has been successfully updated!"
+        );
+      } catch (e) {
+        console.log(`Failed to send mail to ${userInfo.emailInput}`);
+      } finally {
+        // redirect to profile page even if the mail is not sent
+        return res.redirect("profile");
+      }
     } catch (e) {
       return res.status(500).render("error", {
         title: "Error",
@@ -406,24 +433,32 @@ router.route("/events/:sports").get(async (req, res) => {
   });
 });
 
-router.route("/classes/:sports")
-.get(async (req, res) => {    
-  let sportName = req.params.sports;
-  let sportObj = await sportsData.getByName(sportName);
-  let sportObjectId = sportObj._id.toString();
-  let classList = await classesData.getClassesBySport(sportObjectId);
-  return res.render("classes", { sport: sportObj.name, classList : classList});
-})
-.post(async (req, res) => { 
-  let classID = req.body.classId;
-  let userID = req.session.user.userID;   
-  let result = await classesData.reserve(classID, userID);
-  let sportName = req.params.sports;
-  let sportObj = await sportsData.getByName(sportName);
-  let sportObjectId = sportObj._id.toString();
-  let classList = await classesData.getClassesBySport(sportObjectId); 
-  return res.render("classes", { sport: sportObj.name, classList : classList, message : result.msg });
-});
+router
+  .route("/classes/:sports")
+  .get(async (req, res) => {
+    let sportName = req.params.sports;
+    let sportObj = await sportsData.getByName(sportName);
+    let sportObjectId = sportObj._id.toString();
+    let classList = await classesData.getClassesBySport(sportObjectId);
+    return res.render("classes", {
+      sport: sportObj.name,
+      classList: classList,
+    });
+  })
+  .post(async (req, res) => {
+    let classID = req.body.classId;
+    let userID = req.session.user.userID;
+    let result = await classesData.reserve(classID, userID);
+    let sportName = req.params.sports;
+    let sportObj = await sportsData.getByName(sportName);
+    let sportObjectId = sportObj._id.toString();
+    let classList = await classesData.getClassesBySport(sportObjectId);
+    return res.render("classes", {
+      sport: sportObj.name,
+      classList: classList,
+      message: result.msg,
+    });
+  });
 
 router.route("/removeevents/:eventid").get(async (req, res) => {
   try {
@@ -568,6 +603,146 @@ router
     }
   });
 
+router
+  .route("/updateevent/:eventid")
+  .get(async (req, res) => {
+    try {
+      let eventid = req.params.eventid.toString();
+      let eventdata = await eventsData.get(eventid);
+      let sportplaces = await sportsplaceData.getSportPlacesBySport(
+        eventdata.sport
+      );
+
+      return res.render("updateevent", {
+        title: "Update Event",
+        _id: eventdata._id.toString(),
+        places: sportplaces,
+        userID: eventdata.userID,
+        name: eventdata.name,
+        description: eventdata.description,
+        sport: eventdata.sport,
+        sportPlace: eventdata.sportPlace,
+        capacity: eventdata.capacity,
+        date: eventdata.date,
+        startTime: eventdata.startTime,
+        endTime: eventdata.endTime,
+        image: eventdata.image,
+      });
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  })
+  .put(async (req, res) => {
+    try {
+      for (const key in req.body) {
+        req.body[key] = xss(req.body[key]);
+      }
+      let eventid = req.params.eventid.toString();
+      eventid = validation.helperMethodsForEvents.checkId(eventid, "Event ID");
+
+      let owner = validation.helperMethodsForEvents.checkId(
+        req.body.owner,
+        "userID"
+      );
+
+      let evenntname = validation.helperMethodsForEvents.checkEventName(
+        req.body.eventname,
+        "Event Name"
+      );
+      let desc = validation.helperMethodsForEvents.checkEventName(
+        req.body.desc,
+        "Description"
+      );
+      let sportname = validation.helperMethodsForEvents.checkString(
+        req.body.sportname,
+        "Sport Name"
+      );
+      let sportPlace = validation.helperMethodsForEvents.checkString(
+        req.body.sportPlace,
+        "SportPlace"
+      );
+      let CapacityInput = validation.helperMethodsForEvents.checkCapacity(
+        req.body.CapacityInput,
+        "Capacity"
+      );
+      let dateinput = validation.helperMethodsForEvents.checkDate(
+        req.body.dateinput,
+        "Event Date"
+      );
+      let startTime = validation.helperMethodsForEvents.checkEventTime(
+        req.body.startTime,
+        "Event Start Time"
+      );
+      let endTime = validation.helperMethodsForEvents.checkEventTime(
+        req.body.endTime,
+        "Event End time"
+      );
+      let thumbnail = validation.helperMethodsForEvents.checkURL(
+        req.body.thumbnail,
+        "Thumbnail URL"
+      );
+      let timerange = validation.helperMethodsForEvents.checkTimeRange(
+        startTime,
+        endTime
+      );
+      let sportsplaceId = await sportsplaceData.getSportPlaceId(sportPlace);
+      let slotarray = validation.helperMethodsForEvents.determineSlots(
+        startTime,
+        endTime
+      );
+      let slots = await slotsData.getslotsByDate(
+        sportsplaceId,
+        dateinput,
+        slotarray
+      );
+
+      if (slots.length !== 0) {
+        for (let item of slots) {
+          let deleted = await slotsData.remove(item._id.toString());
+        }
+      }
+
+      let sportId = await sportsData.getID(sportname);
+      for (let i in slotarray) {
+        let slotinfo = await slotsData.create(
+          sportId,
+          sportsplaceId,
+          dateinput,
+          slotarray[i],
+          owner,
+          "2"
+        );
+      }
+
+      let event = await eventsData.update(
+        eventid,
+        evenntname,
+        desc,
+        sportname,
+        sportPlace,
+        CapacityInput,
+        dateinput,
+        startTime,
+        endTime,
+        thumbnail
+      );
+
+      if (event.updateEvent == true) {
+        return res.redirect(`/myevents`);
+      } else {
+        throw "Event could not be updated!";
+      }
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
+
 router.route("/events/:sports/register/:eventid").get(async (req, res) => {
   try {
     let eventid = req.params.eventid;
@@ -664,7 +839,7 @@ router.route("/venue/:sports").get(async (req, res) => {
       "sports Param"
     );
   } catch (e) {
-    return res.status(400).render("error", {    
+    return res.status(400).render("error", {
       title: "Error",
       error: e,
     });

@@ -343,34 +343,47 @@ if (document.URL.includes("/admin")) {
     });
   }
 
-  // sports and sportInfo
-  let sportInfo = document.getElementById("sport-form");
-  if (sportInfo) {
-    /*
-    (function ($) {
-      let mySportForm = $("#sport-form"),
-        newNameInput = $("#nameInput");
+  // sports and sportInfo (AJAX)
+  (function ($) {
+    let mySportForm = $("#sport-form"),
+      newNameInput = $("#nameInput"),
+      newThumbnailInput = $("#thumbnailInput"),
+      url = window.location.href;
 
-      // sport form submission event
-      mySportForm.submit(function (event) {
-        let newName = newNameInput.val();
+    // sport form submission event
+    mySportForm.submit(function (event) {
+      event.preventDefault();
+
+      let newName = newNameInput.val();
+      let newThumbnail = newThumbnailInput.val();
+      //validation
+      try {
+        newName = checkTitle(newName, "Name");
+        if (newThumbnail) newThumbnail = checkURL(newThumbnail, "Thumbnail");
+
         if (newName) {
           //set up AJAX request config
-          let requestConfig = {
+          $.ajax({
             method: "POST",
-            url: "/admin/sports",
-            data: {
+            url: url,
+            contentType: "application/json",
+            data: JSON.stringify({
               nameInput: newName,
+              thumbnailInput: newThumbnail,
+            }),
+            success: function (res) {
+              window.location.href = url;
             },
-          };
-
-          //AJAX Call. Gets the returned HTML data, binds the click event to the link and appends the new todo to the page
-          $.ajax(requestConfig);
+          });
         }
-      });
-    })(window.jQuery);
+      } catch (e) {
+        event.preventDefault();
+        show_error(e);
+      }
+    });
+  })(window.jQuery);
 
-    */
+  /*
     // get elements
     let nameInput = document.getElementById("nameInput");
     let thumbnailInput = document.getElementById("thumbnailInput");
@@ -393,7 +406,7 @@ if (document.URL.includes("/admin")) {
         show_error(e);
       }
     });
-  }
+  */
 
   // sportPlaces and sportPlaceInfo
   let sportPlaceInfo = document.getElementById("sportPlace-form");
