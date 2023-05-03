@@ -1,7 +1,8 @@
 <header>
   <nav class="navbar">
-    <a href="/">Back</a>
-    <a href="/myevents">MyEvents</a>
+    <a href="/" class="logo">Sportify</a>
+     <a href="/">Back</a>
+       <a href="/profile">Profile</a>
     <a href="/logout">Logout</a>
   </nav>
 </header>
@@ -25,58 +26,33 @@
   <form action="/profile" method="post" id="user-info-form">
 
     <label for="firstNameInput">First Name:</label><br />
-    <input
-      type="text"
-      id="firstNameInput"
-      name="firstNameInput"
-      value="{{newFirstName}}"
-    />
+    <input type="text" id="firstNameInput" name="firstNameInput" value="{{newFirstName}}" />
     <br />
 
     <label for="lastNameInput">Last Name:</label><br />
-    <input
-      type="text"
-      id="lastNameInput"
-      name="lastNameInput"
-      value="{{newLastName}}"
-    />
+    <input type="text" id="lastNameInput" name="lastNameInput" value="{{newLastName}}" />
     <br />
 
     <label for="emailInput">Email:</label><br />
-    <input
-      type="email"
-      id="emailInput"
-      name="emailInput"
-      value="{{newEmail}}"
-    />
+    <input type="email" id="emailInput" name="emailInput" value="{{newEmail}}" />
     <br />
 
     <label for="dateOfBirthInput">Date Of Birth:</label><br />
-    <input
-      type="date"
-      id="dateOfBirthInput"
-      name="dateOfBirthInput"
-      value="{{newDateOfBirth}}"
-    />
+    <input type="date" id="dateOfBirthInput" name="dateOfBirthInput" value="{{newDateOfBirth}}" />
     <br />
 
     <label for="contactNumberInput">Contact Number:</label><br />
-    <input
-      type="text"
-      id="contactNumberInput"
-      name="contactNumberInput"
-      value="{{newContactNumber}}"
-    />
+    <input type="text" id="contactNumberInput" name="contactNumberInput" value="{{newContactNumber}}" />
     <br />
 
     <label for="genderInput">Gender:</label><br />
     <select id="genderInput" name="genderInput">
       {{#if newGender}}
-        <option value="{{newGender}}">{{newGender}}</option>
+      <option value="{{newGender}}">{{newGender}}</option>
       {{/if}}
       <option value="">-</option>
       {{#each genderOptions}}
-        <option value="{{this}}">{{this}}</option>
+      <option value="{{this}}">{{this}}</option>
       {{/each}}
     </select>
     <br />
@@ -94,11 +70,7 @@
     </ul>
 
     <label for="confirmPasswordInput">Confirm Password:</label><br />
-    <input
-      type="password"
-      id="confirmPasswordInput"
-      name="confirmPasswordInput"
-    />
+    <input type="password" id="confirmPasswordInput" name="confirmPasswordInput" />
     <br />
 
     <input type="submit" value="Save" />
