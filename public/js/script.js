@@ -555,7 +555,7 @@ else {
   });
 
   //addevents/updateevnt forms
-  //let eventform = document.getElementById("addeventform");
+  let eventform = document.getElementById("addeventform");
   if (eventform) {
     eventform.addEventListener("submit", (event) => {
       let errorDiv = document.getElementById("errors");
