@@ -161,11 +161,13 @@ const checkPrice = (price, varName) => {
 const checkDate = (date, varName) => {
   date = checkString(date, varName);
 
-  const d = new Date(date);
-  if (!d) throw `Error: Invalid ${varName}.`;
-
   const today = new Date();
-  if (d < today) throw `Error: Valid date starts from tomorrow.`;
+  let yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  let inputDate = new Date(date);
+  if (inputDate < yesterday) {
+    throw new Error("Input date cannot be less than today's date.");
+  }
 
   return date;
 };
@@ -555,7 +557,7 @@ else {
   });
 
   //addevents/updateevnt forms
-  //let eventform = document.getElementById("addeventform");
+  let eventform = document.getElementById("addeventform");
   if (eventform) {
     eventform.addEventListener("submit", (event) => {
       let errorDiv = document.getElementById("errors");
@@ -583,6 +585,24 @@ else {
         endTime = checkEventTime(endTime, "End Time of Event");
         url = checkURL(url, "Thumbnail Url");
         let correcttime = checkTimeRange(startTime, endTime);
+      } catch (e) {
+        event.preventDefault();
+        errorDiv.textContent = e;
+        errorDiv.hidden = false;
+      }
+    });
+  }
+
+  //addcomment
+  let commentform = document.getElementById("addcomment");
+  if (commentform) {
+    commentform.addEventListener("submit", (event) => {
+      let errorDiv = document.getElementById("errors");
+      let comment = document.getElementById("com").value;
+
+      try {
+        // hide containers by default
+        comment = checkString(comment, "Comment");
       } catch (e) {
         event.preventDefault();
         errorDiv.textContent = e;

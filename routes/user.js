@@ -6,6 +6,7 @@ import * as classesData from "../data/user/classes.js";
 import { helperMethodsForUsers } from "../data/user/helpers.js";
 import * as validation from "../data/user/helpers.js";
 import * as sportsplaceData from "../data/user/sportPlaces.js";
+import * as commentsData from "../data/user/comments.js";
 import * as slotsData from "../data/user/timeSlots.js";
 import xss from "xss";
 import { sendEmail } from "../data/admin/mail.js";
@@ -776,6 +777,55 @@ router
     }
   });
 
+router.route("/commentbox/:eventid").get(async (req, res) => {
+  try {
+    let eventid = req.params.eventid.toString();
+    let eventdata = await eventsData.get(eventid);
+    let comments = await commentsData.get(eventid);
+    let hascomments = comments.length == 0 ? false : true;
+    for (let item of comments) {
+      const timings = new Date(item.timestamp);
+      const printtime = timings.toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      });
+      item.printtime = printtime;
+
+      if ((item.userID = req.session.user.userID)) {
+        item.owner = true;
+      } else {
+        item.owner = false;
+      }
+    }
+
+    return res.render("commentbox", {
+      title: "CommentBox",
+      _id: eventdata._id.toString(),
+      userID: eventdata.userID,
+      name: eventdata.name,
+      description: eventdata.description,
+      sport: eventdata.sport,
+      sportPlace: eventdata.sportPlace,
+      capacity: eventdata.capacity,
+      participants: eventdata.participants.length,
+      date: eventdata.date,
+      startTime: eventdata.startTime,
+      endTime: eventdata.endTime,
+      image: eventdata.image,
+      comments: comments,
+      hascomments: hascomments,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(400).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
+
 router.route("/events/:sports/register/:eventid").get(async (req, res) => {
   try {
     let eventid = req.params.eventid;
@@ -864,6 +914,38 @@ router
       });
     }
   });
+
+router.route("/addcomment/:eventid").post(async (req, res) => {
+  try {
+    let eventid = req.params.eventid.toString();
+    eventid = validation.helperMethodsForEvents.checkId(eventid, "Event ID");
+    let uid = req.session.user.userID.toString();
+    uid = validation.helperMethodsForEvents.checkId(uid, "User ID");
+    let user = await userData.get(uid);
+    let name = user.firstName + " " + user.lastName;
+    let time = new Date();
+    let comm = xss(req.body.com);
+    comm = validation.helperMethodsForEvents.checkString(comm, "Comment");
+
+    let addedComment = await commentsData.create(
+      eventid,
+      uid,
+      name,
+      comm,
+      time
+    );
+    if (addedComment.insertedEvent == true) {
+      return res.redirect(`/commentbox/${eventid}`);
+    } else {
+      throw "Failed to Add Comment.";
+    }
+  } catch (e) {
+    return res.status(400).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
 
 router.route("/venue/:sports").get(async (req, res) => {
   try {

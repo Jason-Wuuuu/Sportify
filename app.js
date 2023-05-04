@@ -191,6 +191,20 @@ app.use("/myevents", (req, res, next) => {
   next();
 });
 
+app.use("/commentbox/:eventid", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
+app.use("/addcomment/:eventid", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
 app.use("/updateevent/:eventid", (req, res, next) => {
   if (!req.session.user) {
     return res.redirect("/");

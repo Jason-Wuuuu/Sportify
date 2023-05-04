@@ -5,6 +5,7 @@ import * as sports from "./data/admin/sports.js";
 import * as classes from "./data/admin/classes.js";
 import * as sportPlaces from "./data/admin/sportPlaces.js";
 import * as timeSlot from "./data/admin/timeSlot.js";
+import * as comments from "./data/user/comments.js";
 
 import { dbConnection, closeConnection } from "./config/mongoConnection.js";
 

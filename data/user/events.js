@@ -89,7 +89,7 @@ const getAll = async () => {
 };
 
 const get = async (eventID) => {
-  // eventID = validation.checkId(eventID);
+  eventID = validation.checkId(eventID);
   const eventCollection = await events();
   const event = await eventCollection.findOne({
     _id: new ObjectId(eventID),
