@@ -98,13 +98,12 @@
 <h3>List of Student:</h3>
 <div id="userList">
     {{#if n}}
-    <dl>
-        {{#each users}}
-        <dt>ID: {{userID}}</dt>
-        <dd>Name: {{userFirstName}}, {{userLastName}}</dd>
+    <ul>
+        {{#each students}}
+        <li><a href="/admin/users/{{this}}">{{this}}</a></li>
         {{/each}}
-    </dl>
+    </ul>
     {{else}}
-    There are no student for this class...
+    There are no students for this event...
     {{/if}}
 </div>
