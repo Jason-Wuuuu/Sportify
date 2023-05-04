@@ -1,6 +1,35 @@
 import { timeSlot, sportPlaces, sports } from "../../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import * as validation from "./helpers.js";
+import { helperMethodsForEvents } from "./helpers.js";
+
+
+const getslotsByDate = async (sportPlaceid, date) => {
+    sportPlaceid = validation.checkId(sportPlaceid, "sportPlaceid");
+    date = helperMethodsForEvents.checkDate(date, "date");
+    
+    const slotCollection = await timeSlot();
+    const slots = await slotCollection
+        .find({
+            sportPlaceID: sportPlaceid,
+            Date: date,
+            availability: 0
+        })
+        .toArray();
+    // if (!slots) throw "Error: slot can not be found";
+    for (let i = 0; i < slots.length; i++) {
+        if (slots[i]["slotID"] == 1) {
+            slots[i]["slotName"] = "12:00AM to 08:00AM";
+        }
+        else if (slots[i]["slotID"] == 2) {
+            slots[i]["slotName"] = "08:00AM to 04:00PM";
+        }
+        else {
+            slots[i]["slotName"] = "04:00PM to 12:00AM";
+        }
+    }
+    return slots;
+};
 
 
 const getvenuebyuserid = async (ID) => {
@@ -111,4 +140,4 @@ const getvenuebyuserid = async (ID) => {
     return arr;
 };
 
-export { getvenuebyuserid };
+export { getvenuebyuserid ,getslotsByDate};
