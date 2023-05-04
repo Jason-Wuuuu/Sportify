@@ -439,39 +439,32 @@ router.route("/events/:sports").get(async (req, res) => {
   });
 });
 
-//shared Event
-router.route("/event/:eventid").get(async (req, res) => {
-  try {
-    let eventid = req.params.eventid;
-    eventid = helperMethodsForUsers.checkId(eventid);
-    let eventdata = await eventsData.get(eventid);
-    eventdata._id = eventdata._id.toString();
-    if (req.session.user) {
-      let userID = req.session.user.userID.toString();
-      if (eventdata.participants.includes(req.session.user.userID)) {
-        eventdata.registered = true;
-      } else {
-        eventdata.registered = false;
-      }
-      eventdata.available =
-        eventdata.capacity > eventdata.participants.length ? true : false;
-      eventdata.auth = true;
-    } else {
-      eventdata.auth = false;
-    }
-
-    console.log(eventdata);
-    if (eventdata) {
-      return res.render("event", {
-        title: "event",
-        sport: eventdata.sport,
-        event: eventdata,
-      });
-    } else {
-      throw `No Event found with ID ${eventid}`;
-    }
-  } catch (e) {}
-});
+router
+  .route("/classes/:sports")
+  .get(async (req, res) => {
+    let sportName = req.params.sports;
+    let sportObj = await sportsData.getByName(sportName);
+    let sportObjectId = sportObj._id.toString();
+    let classList = await classesData.getClassesBySport(sportObjectId);
+    return res.render("classes", {
+      sport: sportObj.name,
+      classList: classList,
+    });
+  })
+  .post(async (req, res) => {
+    let classID = req.body.classId;
+    let userID = req.session.user.userID;
+    let result = await classesData.reserve(classID, userID);
+    let sportName = req.params.sports;
+    let sportObj = await sportsData.getByName(sportName);
+    let sportObjectId = sportObj._id.toString();
+    let classList = await classesData.getClassesBySport(sportObjectId);
+    return res.render("classes", {
+      sport: sportObj.name,
+      classList: classList,
+      message: result.msg,
+    });
+  });
 
 router.route("/removeevents/:eventid").get(async (req, res) => {
   try {
@@ -1042,7 +1035,7 @@ router.route("/venueInfo/:id").get(async (req, res) => {
 });
 
 router
-  .route("/venueGetslot")
+  .route("/venueGetslot/:id/date/:dateInput")
   .get(async (req, res) => {
     try {
       req.params.id = helperMethodsForUsers.checkId(
