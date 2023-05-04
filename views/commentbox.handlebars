@@ -42,44 +42,41 @@
   </div>
   <div class="textDetails">
     <h1>{{this.name}} Comment Box</h1>
-    <li class="black">Date : {{this.date}}</li>
-    <li class="black">Location : {{this.sportPlace}}</li>
-    <li class="black"> Time : {{this.startTime}} to {{this.endTime}}</li>
-    <li class="black"> Max Capacity : {{this.capacity}}</li>
-    <li class="black"> Total Members : {{this.participants}}</li>
-    <li class="black"> Description : {{this.description}}</li>
+    <ul>
+      <li class="black">Date : {{this.date}}</li>
+      <li class="black">Location : {{this.sportPlace}}</li>
+      <li class="black"> Time : {{this.startTime}} to {{this.endTime}}</li>
+      <li class="black"> Max Capacity : {{this.capacity}}</li>
+      <li class="black"> Total Members : {{this.participants}}</li>
+      <li class="black"> Description : {{this.description}}</li>
+    </ul>
   </div>
 </div>
 {{#if hascomments}}
-  {{#each comments}}
-    {{#if this.owner}}
-      <div class="chats">
-        <div class="flexDirection user">
-          <div class="usermsg user">
-            {{this.comment}}
-          </div>
-        </div><span class="user">{{this.name}} . {{this.printtime}}</span>
-      </div>
-    {{else}}
-      <div class="chats">
-        <div class="flexDirection">
-          <div class="participantmsg participant">
-            {{this.comment}}
-          </div>
-        </div><span class="participant">11:11</span>
-      </div>
-    {{/if}}
-  {{/each}}
+{{#each comments}}
+{{#if this.owner}}
+<div class="chats">
+  <div class="flexDirection user">
+    <div class="usermsg user">
+      {{this.comment}}
+    </div>
+  </div><span class="user">{{this.name}} . {{this.printtime}}</span>
+</div>
 {{else}}
-  <h2 style="text-align: center;">No comments. </h2>
+<div class="chats">
+  <div class="flexDirection">
+    <div class="participantmsg participant">
+      {{this.comment}}
+    </div>
+  </div><span class="participant">11:11</span>
+</div>
+{{/if}}
+{{/each}}
+{{else}}
+<h2 style="text-align: center;">No comments. </h2>
 {{/if}}
 
-<form
-  action="/addcomment/{{_id}}"
-  method="post"
-  class="commentarea"
-  id="addcomment"
->
+<form action="/addcomment/{{_id}}" method="post" class="commentarea" id="addcomment">
   <label for="com">Enter Comment Here:</label><br />
   <input type="text" name="com" id="com" class="comment" required />
   <input type="submit" value="Add Comment!" />
