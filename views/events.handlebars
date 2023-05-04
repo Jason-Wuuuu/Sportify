@@ -40,6 +40,15 @@
           Chat With Participants! 💬
         </a>
       {{/if}}
+      <button
+        onclick="popup()"
+        class="copylink{{this._id}} copylink"
+        data-clipboard-text="http://localhost:3000/event/{{this._id}}"
+      >Share Event</button><br />
+      <script>
+        var copy = new ClipboardJS(".copylink{{this._id}}"); function popup() {
+        alert("Event Link Copied!"); }
+      </script>
       <p class="joinLink">
         {{#if this.available}}
           {{#if this.registered}}

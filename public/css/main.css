@@ -525,3 +525,8 @@ th {
   flex: 1;
   background: #ddd;
 }
+.copylink {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+}

@@ -13,6 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "clipboard": "^2.0.11",
     "express": "^4.18.2",
     "express-handlebars": "^7.0.6",
     "express-session": "^1.17.3",

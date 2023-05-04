@@ -3,7 +3,10 @@ import * as userData from "../data/user/users.js";
 import * as eventsData from "../data/user/events.js";
 import * as sportsData from "../data/user/sports.js";
 import * as classesData from "../data/user/classes.js";
-import { helperMethodsForUsers, helperMethodsForEvents } from "../data/user/helpers.js";
+import {
+  helperMethodsForUsers,
+  helperMethodsForEvents,
+} from "../data/user/helpers.js";
 import * as validation from "../data/user/helpers.js";
 import * as sportsplaceData from "../data/user/sportPlaces.js";
 import * as commentsData from "../data/user/comments.js";
@@ -795,12 +798,13 @@ router.route("/commentbox/:eventid").get(async (req, res) => {
       });
       item.printtime = printtime;
 
-      if ((item.userID = req.session.user.userID)) {
+      if (item.userID == req.session.user.userID) {
         item.owner = true;
       } else {
         item.owner = false;
       }
     }
+    comments = comments.reverse();
 
     return res.render("commentbox", {
       title: "CommentBox",
@@ -948,6 +952,32 @@ router.route("/addcomment/:eventid").post(async (req, res) => {
     });
   }
 });
+router
+  .route("/classes/:sports")
+  .get(async (req, res) => {
+    let sportName = req.params.sports;
+    let sportObj = await sportsData.getByName(sportName);
+    let sportObjectId = sportObj._id.toString();
+    let classList = await classesData.getClassesBySport(sportObjectId);
+    return res.render("classes", {
+      sport: sportObj.name,
+      classList: classList,
+    });
+  })
+  .post(async (req, res) => {
+    let classID = req.body.classId;
+    let userID = req.session.user.userID;
+    let result = await classesData.reserve(classID, userID);
+    let sportName = req.params.sports;
+    let sportObj = await sportsData.getByName(sportName);
+    let sportObjectId = sportObj._id.toString();
+    let classList = await classesData.getClassesBySport(sportObjectId);
+    return res.render("classes", {
+      sport: sportObj.name,
+      classList: classList,
+      message: result.msg,
+    });
+  });
 
 router.route("/venue/:sports").get(async (req, res) => {
   try {
@@ -1004,7 +1034,8 @@ router.route("/venueInfo/:id").get(async (req, res) => {
   }
 });
 
-router.route("/venueGetslot/:id/date/:dateInput")
+router
+  .route("/venueGetslot/:id/date/:dateInput")
   .get(async (req, res) => {
     try {
       req.params.id = helperMethodsForUsers.checkId(
@@ -1021,12 +1052,15 @@ router.route("/venueGetslot/:id/date/:dateInput")
         error: e,
       });
     }
-   
+
     try {
       // let sport = req.params.sports;
-      let venueslot = await venueData.getslotsByDate(req.params.id, req.params.dateInput);
+      let venueslot = await venueData.getslotsByDate(
+        req.params.id,
+        req.params.dateInput
+      );
       return res.render("venueInfo", {
-       // sport: sport,
+        // sport: sport,
         venues: venueslot,
         title: "Reserve Venue",
       });
@@ -1112,32 +1146,30 @@ router.route("/venueGetslot/:id/date/:dateInput")
 router.route("/myVenue").get(async (req, res) => {
   try {
     await userData.get(req.session.user.userID);
-  }
-  catch (e) {
+  } catch (e) {
     return res.status(500).render("error", {
       title: "Error",
       error: e,
     });
   }
   let uid = req.session.user.userID;
-  try{
-  let venueList = await venueData.getvenuebyuserid(uid);
- 
-  let empty = venueList.length == 0 ? true : false;
+  try {
+    let venueList = await venueData.getvenuebyuserid(uid);
 
-  return res.render("myVenue", {
-    title: "My Venue",
-    venueList: venueList,
-    hidden: "hidden",
-    isempty: empty,
-  });
-} catch (e) {
-  return res.status(500).render("error", {
-    title: "Error",
-    error: e,
-  });
-}
+    let empty = venueList.length == 0 ? true : false;
 
+    return res.render("myVenue", {
+      title: "My Venue",
+      venueList: venueList,
+      hidden: "hidden",
+      isempty: empty,
+    });
+  } catch (e) {
+    return res.status(500).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
 });
 
 export default router;
