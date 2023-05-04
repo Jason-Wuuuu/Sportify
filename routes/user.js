@@ -447,6 +447,7 @@ router
     let sportObjectId = sportObj._id.toString();
     let classList = await classesData.getClassesBySport(sportObjectId);
     return res.render("classes", {
+      title: sportObj.name,
       sport: sportObj.name,
       classList: classList,
     });

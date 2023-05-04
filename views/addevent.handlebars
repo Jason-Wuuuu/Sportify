@@ -29,12 +29,12 @@
   <input type="text" id="desc" name="desc" value="{{description}}" required />
   <br />
 
-  <label for="sportsname">Preselected sports value: {{sport}}</label><br />
+  <label for="sportname">Preselected sports value: {{sport}}</label><br />
   <input type="text" id="sportname" name="sportname" value="{{sport}}" readonly />
   <br />
 
   <label for="sportPlace">Select Sports facility for Event : </label><br />
-  <select id="sportPlace" name="sportPlace" value="{{sportPlace}}" required>
+  <select id="sportPlace" name="sportPlace" required>
     {{#each places}}
     <option value="{{this.name}}">{{this.name}}</option>
     {{/each}}
