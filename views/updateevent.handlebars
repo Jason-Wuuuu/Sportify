@@ -4,19 +4,17 @@
 
     <a href="/events/{{sport}}">Events</a>
     <a href="/myevents">MyEvents</a>
-    <a href="*">Classes</a>
+    <a href="/classes/{{sport}}">Classes</a>
     <a href="/venue/{{sport}}">Reserve Venue</a>
-    <a href="*">Places</a>
-
     <a href="/profile">Profile</a>
     <a href="/logout">Logout</a>
 
   </nav>
 </header>
 <h2>Update Event Details Below:</h2>
-
-<div class="error" id="errors"></div>
-
+{{#if err}}
+<div class="error" id="errors">{{error}}</div>
+{{/if}}
 <form action="/updateevent/{{_id}}" method="post" id="addeventform">
 
   <label for="owner">Event by User:</label><br />
@@ -24,13 +22,7 @@
   <br />
 
   <label for="eventname">Enter Event Name Here:</label><br />
-  <input
-    type="text"
-    id="eventname"
-    name="eventname"
-    value="{{name}}"
-    required
-  />
+  <input type="text" id="eventname" name="eventname" value="{{name}}" required />
   <br />
 
   <label for="desc">Enter Description Here:</label><br />
@@ -38,56 +30,30 @@
   <br />
 
   <label for="sportsname">Preselected sports value: {{sport}}</label><br />
-  <input
-    type="text"
-    id="sportname"
-    name="sportname"
-    value="{{sport}}"
-    readonly
-  />
+  <input type="text" id="sportname" name="sportname" value="{{sport}}" readonly />
   <br />
 
   <label for="sportPlace">Select Sports facility for Event : </label><br />
   <select id="sportPlace" name="sportPlace" value="{{sportPlace}}" required>
     {{#each places}}
-      <option value="{{this.name}}">{{this.name}}</option>
+    <option value="{{this.name}}">{{this.name}}</option>
     {{/each}}
   </select>
   <br />
 
   <label for="CapacityInput">Enter Event Capacity Here:</label><br />
-  <input
-    type="number"
-    id="CapacityInput"
-    name="CapacityInput"
-    pattern="[0-9]*"
-    inputmode="numeric"
-    min="1"
-    value="{{capacity}}"
-    required
-  />
+  <input type="number" id="CapacityInput" name="CapacityInput" pattern="[0-9]*" inputmode="numeric" min="1"
+    value="{{capacity}}" required />
   <br />
 
   <label for="dateinput">Enter Date for Event:</label><br />
-  <input
-    type="date"
-    id="dateinput"
-    name="dateinput"
-    min="<%= new Date().toISOString().split('T')[0] %>"
-    value="{{date}}"
-    required
-  />
+  <input type="date" id="dateinput" name="dateinput" min="<%= new Date().toISOString().split('T')[0] %>"
+    value="{{date}}" required />
   <br />
 
   <label for="startTime">Enter a Start time:</label>
   <br />
-  <input
-    type="time"
-    id="startTime"
-    name="startTime"
-    value="{{startTime}}"
-    required
-  />
+  <input type="time" id="startTime" name="startTime" value="{{startTime}}" required />
   <br />
 
   <label for="endTime">Enter a End time:</label>
@@ -97,13 +63,7 @@
 
   <label for="thumbnail">Enter a Thumbnail URL here:</label>
   <br />
-  <input
-    type="url"
-    id="thumbnail"
-    name="thumbnail"
-    value="{{image}}"
-    required
-  />
+  <input type="url" id="thumbnail" name="thumbnail" value="{{image}}" required />
   <br />
 
   <input type="submit" value="Update Event" />

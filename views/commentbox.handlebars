@@ -1,0 +1,86 @@
+<header>
+  <nav class="navbar">
+    <a href="/" class="logo">Sportify</a>
+
+    <a href="/events/{{sport}}">Events</a>
+    <a href="/myevents">MyEvents</a>
+    <a href="/classes/{{sport}}">Classes</a>
+    <a href="/venue/{{sport}}">SportFacilities</a>
+
+    <a href="/profile">Profile</a>
+    <a href="/logout">Logout</a>
+
+  </nav>
+</header>
+
+<h2> </h2>
+
+<div class="bgcard">
+  <div class="info">
+    <div class="bgimg" style="background-image: url({{this.image}})"></div>
+    <ul class="info-list">
+      <li class="chatboxrules">Respect others: Make it clear that disrespectful
+        or offensive comments will not be tolerated. Encourage users to treat
+        each other with kindness and respect.</li>
+
+      <li class="chatboxrules">Stay on topic: Encourage users to keep their
+        comments related to the topic at hand. Off-topic comments can detract
+        from the conversation and make it difficult for others to follow.</li>
+
+      <li class="chatboxrules">No spamming: Spam comments can be annoying and
+        disruptive. Make it clear that comments that are purely promotional or
+        irrelevant will not be tolerated.</li>
+
+      <li class="chatboxrules">Use appropriate language: Encourage users to use
+        language that is appropriate for all ages and backgrounds. Offensive
+        language, slurs, or hate speech should not be allowed.</li>
+
+      <li class="chatboxrules">No personal attacks: Make it clear that personal
+        attacks or name-calling will not be tolerated. Users should be
+        encouraged to focus on the topic at hand and avoid attacking others.</li>
+    </ul>
+  </div>
+  <div class="textDetails">
+    <h1>{{this.name}} Comment Box</h1>
+    <li class="black">Date : {{this.date}}</li>
+    <li class="black">Location : {{this.sportPlace}}</li>
+    <li class="black"> Time : {{this.startTime}} to {{this.endTime}}</li>
+    <li class="black"> Max Capacity : {{this.capacity}}</li>
+    <li class="black"> Total Members : {{this.participants}}</li>
+    <li class="black"> Description : {{this.description}}</li>
+  </div>
+</div>
+{{#if hascomments}}
+  {{#each comments}}
+    {{#if this.owner}}
+      <div class="chats">
+        <div class="flexDirection user">
+          <div class="usermsg user">
+            {{this.comment}}
+          </div>
+        </div><span class="user">{{this.name}} . {{this.printtime}}</span>
+      </div>
+    {{else}}
+      <div class="chats">
+        <div class="flexDirection">
+          <div class="participantmsg participant">
+            {{this.comment}}
+          </div>
+        </div><span class="participant">11:11</span>
+      </div>
+    {{/if}}
+  {{/each}}
+{{else}}
+  <h2 style="text-align: center;">No comments. </h2>
+{{/if}}
+
+<form
+  action="/addcomment/{{_id}}"
+  method="post"
+  class="commentarea"
+  id="addcomment"
+>
+  <label for="com">Enter Comment Here:</label><br />
+  <input type="text" name="com" id="com" class="comment" required />
+  <input type="submit" value="Add Comment!" />
+</form>

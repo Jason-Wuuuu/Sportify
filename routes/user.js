@@ -3,10 +3,13 @@ import * as userData from "../data/user/users.js";
 import * as eventsData from "../data/user/events.js";
 import * as sportsData from "../data/user/sports.js";
 import * as classesData from "../data/user/classes.js";
-import { helperMethodsForUsers } from "../data/user/helpers.js";
+import { helperMethodsForUsers, helperMethodsForEvents } from "../data/user/helpers.js";
 import * as validation from "../data/user/helpers.js";
 import * as sportsplaceData from "../data/user/sportPlaces.js";
+import * as commentsData from "../data/user/comments.js";
 import * as slotsData from "../data/user/timeSlots.js";
+import * as venueData from "../data/user/venue.js";
+
 import xss from "xss";
 import { sendEmail } from "../data/admin/mail.js";
 
@@ -504,7 +507,7 @@ router
         req.body.owner,
         "userID"
       );
-      let evenntname = validation.helperMethodsForEvents.checkEventName(
+      let eventname = validation.helperMethodsForEvents.checkEventName(
         req.body.eventname,
         "Event Name"
       );
@@ -564,7 +567,6 @@ router
           }
         }
       }
-
       let sportId = await sportsData.getID(sportname);
       for (let i in slotarray) {
         let slotinfo = await slotsData.create(
@@ -579,7 +581,7 @@ router
 
       let event = await eventsData.create(
         owner,
-        evenntname,
+        eventname,
         desc,
         sportname,
         sportPlace,
@@ -596,9 +598,26 @@ router
         throw "Event could not be added!";
       }
     } catch (e) {
-      return res.status(400).render("error", {
-        title: "Error",
-        error: e,
+      let sportt = req.params.sports;
+      let uid = req.session.user.userID;
+
+      let sportplaces = await sportsplaceData.getSportPlacesBySport(sportt);
+      return res.status(400).render("addevent", {
+        error: true,
+        userID: req.body.owner.toString(),
+        places: sportplaces,
+        title: "Add Event",
+        errmsg: e,
+        _id: req.body.owner.toString(),
+        name: req.body.eventname,
+        description: req.body.desc,
+        sport: req.body.sportname,
+        sportPlace: req.body.sportPlace,
+        capacity: req.body.CapacityInput,
+        date: req.body.dateinput,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        image: req.body.thumbnail,
       });
     }
   });
@@ -736,12 +755,78 @@ router
         throw "Event could not be updated!";
       }
     } catch (e) {
-      return res.status(400).render("error", {
-        title: "Error",
+      let sportt = req.body.sportname;
+
+      let sportplaces = await sportsplaceData.getSportPlacesBySport(sportt);
+      return res.status(400).render("updateevent", {
+        _id: req.params.eventid.toString(),
+        err: true,
         error: e,
+        places: sportplaces,
+        title: "Update Event",
+        errmsg: e,
+        userID: req.body.owner.toString(),
+        name: req.body.eventname,
+        description: req.body.desc,
+        sport: req.body.sportname,
+        sportPlace: req.body.sportPlace,
+        capacity: req.body.CapacityInput,
+        date: req.body.dateinput,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        image: req.body.thumbnail,
       });
     }
   });
+
+router.route("/commentbox/:eventid").get(async (req, res) => {
+  try {
+    let eventid = req.params.eventid.toString();
+    let eventdata = await eventsData.get(eventid);
+    let comments = await commentsData.get(eventid);
+    let hascomments = comments.length == 0 ? false : true;
+    for (let item of comments) {
+      const timings = new Date(item.timestamp);
+      const printtime = timings.toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      });
+      item.printtime = printtime;
+
+      if ((item.userID = req.session.user.userID)) {
+        item.owner = true;
+      } else {
+        item.owner = false;
+      }
+    }
+
+    return res.render("commentbox", {
+      title: "CommentBox",
+      _id: eventdata._id.toString(),
+      userID: eventdata.userID,
+      name: eventdata.name,
+      description: eventdata.description,
+      sport: eventdata.sport,
+      sportPlace: eventdata.sportPlace,
+      capacity: eventdata.capacity,
+      participants: eventdata.participants.length,
+      date: eventdata.date,
+      startTime: eventdata.startTime,
+      endTime: eventdata.endTime,
+      image: eventdata.image,
+      comments: comments,
+      hascomments: hascomments,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(400).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
 
 router.route("/events/:sports/register/:eventid").get(async (req, res) => {
   try {
@@ -832,6 +917,38 @@ router
     }
   });
 
+router.route("/addcomment/:eventid").post(async (req, res) => {
+  try {
+    let eventid = req.params.eventid.toString();
+    eventid = validation.helperMethodsForEvents.checkId(eventid, "Event ID");
+    let uid = req.session.user.userID.toString();
+    uid = validation.helperMethodsForEvents.checkId(uid, "User ID");
+    let user = await userData.get(uid);
+    let name = user.firstName + " " + user.lastName;
+    let time = new Date();
+    let comm = xss(req.body.com);
+    comm = validation.helperMethodsForEvents.checkString(comm, "Comment");
+
+    let addedComment = await commentsData.create(
+      eventid,
+      uid,
+      name,
+      comm,
+      time
+    );
+    if (addedComment.insertedEvent == true) {
+      return res.redirect(`/commentbox/${eventid}`);
+    } else {
+      throw "Failed to Add Comment.";
+    }
+  } catch (e) {
+    return res.status(400).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
+
 router.route("/venue/:sports").get(async (req, res) => {
   try {
     req.params.sports = helperMethodsForUsers.checkString(
@@ -885,6 +1002,142 @@ router.route("/venueInfo/:id").get(async (req, res) => {
       error: e,
     });
   }
+});
+
+router.route("/venueGetslot/:id/date/:dateInput")
+  .get(async (req, res) => {
+    try {
+      req.params.id = helperMethodsForUsers.checkId(
+        req.params.id,
+        "sports place id Param"
+      );
+      req.params.dateInput = helperMethodsForEvents.checkDate(
+        req.params.dateInput,
+        "Date"
+      );
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+   
+    try {
+      // let sport = req.params.sports;
+      let venueslot = await venueData.getslotsByDate(req.params.id, req.params.dateInput);
+      return res.render("venueInfo", {
+       // sport: sport,
+        venues: venueslot,
+        title: "Reserve Venue",
+      });
+    } catch (e) {
+      return res.status(404).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  })
+  .post(async (req, res) => {
+    let timeSlotInfo = req.body;
+    if (!timeSlotInfo || Object.keys(timeSlotInfo).length === 0) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+
+    // validation
+    try {
+      timeSlotInfo.sportIDInput = validation.checkId(
+        timeSlotInfo.sportIDInput,
+        "sportID"
+      );
+      timeSlotInfo.sportplaceIDInput1 = validation.checkId(
+        timeSlotInfo.sportplaceIDInput1,
+        "sportPlaceID"
+      );
+      timeSlotInfo.dateInput = validation.checkString(
+        timeSlotInfo.dateInput,
+        "date"
+      );
+      timeSlotInfo.slotInput = validation.checkNumber(
+        timeSlotInfo.slotInput,
+        "slotID"
+      );
+    } catch (e) {
+      // const sports = await getSportOptions(timeSlotInfo.sportIDInput);
+      // const sportPlacetList = await sportPlaceData.getAll();
+      // const sportPlaces = sportPlacetList.map((sportPlace) =>
+      //   Object({
+      //     sportPlaceID: sportPlace._id,
+      //     sportPlaceName: sportPlace.name,
+      //   })
+      // );
+
+      // return res.status(400).render("admin/timeSlot", {
+      //   title: "Add TimeSlots",
+      //   hidden: "",
+      //   error: e,
+      //   sports: sports,
+      //   sportPlaces: sportPlaces,
+      //   name: timeSlotInfo.sportIDInput,
+      //   address: timeSlotInfo.sportplaceIDInput,
+      //   description: timeSlotInfo.dateInput,
+      //   capacity: timeSlotInfo.slotInput,
+
+      // });
+      return res.status(500).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+
+    try {
+      const newSlot = await timeSlot.create(
+        timeSlotInfo.sportIDInput,
+        timeSlotInfo.sportplaceIDInput1,
+        timeSlotInfo.dateInput,
+        timeSlotInfo.slotInput
+      );
+      if (!newSlot.insertedtimeSlot) throw "Internal Server Error";
+      return res.redirect("timeSlot");
+    } catch (e) {
+      return res.status(500).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
+
+router.route("/myVenue").get(async (req, res) => {
+  try {
+    await userData.get(req.session.user.userID);
+  }
+  catch (e) {
+    return res.status(500).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+  let uid = req.session.user.userID;
+  try{
+  let venueList = await venueData.getvenuebyuserid(uid);
+ 
+  let empty = venueList.length == 0 ? true : false;
+
+  return res.render("myVenue", {
+    title: "My Venue",
+    venueList: venueList,
+    hidden: "hidden",
+    isempty: empty,
+  });
+} catch (e) {
+  return res.status(500).render("error", {
+    title: "Error",
+    error: e,
+  });
+}
+
 });
 
 export default router;

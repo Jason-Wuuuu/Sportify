@@ -22,7 +22,7 @@ async function sendEmail(emailAddress, msg) {
   });
 
   // send mail with defined transport object
-  await transporter.sendMail({
+  transporter.sendMail({
     from: "no-reply <cs546sportify@gmail.com>", // sender address
     to: emailAddress, // list of receivers
     subject: "Sportify", // Subject line

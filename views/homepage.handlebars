@@ -2,55 +2,50 @@
   <nav class="navbar">
     <a href="/" class="logo">Sportify</a>
     {{#if authenticated}}
-      <a href="/myevents">MyEvents</a>
-      <a href="/myclasses">My Classes</a>
-      <a href="/profile">Profile</a>
-      <a href="/logout">Logout</a>
+    <a href="/myevents">My Events</a>
+    <a href="/myclasses">My Classes</a>
+    <a href="/myVenue">My Venue</a>
+    <a href="/profile">Profile</a>
+    <a href="/logout">Logout</a>
 
     {{else}}
 
-      <a href="/register">Register</a>
+    <a href="/register">Register</a>
 
-      <a href="/login">Login</a>
+    <a href="/login">Login</a>
 
     {{/if}}
   </nav>
 </header>
 
 {{#if authenticated}}
-  <h2>Welcome Back! {{firstName}}</h2>
+<h2>Welcome Back! {{firstName}}</h2>
 
-  <div id="cardsdiv">
-    <div class="cards">
-      {{#each sports}}
-        <div class="card">
-          <img src={{this.thumbnail}} alt="{{this.name}}" style="width:100%" />
-          <div class="container">
-            <h4><a
-                class="cardlink"
-                href="/events/{{this.name}}"
-              >{{this.name}}</a></h4>
-          </div>
-        </div>
-      {{/each}}
+<div id="cardsdiv">
+  <div class="cards">
+    {{#each sports}}
+    <div class="card">
+      <img src={{this.thumbnail}} alt="{{this.name}}" style="width:100%" />
+      <div class="container">
+        <h4><a class="cardlink" href="/events/{{this.name}}">{{this.name}}</a></h4>
+      </div>
     </div>
+    {{/each}}
   </div>
+</div>
 {{else}}
-  <h2 id="error-msg"></h2>
+<h2 id="error-msg"></h2>
 
-  <div id="cardsdiv">
-    <div class="cards">
-      {{#each sports}}
-        <div class="card">
-          <img src={{this.thumbnail}} alt="{{this.name}}" style="width:100%" />
-          <div class="container">
-            <h4><a
-                class="cardlink err"
-                href="/events/{{this.name}}"
-              >{{this.name}}</a></h4>
-          </div>
-        </div>
-      {{/each}}
+<div id="cardsdiv">
+  <div class="cards">
+    {{#each sports}}
+    <div class="card">
+      <img src={{this.thumbnail}} alt="{{this.name}}" style="width:100%" />
+      <div class="container">
+        <h4><a class="cardlink err" href="/events/{{this.name}}">{{this.name}}</a></h4>
+      </div>
     </div>
+    {{/each}}
   </div>
+</div>
 {{/if}}
