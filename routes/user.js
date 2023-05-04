@@ -1004,20 +1004,15 @@ router.route("/venueInfo/:id").get(async (req, res) => {
   }
 });
 
-router.route("/venueGetslot")
+router.route("/venueGetslot/:id/date/:dateInput")
   .get(async (req, res) => {
-    let venueinfo = req.body;
     try {
-      venueinfo._id = helperMethodsForUsers.checkId(
-        venueinfo._id,
-        "sports place ID"
+      req.params.id = helperMethodsForUsers.checkId(
+        req.params.id,
+        "sports place id Param"
       );
-      venueinfo.sportID = helperMethodsForUsers.checkId(
-        venueinfo.sportID,
-        "sports  ID"
-      );
-      venueinfo.dateInput = helperMethodsForEvents.checkDate(
-        venueinfo.dateInput,
+      req.params.dateInput = helperMethodsForEvents.checkDate(
+        req.params.dateInput,
         "Date"
       );
     } catch (e) {
@@ -1026,13 +1021,14 @@ router.route("/venueGetslot")
         error: e,
       });
     }
+   
     try {
       // let sport = req.params.sports;
-      //let venueList = await sportsplaceData.getSportPlacesBySport(sport);
-      return res.render("venue", {
-        sport: sport,
-        venues: venueList,
-        title: "",
+      let venueslot = await venueData.getslotsByDate(req.params.id, req.params.dateInput);
+      return res.render("venueInfo", {
+       // sport: sport,
+        venues: venueslot,
+        title: "Reserve Venue",
       });
     } catch (e) {
       return res.status(404).render("error", {

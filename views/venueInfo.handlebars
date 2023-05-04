@@ -1,7 +1,7 @@
 <header>
     <nav class="navbar">
         <a href="/venue/{{venueinfo.sportname}}">Back</a>
-          <a href="/logout">Logout</a>
+        <a href="/logout">Logout</a>
     </nav>
 </header>
 <h1>{{title}}</h1>
@@ -27,15 +27,19 @@
             <li>Rating: {{venueinfo.rating}}</li>
         </ul>
         <br>
-        <form action="/venueGetslot" method="post" id="VenueInfo-form">
+        <form id="VenueInfo-form" >
 
-            <input type="hidden" id="idh" name="idh" {{venueinfo._id}}>
-            <input type="hidden" id="sportIDh" name="sportIDh" {{venueinfo.sportID}}>
+            {{!-- <input type="hidden" id="idh" name="idh" {{venueinfo._id}}>
+            <input type="hidden" id="sportIDh" name="sportIDh" {{venueinfo.sportID}}> --}}
             <label for="dateInput">Select Date:</label>
             <br>
             <input type="date" id="dateInput" name="dateInput" value="{{date}}" />
             <br>
-            <input type="submit" value="Get Slots" />
+            <button type="submit">Get Slots</button>
+
+            <a href="/venueGetslot/{{venueinfo._id}}/date/{{dateInput}}">Get Slots</a>
+
+            {{!-- <input type="submit" value="Get Slots" /> --}}
             <br>
 
         </form>
@@ -44,11 +48,11 @@
             <label for="slotInput">Select Slot:</label>
             <select name="slotInput" id="slotInput">
                 <option value="">-</option>
-                {{!-- {{#each sports}}
-                <option value="{{}}">{{}}</option>
-                {{else}}
-                <p>Sorry!<br /> No Slot found for Venue: {{venueinfo.name}} for this date: {{date}}.</p>
-                {{/each}} --}}
+                {{#each venues}}
+                <option value="{{this.slotID}}">{{this.slotName}}</option>
+                {{!-- {{else}}
+                <p>Sorry!<br /> No Slot found for Venue: {{venues.name}} for this date: {{date}}.</p> --}}
+                {{/each}}
             </select>
             <br>
             <input type="submit" value="Book Slot" />
