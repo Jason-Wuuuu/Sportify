@@ -162,6 +162,13 @@ app.use("/admin/events/remove/:id", (req, res, next) => {
   next();
 });
 
+app.use("/admin/timeSlot", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  next();
+});
+
 app.use("/admin/logout", (req, res, next) => {
   if (!req.session.admin) {
     return res.redirect("/admin/login");
@@ -245,6 +252,13 @@ app.use("/profile", (req, res, next) => {
     return res.redirect("/login");
   }
   if (req.method === "POST") req.method = "PUT";
+  next();
+});
+
+app.use("/myVenue", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
   next();
 });
 

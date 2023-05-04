@@ -1,6 +1,7 @@
 <header>
     <nav class="navbar">
         <a href="/venue/{{venueinfo.sportname}}">Back</a>
+          <a href="/logout">Logout</a>
     </nav>
 </header>
 <h1>{{title}}</h1>
@@ -25,5 +26,33 @@
             <li>capacity: {{venueinfo.capacity}}</li>
             <li>Rating: {{venueinfo.rating}}</li>
         </ul>
+        <br>
+        <form action="/venueGetslot" method="post" id="VenueInfo-form">
+
+            <input type="hidden" id="idh" name="idh" {{venueinfo._id}}>
+            <input type="hidden" id="sportIDh" name="sportIDh" {{venueinfo.sportID}}>
+            <label for="dateInput">Select Date:</label>
+            <br>
+            <input type="date" id="dateInput" name="dateInput" value="{{date}}" />
+            <br>
+            <input type="submit" value="Get Slots" />
+            <br>
+
+        </form>
+        <form action="/venueInfo" method="post" id="VenueInfo-form">
+
+            <label for="slotInput">Select Slot:</label>
+            <select name="slotInput" id="slotInput">
+                <option value="">-</option>
+                {{!-- {{#each sports}}
+                <option value="{{}}">{{}}</option>
+                {{else}}
+                <p>Sorry!<br /> No Slot found for Venue: {{venueinfo.name}} for this date: {{date}}.</p>
+                {{/each}} --}}
+            </select>
+            <br>
+            <input type="submit" value="Book Slot" />
+
+        </form>
     </div>
 </form>

@@ -3,11 +3,13 @@ import * as userData from "../data/user/users.js";
 import * as eventsData from "../data/user/events.js";
 import * as sportsData from "../data/user/sports.js";
 import * as classesData from "../data/user/classes.js";
-import { helperMethodsForUsers } from "../data/user/helpers.js";
+import { helperMethodsForUsers, helperMethodsForEvents } from "../data/user/helpers.js";
 import * as validation from "../data/user/helpers.js";
 import * as sportsplaceData from "../data/user/sportPlaces.js";
 import * as commentsData from "../data/user/comments.js";
 import * as slotsData from "../data/user/timeSlots.js";
+import * as venueData from "../data/user/venue.js";
+
 import xss from "xss";
 import { sendEmail } from "../data/admin/mail.js";
 
@@ -1000,6 +1002,146 @@ router.route("/venueInfo/:id").get(async (req, res) => {
       error: e,
     });
   }
+});
+
+router.route("/venueGetslot")
+  .get(async (req, res) => {
+    let venueinfo = req.body;
+    try {
+      venueinfo._id = helperMethodsForUsers.checkId(
+        venueinfo._id,
+        "sports place ID"
+      );
+      venueinfo.sportID = helperMethodsForUsers.checkId(
+        venueinfo.sportID,
+        "sports  ID"
+      );
+      venueinfo.dateInput = helperMethodsForEvents.checkDate(
+        venueinfo.dateInput,
+        "Date"
+      );
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      // let sport = req.params.sports;
+      //let venueList = await sportsplaceData.getSportPlacesBySport(sport);
+      return res.render("venue", {
+        sport: sport,
+        venues: venueList,
+        title: "",
+      });
+    } catch (e) {
+      return res.status(404).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  })
+  .post(async (req, res) => {
+    let timeSlotInfo = req.body;
+    if (!timeSlotInfo || Object.keys(timeSlotInfo).length === 0) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+
+    // validation
+    try {
+      timeSlotInfo.sportIDInput = validation.checkId(
+        timeSlotInfo.sportIDInput,
+        "sportID"
+      );
+      timeSlotInfo.sportplaceIDInput1 = validation.checkId(
+        timeSlotInfo.sportplaceIDInput1,
+        "sportPlaceID"
+      );
+      timeSlotInfo.dateInput = validation.checkString(
+        timeSlotInfo.dateInput,
+        "date"
+      );
+      timeSlotInfo.slotInput = validation.checkNumber(
+        timeSlotInfo.slotInput,
+        "slotID"
+      );
+    } catch (e) {
+      // const sports = await getSportOptions(timeSlotInfo.sportIDInput);
+      // const sportPlacetList = await sportPlaceData.getAll();
+      // const sportPlaces = sportPlacetList.map((sportPlace) =>
+      //   Object({
+      //     sportPlaceID: sportPlace._id,
+      //     sportPlaceName: sportPlace.name,
+      //   })
+      // );
+
+      // return res.status(400).render("admin/timeSlot", {
+      //   title: "Add TimeSlots",
+      //   hidden: "",
+      //   error: e,
+      //   sports: sports,
+      //   sportPlaces: sportPlaces,
+      //   name: timeSlotInfo.sportIDInput,
+      //   address: timeSlotInfo.sportplaceIDInput,
+      //   description: timeSlotInfo.dateInput,
+      //   capacity: timeSlotInfo.slotInput,
+
+      // });
+      return res.status(500).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+
+    try {
+      const newSlot = await timeSlot.create(
+        timeSlotInfo.sportIDInput,
+        timeSlotInfo.sportplaceIDInput1,
+        timeSlotInfo.dateInput,
+        timeSlotInfo.slotInput
+      );
+      if (!newSlot.insertedtimeSlot) throw "Internal Server Error";
+      return res.redirect("timeSlot");
+    } catch (e) {
+      return res.status(500).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
+
+router.route("/myVenue").get(async (req, res) => {
+  try {
+    await userData.get(req.session.user.userID);
+  }
+  catch (e) {
+    return res.status(500).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+  let uid = req.session.user.userID;
+  try{
+  let venueList = await venueData.getvenuebyuserid(uid);
+ 
+  let empty = venueList.length == 0 ? true : false;
+
+  return res.render("myVenue", {
+    title: "My Venue",
+    venueList: venueList,
+    hidden: "hidden",
+    isempty: empty,
+  });
+} catch (e) {
+  return res.status(500).render("error", {
+    title: "Error",
+    error: e,
+  });
+}
+
 });
 
 export default router;
