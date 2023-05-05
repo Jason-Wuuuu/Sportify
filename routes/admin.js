@@ -10,6 +10,7 @@ import * as sportPlaceData from "../data/admin/sportPlaces.js";
 import validation, { checkUsedEmail } from "../data/admin/helpers.js";
 import xss from "xss";
 import * as timeSlot from "../data/admin/timeSlot.js";
+import { sendEmail } from "../data/admin/mail.js";
 
 const router = Router();
 
@@ -52,7 +53,11 @@ const getSportPlaceOptions = async (sportPlaceID) => {
   let sportPlaces = [];
   if (sportPlacetList) {
     sportPlaces = sportPlacetList.map((sportPlace) =>
-      Object({ sportPlaceID: sportPlace._id, name: sportPlace.name, sportId1: sportPlace.sportID})
+      Object({
+        sportPlaceID: sportPlace._id,
+        name: sportPlace.name,
+        sportId1: sportPlace.sportID,
+      })
     );
   }
   if (sportPlaceID) {
@@ -190,7 +195,19 @@ router
         adminInfo.passwordInput
       );
       if (!newAdmin.updatedAdmin) throw "Internal Server Error";
-      return res.redirect("profile");
+
+      //send mail
+      try {
+        await sendEmail(
+          adminInfo.emailInput,
+          "Your information has been successfully updated!"
+        );
+      } catch (e) {
+        console.log(`Failed to send mail to ${adminInfo.emailInput}`);
+      } finally {
+        // redirect to profile page even if the mail is not sent
+        return res.redirect("profile");
+      }
     } catch (e) {
       return res.status(500).render("admin/error", {
         title: "Error",
@@ -279,7 +296,19 @@ router
         adminInfo.passwordInput
       );
       if (!newAdmin.insertedAdmin) throw "Internal Server Error";
-      return res.redirect("login");
+
+      //send mail
+      try {
+        await sendEmail(
+          adminInfo.emailInput,
+          "Welcome to the family! You are now an admin of Sportify!"
+        );
+      } catch (e) {
+        console.log(`Failed to send mail to ${adminInfo.emailInput}`);
+      } finally {
+        // redirect to login page even if the mail is not sent
+        return res.redirect("login");
+      }
     } catch (e) {
       res.status(500).render("admin/error", {
         title: "Error",
@@ -431,7 +460,7 @@ router
         classInfo.priceInput,
         "Price"
       );
-     classInfo.dateInput = validation.checkDate(classInfo.dateInput, "Date");
+      classInfo.dateInput = validation.checkDate(classInfo.dateInput, "Date");
       classInfo.startTimeInput = validation.checkTime(
         classInfo.startTimeInput,
         "Start Time"
@@ -699,7 +728,7 @@ router
         db: "users",
       });
     } catch (e) {
-      return res.status(400).render("admin/error", {
+      return res.status(404).render("admin/error", {
         title: "Error",
         error: e,
       });
@@ -747,7 +776,7 @@ router
         db: "classes",
       });
     } catch (e) {
-      return res.status(400).render("admin/error", {
+      return res.status(404).render("admin/error", {
         title: "Error",
         error: e,
       });
@@ -795,7 +824,7 @@ router
         db: "sports",
       });
     } catch (e) {
-      return res.status(400).render("admin/error", {
+      return res.status(404).render("admin/error", {
         title: "Error",
         error: e,
       });
@@ -843,7 +872,7 @@ router
         db: "sportPlaces",
       });
     } catch (e) {
-      return res.status(400).render("admin/error", {
+      return res.status(404).render("admin/error", {
         title: "Error",
         error: e,
       });
@@ -891,7 +920,7 @@ router
         db: "events",
       });
     } catch (e) {
-      return res.status(400).render("admin/error", {
+      return res.status(404).render("admin/error", {
         title: "Error",
         error: e,
       });
@@ -930,18 +959,25 @@ router.route("/users/:id").get(async (req, res) => {
     });
   }
 
-  let userInfo = await userData.get(req.params.id);
+  try {
+    let userInfo = await userData.get(req.params.id);
 
-  return res.render("admin/userInfo", {
-    title: "User Info",
-    id: userInfo._id,
-    firstName: userInfo.firstName,
-    lastName: userInfo.lastName,
-    email: userInfo.email,
-    gender: userInfo.gender,
-    dateOfBirth: userInfo.dateOfBirth,
-    contactNumber: userInfo.contactNumber,
-  });
+    return res.render("admin/userInfo", {
+      title: "User Info",
+      id: userInfo._id,
+      firstName: userInfo.firstName,
+      lastName: userInfo.lastName,
+      email: userInfo.email,
+      gender: userInfo.gender,
+      dateOfBirth: userInfo.dateOfBirth,
+      contactNumber: userInfo.contactNumber,
+    });
+  } catch (e) {
+    return res.status(404).render("admin/error", {
+      title: "Error",
+      error: e,
+    });
+  }
 });
 
 router
@@ -992,7 +1028,7 @@ router
         thumbnail: classInfo.thumbnail,
         rating: classInfo.rating,
         n: classInfo.students.length,
-        users: classInfo.students,
+        students: classInfo.students,
         classTitle: classInfo.title,
         sportID: sportInfo._id,
         sportName: sportInfo.name,
@@ -1130,7 +1166,12 @@ router
       );
       if (!newClass.updatedClass) throw "Internal Server Error";
       return res.redirect(`${classID}`);
-    } catch (e) { }
+    } catch (e) {
+      return res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
   });
 
 router
@@ -1212,7 +1253,12 @@ router
       );
       if (!newSport.updatedSport) throw "Internal Server Error";
       return res.redirect(`${sportID}`);
-    } catch (e) { }
+    } catch (e) {
+      return res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
   });
 
 router
@@ -1361,7 +1407,10 @@ router
       if (!newSportPlace.updatedSportPlace) throw "Internal Server Error";
       return res.redirect(`${sportPlaceID}`);
     } catch (e) {
-      const sports = await getSportOptions();
+      return res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
     }
   });
 

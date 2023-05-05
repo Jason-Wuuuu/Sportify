@@ -161,11 +161,13 @@ const checkPrice = (price, varName) => {
 const checkDate = (date, varName) => {
   date = checkString(date, varName);
 
-  const d = new Date(date);
-  if (!d) throw `Error: Invalid ${varName}.`;
-
   const today = new Date();
-  if (d < today) throw `Error: Valid date starts from tomorrow.`;
+  let yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  let inputDate = new Date(date);
+  if (inputDate < yesterday) {
+    throw new Error("Input date cannot be less than today's date.");
+  }
 
   return date;
 };
@@ -343,34 +345,47 @@ if (document.URL.includes("/admin")) {
     });
   }
 
-  // sports and sportInfo
-  let sportInfo = document.getElementById("sport-form");
-  if (sportInfo) {
-    /*
-    (function ($) {
-      let mySportForm = $("#sport-form"),
-        newNameInput = $("#nameInput");
+  // sports and sportInfo (AJAX)
+  (function ($) {
+    let mySportForm = $("#sport-form"),
+      newNameInput = $("#nameInput"),
+      newThumbnailInput = $("#thumbnailInput"),
+      url = window.location.href;
 
-      // sport form submission event
-      mySportForm.submit(function (event) {
-        let newName = newNameInput.val();
+    // sport form submission event
+    mySportForm.submit(function (event) {
+      event.preventDefault();
+
+      let newName = newNameInput.val();
+      let newThumbnail = newThumbnailInput.val();
+      //validation
+      try {
+        newName = checkTitle(newName, "Name");
+        if (newThumbnail) newThumbnail = checkURL(newThumbnail, "Thumbnail");
+
         if (newName) {
           //set up AJAX request config
-          let requestConfig = {
+          $.ajax({
             method: "POST",
-            url: "/admin/sports",
-            data: {
+            url: url,
+            contentType: "application/json",
+            data: JSON.stringify({
               nameInput: newName,
+              thumbnailInput: newThumbnail,
+            }),
+            success: function (res) {
+              window.location.href = url;
             },
-          };
-
-          //AJAX Call. Gets the returned HTML data, binds the click event to the link and appends the new todo to the page
-          $.ajax(requestConfig);
+          });
         }
-      });
-    })(window.jQuery);
+      } catch (e) {
+        event.preventDefault();
+        show_error(e);
+      }
+    });
+  })(window.jQuery);
 
-    */
+  /*
     // get elements
     let nameInput = document.getElementById("nameInput");
     let thumbnailInput = document.getElementById("thumbnailInput");
@@ -393,7 +408,7 @@ if (document.URL.includes("/admin")) {
         show_error(e);
       }
     });
-  }
+  */
 
   // sportPlaces and sportPlaceInfo
   let sportPlaceInfo = document.getElementById("sportPlace-form");
@@ -541,11 +556,12 @@ else {
     });
   });
 
-  //addeventsform
+  //addevents/updateevnt forms
   let eventform = document.getElementById("addeventform");
   if (eventform) {
     eventform.addEventListener("submit", (event) => {
       let errorDiv = document.getElementById("errors");
+      console.log(errorDiv);
       let userID = document.getElementById("owner").value;
       let eventname = document.getElementById("eventname").value;
       let description = document.getElementById("desc").value;
@@ -570,6 +586,25 @@ else {
         endTime = checkEventTime(endTime, "End Time of Event");
         url = checkURL(url, "Thumbnail Url");
         let correcttime = checkTimeRange(startTime, endTime);
+      } catch (e) {
+        console.log(e);
+        event.preventDefault();
+        errorDiv.textContent = e;
+        errorDiv.hidden = false;
+      }
+    });
+  }
+
+  //addcomment
+  let commentform = document.getElementById("addcomment");
+  if (commentform) {
+    commentform.addEventListener("submit", (event) => {
+      let errorDiv = document.getElementById("errors");
+      let comment = document.getElementById("com").value;
+
+      try {
+        // hide containers by default
+        comment = checkString(comment, "Comment");
       } catch (e) {
         event.preventDefault();
         errorDiv.textContent = e;

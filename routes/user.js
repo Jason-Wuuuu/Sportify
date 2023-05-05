@@ -9,8 +9,12 @@ import {
 } from "../data/user/helpers.js";
 import * as validation from "../data/user/helpers.js";
 import * as sportsplaceData from "../data/user/sportPlaces.js";
+import * as commentsData from "../data/user/comments.js";
 import * as slotsData from "../data/user/timeSlots.js";
+import * as venueData from "../data/user/venue.js";
+
 import xss from "xss";
+import { sendEmail } from "../data/admin/mail.js";
 
 const router = Router();
 
@@ -142,7 +146,19 @@ router
         userInfo.passwordInput
       );
       if (!newUser.insertedUser) throw "Internal Server Error";
-      return res.redirect("login");
+
+      //send mail
+      try {
+        await sendEmail(
+          userInfo.emailInput,
+          "Welcome to the family! You are now an user of Sportify!"
+        );
+      } catch (e) {
+        console.log(`Failed to send mail to ${userInfo.emailInput}`);
+      } finally {
+        // redirect to login page even if the mail is not sent
+        return res.redirect("login");
+      }
     } catch (e) {
       res.sendStatus(500);
     }
@@ -212,7 +228,11 @@ router.route("/myevents").get(async (req, res) => {
   let eventList = await eventsData.getEventsByUser(uid);
   if (eventList.length !== 0) {
     for (let item of eventList) {
+      item.sportplaces = await sportsplaceData.getSportPlacesBySport(
+        item.sport
+      );
       let memberdetailsList = [];
+
       for (let member of item.participants) {
         let memberdetails = await userData.get(member);
         memberdetailsList.push(memberdetails);
@@ -380,7 +400,19 @@ router
         userInfo.passwordInput
       );
       if (!newUser.updatedUser) throw "Internal Server Error";
-      return res.redirect("profile");
+
+      //send mail
+      try {
+        await sendEmail(
+          userInfo.emailInput,
+          "Your information has been successfully updated!"
+        );
+      } catch (e) {
+        console.log(`Failed to send mail to ${userInfo.emailInput}`);
+      } finally {
+        // redirect to profile page even if the mail is not sent
+        return res.redirect("profile");
+      }
     } catch (e) {
       return res.status(500).render("error", {
         title: "Error",
@@ -434,12 +466,46 @@ router
     });
   });
 
+//shared Event
+router.route("/event/:eventid").get(async (req, res) => {
+  try {
+    let eventid = req.params.eventid;
+    eventid = helperMethodsForUsers.checkId(eventid);
+    let eventdata = await eventsData.get(eventid);
+    eventdata._id = eventdata._id.toString();
+    if (req.session.user) {
+      let userID = req.session.user.userID.toString();
+      if (eventdata.participants.includes(req.session.user.userID)) {
+        eventdata.registered = true;
+      } else {
+        eventdata.registered = false;
+      }
+      eventdata.available =
+        eventdata.capacity > eventdata.participants.length ? true : false;
+      eventdata.auth = true;
+    } else {
+      eventdata.auth = false;
+    }
+
+    console.log(eventdata);
+    if (eventdata) {
+      return res.render("event", {
+        title: "event",
+        sport: eventdata.sport,
+        event: eventdata,
+      });
+    } else {
+      throw `No Event found with ID ${eventid}`;
+    }
+  } catch (e) { }
+});
+
 router.route("/removeevents/:eventid").get(async (req, res) => {
   try {
     let eventID = req.params.eventid.toString();
     eventID = validation.checkId(eventID, "Event ID");
     let removeinfo = await eventsData.remove(eventID);
-    return res.redirect("/profile");
+    return res.redirect("/myevents");
   } catch (e) {
     return res.status(400).render("error", {
       title: "Error",
@@ -478,7 +544,8 @@ router
         req.body.owner,
         "userID"
       );
-      let evenntname = validation.helperMethodsForEvents.checkEventName(
+      let userInfo = await userData.get(owner);
+      let eventname = validation.helperMethodsForEvents.checkEventName(
         req.body.eventname,
         "Event Name"
       );
@@ -538,7 +605,6 @@ router
           }
         }
       }
-
       let sportId = await sportsData.getID(sportname);
       for (let i in slotarray) {
         let slotinfo = await slotsData.create(
@@ -553,7 +619,7 @@ router
 
       let event = await eventsData.create(
         owner,
-        evenntname,
+        eventname,
         desc,
         sportname,
         sportPlace,
@@ -565,25 +631,263 @@ router
       );
 
       if (event.insertedEvent == true) {
+        await sendEmail(
+          userInfo.email,
+          `Hi ${userInfo.firstName}, You have succesfully created new event: ${eventname}! Thank you. `
+        );
         return res.redirect(`/events/${sportname}`);
       } else {
         throw "Event could not be added!";
       }
+    } catch (e) {
+      let sportt = req.params.sports;
+      let uid = req.session.user.userID;
+
+      let sportplaces = await sportsplaceData.getSportPlacesBySport(sportt);
+      return res.status(400).render("addevent", {
+        error: true,
+        userID: req.body.owner.toString(),
+        places: sportplaces,
+        title: "Add Event",
+        errmsg: e,
+        _id: req.body.owner.toString(),
+        name: req.body.eventname,
+        description: req.body.desc,
+        sport: req.body.sportname,
+        sportPlace: req.body.sportPlace,
+        capacity: req.body.CapacityInput,
+        date: req.body.dateinput,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        image: req.body.thumbnail,
+      });
+    }
+  });
+
+router
+  .route("/updateevent/:eventid")
+  .get(async (req, res) => {
+    try {
+      let eventid = req.params.eventid.toString();
+      let eventdata = await eventsData.get(eventid);
+      let sportplaces = await sportsplaceData.getSportPlacesBySport(
+        eventdata.sport
+      );
+
+      return res.render("updateevent", {
+        title: "Update Event",
+        _id: eventdata._id.toString(),
+        places: sportplaces,
+        userID: eventdata.userID,
+        name: eventdata.name,
+        description: eventdata.description,
+        sport: eventdata.sport,
+        sportPlace: eventdata.sportPlace,
+        capacity: eventdata.capacity,
+        date: eventdata.date,
+        startTime: eventdata.startTime,
+        endTime: eventdata.endTime,
+        image: eventdata.image,
+      });
     } catch (e) {
       return res.status(400).render("error", {
         title: "Error",
         error: e,
       });
     }
+  })
+  .put(async (req, res) => {
+    try {
+      for (const key in req.body) {
+        req.body[key] = xss(req.body[key]);
+      }
+      let eventid = req.params.eventid.toString();
+      eventid = validation.helperMethodsForEvents.checkId(eventid, "Event ID");
+
+      let owner = validation.helperMethodsForEvents.checkId(
+        req.body.owner,
+        "userID"
+      );
+      let userInfo = await userData.get(owner);
+
+      let evenntname = validation.helperMethodsForEvents.checkEventName(
+        req.body.eventname,
+        "Event Name"
+      );
+      let desc = validation.helperMethodsForEvents.checkEventName(
+        req.body.desc,
+        "Description"
+      );
+      let sportname = validation.helperMethodsForEvents.checkString(
+        req.body.sportname,
+        "Sport Name"
+      );
+      let sportPlace = validation.helperMethodsForEvents.checkString(
+        req.body.sportPlace,
+        "SportPlace"
+      );
+      let CapacityInput = validation.helperMethodsForEvents.checkCapacity(
+        req.body.CapacityInput,
+        "Capacity"
+      );
+      let dateinput = validation.helperMethodsForEvents.checkDate(
+        req.body.dateinput,
+        "Event Date"
+      );
+      let startTime = validation.helperMethodsForEvents.checkEventTime(
+        req.body.startTime,
+        "Event Start Time"
+      );
+      let endTime = validation.helperMethodsForEvents.checkEventTime(
+        req.body.endTime,
+        "Event End time"
+      );
+      let thumbnail = validation.helperMethodsForEvents.checkURL(
+        req.body.thumbnail,
+        "Thumbnail URL"
+      );
+      let timerange = validation.helperMethodsForEvents.checkTimeRange(
+        startTime,
+        endTime
+      );
+      let sportsplaceId = await sportsplaceData.getSportPlaceId(sportPlace);
+      let slotarray = validation.helperMethodsForEvents.determineSlots(
+        startTime,
+        endTime
+      );
+      let slots = await slotsData.getslotsByDate(
+        sportsplaceId,
+        dateinput,
+        slotarray
+      );
+
+      if (slots.length !== 0) {
+        for (let item of slots) {
+          let deleted = await slotsData.remove(item._id.toString());
+        }
+      }
+
+      let sportId = await sportsData.getID(sportname);
+      for (let i in slotarray) {
+        let slotinfo = await slotsData.create(
+          sportId,
+          sportsplaceId,
+          dateinput,
+          slotarray[i],
+          owner,
+          "2"
+        );
+      }
+
+      let event = await eventsData.update(
+        eventid,
+        evenntname,
+        desc,
+        sportname,
+        sportPlace,
+        CapacityInput,
+        dateinput,
+        startTime,
+        endTime,
+        thumbnail
+      );
+
+      if (event.updateEvent == true) {
+        await sendEmail(
+          userInfo.email,
+          `Hi ${userInfo.firstName}, You have succesfully updated your event: ${evenntname}! Thank you. `
+        );
+        return res.redirect(`/myevents`);
+      } else {
+        throw "Event could not be updated!";
+      }
+    } catch (e) {
+      let sportt = req.body.sportname;
+
+      let sportplaces = await sportsplaceData.getSportPlacesBySport(sportt);
+      return res.status(400).render("updateevent", {
+        _id: req.params.eventid.toString(),
+        err: true,
+        error: e,
+        places: sportplaces,
+        title: "Update Event",
+        errmsg: e,
+        userID: req.body.owner.toString(),
+        name: req.body.eventname,
+        description: req.body.desc,
+        sport: req.body.sportname,
+        sportPlace: req.body.sportPlace,
+        capacity: req.body.CapacityInput,
+        date: req.body.dateinput,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        image: req.body.thumbnail,
+      });
+    }
   });
+
+router.route("/commentbox/:eventid").get(async (req, res) => {
+  try {
+    let eventid = req.params.eventid.toString();
+    let eventdata = await eventsData.get(eventid);
+    let comments = await commentsData.get(eventid);
+    let hascomments = comments.length == 0 ? false : true;
+    for (let item of comments) {
+      const timings = new Date(item.timestamp);
+      const printtime = timings.toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      });
+      item.printtime = printtime;
+
+      if (item.userID == req.session.user.userID) {
+        item.owner = true;
+      } else {
+        item.owner = false;
+      }
+    }
+    comments = comments.reverse();
+
+    return res.render("commentbox", {
+      title: "CommentBox",
+      _id: eventdata._id.toString(),
+      userID: eventdata.userID,
+      name: eventdata.name,
+      description: eventdata.description,
+      sport: eventdata.sport,
+      sportPlace: eventdata.sportPlace,
+      capacity: eventdata.capacity,
+      participants: eventdata.participants.length,
+      date: eventdata.date,
+      startTime: eventdata.startTime,
+      endTime: eventdata.endTime,
+      image: eventdata.image,
+      comments: comments,
+      hascomments: hascomments,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(400).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
 
 router.route("/events/:sports/register/:eventid").get(async (req, res) => {
   try {
     let eventid = req.params.eventid;
     if (req.session.user) {
       let uid = req.session.user.userID;
+      let userInfo = await userData.get(uid);
       let updateParticipantlist = await eventsData.join(eventid, uid);
       if (updateParticipantlist.updatedEventParticipants == true) {
+        await sendEmail(
+          userInfo.email,
+          `Hi ${userInfo.firstName}, You have succesfully registered to the event! Thank you. `
+        );
         let eventList = await eventsData.getEventsBySport(req.params.sports);
         for (let item of eventList) {
           if (item.participants.includes(req.session.user.userID)) {
@@ -616,8 +920,13 @@ router.route("/events/:sports/deregister/:eventid").get(async (req, res) => {
     let eventid = req.params.eventid;
     if (req.session.user) {
       let uid = req.session.user.userID;
+      let userInfo = await userData.get(uid);
       let updateParticipantlist = await eventsData.quit(eventid, uid);
       if (updateParticipantlist.updatedEventParticipants == true) {
+        await sendEmail(
+          userInfo.email,
+          `Hi ${userInfo.firstName}, You have unsubscribed from the event! Thank you. `
+        );
         let eventList = await eventsData.getEventsBySport(req.params.sports);
         for (let item of eventList) {
           if (item.participants.includes(uid)) {
@@ -651,9 +960,13 @@ router
     try {
       let eventid = req.params.eventid.toString();
       let uid = req.params.userid.toString();
-
+      let userInfo = await userData.get(uid);
       let updateParticipantlist = await eventsData.quit(eventid, uid);
       if (updateParticipantlist.updatedEventParticipants == true) {
+        await sendEmail(
+          userInfo.email,
+          `Hi ${userInfo.firstName}, Sorry to inform you that the admin has removed you from the event! `
+        );
         return res.redirect("/myevents");
       } else {
         throw "Failed to remove User in Participant list.";
@@ -731,7 +1044,7 @@ router.route("/venue/:sports").get(async (req, res) => {
       "sports Param"
     );
   } catch (e) {
-    return res.status(400).render("error", {    
+    return res.status(400).render("error", {
       title: "Error",
       error: e,
     });
@@ -779,4 +1092,247 @@ router.route("/venueInfo/:id").get(async (req, res) => {
   }
 });
 
+router.route("/venueInfo/:id").get(async (req, res) => {
+  try {
+    req.params.id = helperMethodsForUsers.checkId(
+      req.params.id,
+      "sports place id Param"
+    );
+  } catch (e) {
+    return res.status(400).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+
+  try {
+    // let sport = req.params.sports;
+    let venueslot = await venueData.getslotsByDate(
+      req.params.id,
+      req.params.dateInput
+    );
+    return res.render("venueInfo", {
+      // sport: sport,
+      venues: venueslot,
+      title: "Reserve Venue",
+    });
+  } catch (e) {
+    return res.status(404).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
+
+router.route("/venueBook")
+  .put(async (req, res) => {
+    let venueInfo = req.body;
+    if (!venueInfo || Object.keys(venueInfo).length === 0) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+
+    // validation
+    try {
+      await userData.get(req.session.user.userID);
+    }
+    catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    let bdate = "";
+    let uid = req.session.user.userID;
+    try {
+      venueInfo.slotInput = validation.checkId(
+        venueInfo.slotInput,
+        "id"
+      );
+      bdate = helperMethodsForEvents.checkDate(
+        req.session.user.bookingdate,
+        "date"
+      );
+      req.session.user.bookingdate = null;
+    } catch (e) {
+      // const sports = await getSportOptions(timeSlotInfo.sportIDInput);
+      // const sportPlacetList = await sportPlaceData.getAll();
+      // const sportPlaces = sportPlacetList.map((sportPlace) =>
+      //   Object({
+      //     sportPlaceID: sportPlace._id,
+      //     sportPlaceName: sportPlace.name,
+      //   })
+      // );
+
+      // return res.status(400).render("timeSlot", {
+      //   title: "Add TimeSlots",
+      //   hidden: "",
+      //   error: e,
+      //   sports: sports,
+      //   sportPlaces: sportPlaces,
+      //   name: timeSlotInfo.sportIDInput,
+      //   address: timeSlotInfo.sportplaceIDInput,
+      //   description: timeSlotInfo.dateInput,
+      //   capacity: timeSlotInfo.slotInput,
+
+      // });
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+
+    try {
+      const newSlot = await slotsData.updateslot(venueInfo.slotInput, bdate, uid);
+      if (!newSlot.updatedslot) throw "Internal Server Error";
+      let venueList = await venueData.getvenuebyuserid(uid);
+
+      let empty = venueList.length == 0 ? true : false;
+
+      return res.render("myVenue", {
+        title: "My Venue",
+        venueList: venueList,
+        hidden: "hidden",
+        isempty: empty,
+      });
+     // return res.redirect("myVenue");
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
+
+router.route("/venueGetslot/:id").post(async (req, res) => {
+  let venueInfo = req.body;
+  if (!venueInfo || Object.keys(venueInfo).length === 0) {
+    return res.status(400).render("error", {
+      title: "Error",
+      error: "There are no fields in the request body",
+    });
+  }
+
+  try {
+    req.params.id = helperMethodsForUsers.checkId(
+      req.params.id,
+      "sports place id Param"
+    );
+    venueInfo.dateInput = helperMethodsForEvents.checkDate(
+      venueInfo.dateInput,
+      "Date"
+    );
+  } catch (e) {
+    return res.status(400).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+  try {
+    // let sport = req.params.sports;
+    let venuedetails = await sportsplaceData.getSportPlace(req.params.id);
+    let venueslot = await venueData.getslotsByDate(
+      req.params.id,
+      venueInfo.dateInput
+    );
+
+    req.session.user.bookingdate = venueInfo.dateInput;
+
+    return res.render("venueInfo", {
+      // sport: sport,
+      venueinfo: venuedetails,
+      venues: venueslot,
+      date: venueInfo.dateInput,
+      title: "Reserve Venue",
+    });
+  } catch (e) {
+    return res.status(404).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
+
+router.route("/myVenue")
+  .get(async (req, res) => {
+    try {
+      await userData.get(req.session.user.userID);
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    let uid = req.session.user.userID;
+    try {
+      let venueList = await venueData.getvenuebyuserid(uid);
+
+      let empty = venueList.length == 0 ? true : false;
+
+      return res.render("myVenue", {
+        title: "My Venue",
+        venueList: venueList,
+        hidden: "hidden",
+        isempty: empty,
+      });
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
+
+router.route("/deleteVenue/:id/del/:date")
+  .get(async (req, res) => {
+    let ID = "";
+    let date = "";
+    try {
+      ID = req.params.id;
+      ID = validation.checkId(ID, "ID");
+      date = req.params.date;
+      date = helperMethodsForEvents.checkDate(date, "date");
+      
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+
+    try {
+      await userData.get(req.session.user.userID);
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    let uid = req.session.user.userID;
+
+    try {
+      const newSlot = await slotsData.removefromslot(ID, date);
+      if (!newSlot.updatedslot) throw "Internal Server Error";
+      
+
+      let venueList = await venueData.getvenuebyuserid(uid);
+
+      let empty = venueList.length == 0 ? true : false;
+
+      return res.render("myVenue", {
+        title: "My Venue",
+        venueList: venueList,
+        hidden: "hidden",
+        isempty: empty,
+      });
+     
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
 export default router;

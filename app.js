@@ -162,6 +162,13 @@ app.use("/admin/events/remove/:id", (req, res, next) => {
   next();
 });
 
+app.use("/admin/timeSlot", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  next();
+});
+
 app.use("/admin/logout", (req, res, next) => {
   if (!req.session.admin) {
     return res.redirect("/admin/login");
@@ -188,6 +195,28 @@ app.use("/myevents", (req, res, next) => {
   if (!req.session.user) {
     return res.redirect("/");
   }
+  next();
+});
+
+app.use("/commentbox/:eventid", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
+app.use("/addcomment/:eventid", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
+app.use("/updateevent/:eventid", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  if (req.method === "POST") req.method = "PUT";
   next();
 });
 
@@ -253,6 +282,51 @@ app.use("/profile", (req, res, next) => {
   if (req.method === "POST") req.method = "PUT";
   next();
 });
+
+app.use("/myVenue", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
+app.use("/admin/timeSlot", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  next();
+});
+
+app.use("/venue/:sports", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
+app.use("/venueInfo/:id", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
+app.use("/venueBook", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  if (req.method === "POST") req.method = "PUT";
+  next();
+});
+
+app.use("/deleteVenue/:id/del/:date", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  if (req.method === "POST") req.method = "PUT";
+  next();
+});
+
 
 app.use(async (req, res, next) => {
   const currentTime = new Date().toUTCString();

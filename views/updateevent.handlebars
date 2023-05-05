@@ -11,11 +11,11 @@
 
   </nav>
 </header>
-<h2>Enter Event Details Below:</h2>
+<h2>Update Event Details Below:</h2>
 
-<div class="error" id="errors">{{errmsg}}</div>
+<div class="error" id="errors">{{error}}</div>
 
-<form action="/addevent/{{sport}}" method="post" id="addeventform">
+<form action="/updateevent/{{_id}}" method="post" id="addeventform">
 
   <label for="owner">Event by User:</label><br />
   <input type="text" id="owner" name="owner" value="{{userID}}" readonly />
@@ -103,5 +103,5 @@
   />
   <br />
 
-  <input type="submit" value="Create Event" />
+  <input type="submit" value="Update Event" />
 </form>

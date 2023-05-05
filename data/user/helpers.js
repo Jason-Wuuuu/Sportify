@@ -74,8 +74,8 @@ const helperMethodsForClasses = {
     if (isNaN(min) || min < 0 || min > 59)
       throw `Error: Invalid min for ${varName}`;
 
-    return time;
-  },
+    return time;
+  },
 };
 
 const helperMethodsForEvents = {
@@ -128,11 +128,13 @@ const helperMethodsForEvents = {
   checkDate(date, varName) {
     date = checkString(date, varName);
 
-    const d = new Date(date);
-    if (!d) throw `Error: Invalid ${varName}.`;
-
     const today = new Date();
-    if (d < today) throw `Error: Date shouldn't be less than today.`;
+    let yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    let inputDate = new Date(date);
+    if (inputDate < yesterday) {
+      throw new Error("Input date cannot be less than today's date.");
+    }
 
     return date;
   },

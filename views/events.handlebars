@@ -4,8 +4,8 @@
 
     <a class="active" href="/events/{{sport}}">Events</a>
     <a href="/myevents">MyEvents</a>
-   <a href="/classes/{{sport}}">Classes</a>
-    <a href="/venue/{{sport}}">SportFacilities</a>
+    <a href="/classes/{{sport}}">Classes</a>
+    <a href="/venue/{{sport}}">Reserve Venue</a>
 
     <a href="/profile">Profile</a>
     <a href="/logout">Logout</a>
@@ -33,13 +33,22 @@
       <h1>{{this.name}}</h1>
       <p>{{this.description}}</p>
       {{#if this.registered}}
-        <p style="color: green;">
+        <p style="color: green; ">
           Event Joined! ✅
         </p>
-        <a style="color: rgb(139, 15, 241);">
+        <a href="/commentbox/{{this._id}}" style="color: rgb(139, 15, 241);">
           Chat With Participants! 💬
         </a>
       {{/if}}
+      <button
+        onclick="popup()"
+        class="copylink{{this._id}} copylink"
+        data-clipboard-text="http://localhost:3000/event/{{this._id}}"
+      >Share Event</button><br />
+      <script>
+        var copy = new ClipboardJS(".copylink{{this._id}}"); function popup() {
+        alert("Event Link Copied!"); }
+      </script>
       <p class="joinLink">
         {{#if this.available}}
           {{#if this.registered}}
@@ -56,9 +65,18 @@
             </a>
           {{/if}}
         {{else}}
-          <a style="color: red;">Event Full! 😢 [
-            {{this.participants.length}}/{{this.capacity}}]
-          </a>
+          {{#if this.registered}}
+            <a
+              style="color: rgb(241, 15, 15);"
+              href="/events/{{sport}}/deregister/{{this._id}}"
+            >
+              Deregister Event? ⚠️
+            </a>
+          {{else}}
+            <a style="color: red;">Event Full! 😢 [
+              {{this.participants.length}}/{{this.capacity}}]
+            </a>
+          {{/if}}
         {{/if}}
       </p>
     </div>

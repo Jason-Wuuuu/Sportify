@@ -1,0 +1,59 @@
+<header>
+    <nav class="navbar">
+        <a href="/">Back</a>
+        <a href="/logout">Logout</a>
+    </nav>
+</header>
+<h1 class="centertitle">My Booked Venue</h1>
+{{#if isempty}}
+<p>No, Venue is Booked yet.</p>
+{{else}}
+<div class="centertitle">
+    <p>==============================================================================</p>
+    <table cellspacing="10">
+
+
+        <tr>
+            <th>Sport</th>
+            <th>Venue Name</th>
+            <th>Booking Date</th>
+            <th>Timing</th>
+            <th>Address</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Capacity</th>
+            {{!-- <td>
+                <a class="manageevent" style="color: rgb(43, 103, 37);">
+                    Update Event
+                </a>
+            </td> --}}
+        </tr>
+
+        {{#each venueList}}
+
+
+        <tr>
+            {{!-- <td hidden>{{this._id}}</td> --}}
+            <td>{{this.sportName}}</td>
+            <td>{{this.sportPlaceName}}</td>
+            <td>{{this.Date}}</td>
+            <td> {{this.slotName}}</td>
+            <td>{{this.address}}</td>
+            <td>{{this.description}}</td>
+            <td>{{this.price}}</td>
+            <td>{{this.capacity}}</td>
+            <td>
+                <a href="/deleteVenue/{{this.id}}/del/{{this.Date}}" style="color: red;">
+                    Delete Venue
+                </a>
+            </td>
+
+        </tr>
+
+
+
+        {{!-- <p>==============================================================================</p> --}}
+        {{/each}}
+    </table>
+</div>
+{{/if}}
