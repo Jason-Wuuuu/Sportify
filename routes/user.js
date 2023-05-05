@@ -3,7 +3,10 @@ import * as userData from "../data/user/users.js";
 import * as eventsData from "../data/user/events.js";
 import * as sportsData from "../data/user/sports.js";
 import * as classesData from "../data/user/classes.js";
-import { helperMethodsForUsers } from "../data/user/helpers.js";
+import {
+  helperMethodsForUsers,
+  helperMethodsForEvents,
+} from "../data/user/helpers.js";
 import * as validation from "../data/user/helpers.js";
 import * as sportsplaceData from "../data/user/sportPlaces.js";
 import * as slotsData from "../data/user/timeSlots.js";
@@ -230,24 +233,22 @@ router.route("/myevents").get(async (req, res) => {
 });
 
 router.route("/myclasses").get(async (req, res) => {
-  let userID = req.session.user.userID;        
+  let userID = req.session.user.userID;
   let myClassList = await classesData.getClassesByUserID(userID);
-  return res.render("myclasses", {classList : myClassList});
-}); 
-
-router.route("/myclasses/:classID")
-.get(async (req, res) => {
-  let classID = req.params.classID;
-  let classObj = await classesData.getClass(classID);
-  return res.render("classInfo", {class : classObj});
+  return res.render("myclasses", { classList: myClassList });
 });
 
-router.route("/myclasses/remove/:classID")
-.get(async (req, res) => {
-  let userID = req.session.user.userID; 
+router.route("/myclasses/:classID").get(async (req, res) => {
+  let classID = req.params.classID;
+  let classObj = await classesData.getClass(classID);
+  return res.render("classInfo", { class: classObj });
+});
+
+router.route("/myclasses/remove/:classID").get(async (req, res) => {
+  let userID = req.session.user.userID;
   let classID = req.params.classID;
   await classesData.quit(classID, userID);
-  return res.redirect("/myclasses")
+  return res.redirect("/myclasses");
 });
 
 router
@@ -406,24 +407,32 @@ router.route("/events/:sports").get(async (req, res) => {
   });
 });
 
-router.route("/classes/:sports")
-.get(async (req, res) => {    
-  let sportName = req.params.sports;
-  let sportObj = await sportsData.getByName(sportName);
-  let sportObjectId = sportObj._id.toString();
-  let classList = await classesData.getClassesBySport(sportObjectId);
-  return res.render("classes", { sport: sportObj.name, classList : classList});
-})
-.post(async (req, res) => { 
-  let classID = req.body.classId;
-  let userID = req.session.user.userID;   
-  let result = await classesData.reserve(classID, userID);
-  let sportName = req.params.sports;
-  let sportObj = await sportsData.getByName(sportName);
-  let sportObjectId = sportObj._id.toString();
-  let classList = await classesData.getClassesBySport(sportObjectId); 
-  return res.render("classes", { sport: sportObj.name, classList : classList, message : result.msg });
-});
+router
+  .route("/classes/:sports")
+  .get(async (req, res) => {
+    let sportName = req.params.sports;
+    let sportObj = await sportsData.getByName(sportName);
+    let sportObjectId = sportObj._id.toString();
+    let classList = await classesData.getClassesBySport(sportObjectId);
+    return res.render("classes", {
+      sport: sportObj.name,
+      classList: classList,
+    });
+  })
+  .post(async (req, res) => {
+    let classID = req.body.classId;
+    let userID = req.session.user.userID;
+    let result = await classesData.reserve(classID, userID);
+    let sportName = req.params.sports;
+    let sportObj = await sportsData.getByName(sportName);
+    let sportObjectId = sportObj._id.toString();
+    let classList = await classesData.getClassesBySport(sportObjectId);
+    return res.render("classes", {
+      sport: sportObj.name,
+      classList: classList,
+      message: result.msg,
+    });
+  });
 
 router.route("/removeevents/:eventid").get(async (req, res) => {
   try {
@@ -655,6 +664,64 @@ router
         error: e,
       });
     }
+  });
+
+router.route("/addcomment/:eventid").post(async (req, res) => {
+  try {
+    let eventid = req.params.eventid.toString();
+    eventid = validation.helperMethodsForEvents.checkId(eventid, "Event ID");
+    let uid = req.session.user.userID.toString();
+    uid = validation.helperMethodsForEvents.checkId(uid, "User ID");
+    let user = await userData.get(uid);
+    let name = user.firstName + " " + user.lastName;
+    let time = new Date();
+    let comm = xss(req.body.com);
+    comm = validation.helperMethodsForEvents.checkString(comm, "Comment");
+
+    let addedComment = await commentsData.create(
+      eventid,
+      uid,
+      name,
+      comm,
+      time
+    );
+    if (addedComment.insertedEvent == true) {
+      return res.redirect(`/commentbox/${eventid}`);
+    } else {
+      throw "Failed to Add Comment.";
+    }
+  } catch (e) {
+    return res.status(400).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
+router
+  .route("/classes/:sports")
+  .get(async (req, res) => {
+    let sportName = req.params.sports;
+    let sportObj = await sportsData.getByName(sportName);
+    let sportObjectId = sportObj._id.toString();
+    let classList = await classesData.getClassesBySport(sportObjectId);
+    return res.render("classes", {
+      sport: sportObj.name,
+      classList: classList,
+    });
+  })
+  .post(async (req, res) => {
+    let classID = req.body.classId;
+    let userID = req.session.user.userID;
+    let result = await classesData.reserve(classID, userID);
+    let sportName = req.params.sports;
+    let sportObj = await sportsData.getByName(sportName);
+    let sportObjectId = sportObj._id.toString();
+    let classList = await classesData.getClassesBySport(sportObjectId);
+    return res.render("classes", {
+      sport: sportObj.name,
+      classList: classList,
+      message: result.msg,
+    });
   });
 
 router.route("/venue/:sports").get(async (req, res) => {
