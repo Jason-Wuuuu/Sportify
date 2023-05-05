@@ -470,7 +470,7 @@ router.route("/event/:eventid").get(async (req, res) => {
     } else {
       throw `No Event found with ID ${eventid}`;
     }
-  } catch (e) {}
+  } catch (e) { }
 });
 
 router.route("/removeevents/:eventid").get(async (req, res) => {
@@ -1097,21 +1097,22 @@ router.route("/venueInfo/:id").get(async (req, res) => {
   }
 });
 
-router.route("/venueBook").put(async (req, res) => {
-  let venueInfo = req.body;
-  if (!venueInfo || Object.keys(venueInfo).length === 0) {
-    return res.status(400).render("error", {
-      title: "Error",
-      error: "There are no fields in the request body",
-    });
-  }
+router.route("/venueBook")
+  .put(async (req, res) => {
+    let venueInfo = req.body;
+    if (!venueInfo || Object.keys(venueInfo).length === 0) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
 
     // validation
     try {
       await userData.get(req.session.user.userID);
     }
     catch (e) {
-      return res.status(500).render("error", {
+      return res.status(400).render("error", {
         title: "Error",
         error: e,
       });
@@ -1138,35 +1139,45 @@ router.route("/venueBook").put(async (req, res) => {
       //   })
       // );
 
-    // return res.status(400).render("timeSlot", {
-    //   title: "Add TimeSlots",
-    //   hidden: "",
-    //   error: e,
-    //   sports: sports,
-    //   sportPlaces: sportPlaces,
-    //   name: timeSlotInfo.sportIDInput,
-    //   address: timeSlotInfo.sportplaceIDInput,
-    //   description: timeSlotInfo.dateInput,
-    //   capacity: timeSlotInfo.slotInput,
+      // return res.status(400).render("timeSlot", {
+      //   title: "Add TimeSlots",
+      //   hidden: "",
+      //   error: e,
+      //   sports: sports,
+      //   sportPlaces: sportPlaces,
+      //   name: timeSlotInfo.sportIDInput,
+      //   address: timeSlotInfo.sportplaceIDInput,
+      //   description: timeSlotInfo.dateInput,
+      //   capacity: timeSlotInfo.slotInput,
 
-    // });
-    return res.status(500).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
+      // });
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
 
-  try {
-    const newSlot = await slotsData.updateslot(venueInfo.slotInput, bdate, uid);
-    if (!newSlot.updatedslot) throw "Internal Server Error";
-    return res.redirect("myVenue");
-  } catch (e) {
-    return res.status(500).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
-});
+    try {
+      const newSlot = await slotsData.updateslot(venueInfo.slotInput, bdate, uid);
+      if (!newSlot.updatedslot) throw "Internal Server Error";
+      let venueList = await venueData.getvenuebyuserid(uid);
+
+      let empty = venueList.length == 0 ? true : false;
+
+      return res.render("myVenue", {
+        title: "My Venue",
+        venueList: venueList,
+        hidden: "hidden",
+        isempty: empty,
+      });
+     // return res.redirect("myVenue");
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
 
 router.route("/venueGetslot/:id").post(async (req, res) => {
   let venueInfo = req.body;
@@ -1217,49 +1228,79 @@ router.route("/venueGetslot/:id").post(async (req, res) => {
   }
 });
 
-router.route("/myVenue").get(async (req, res) => {
-  try {
-    await userData.get(req.session.user.userID);
-  } catch (e) {
-    return res.status(500).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
-  let uid = req.session.user.userID;
-  try {
-    let venueList = await venueData.getvenuebyuserid(uid);
-
-    let empty = venueList.length == 0 ? true : false;
-
-    return res.render("myVenue", {
-      title: "My Venue",
-      venueList: venueList,
-      hidden: "hidden",
-      isempty: empty,
-    });
-  } catch (e) {
-    return res.status(500).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
-});
-
-router.route("/deleteVenue/:id")
-  .put(async (req, res) => {
+router.route("/myVenue")
+  .get(async (req, res) => {
     try {
-      let ID = req.params.id;
-      ID = validation.checkId(ID, "ID");
+      await userData.get(req.session.user.userID);
     } catch (e) {
-      return res.status(500).render("error", {
+      return res.status(400).render("error", {
         title: "Error",
         error: e,
       });
     }
+    let uid = req.session.user.userID;
     try {
-      let removeinfo = await venueData.removefromslot(ID);
-      return res.redirect("/myVenue");
+      let venueList = await venueData.getvenuebyuserid(uid);
+
+      let empty = venueList.length == 0 ? true : false;
+
+      return res.render("myVenue", {
+        title: "My Venue",
+        venueList: venueList,
+        hidden: "hidden",
+        isempty: empty,
+      });
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
+
+router.route("/deleteVenue/:id/del/:date")
+  .get(async (req, res) => {
+    let ID = "";
+    let date = "";
+    try {
+      ID = req.params.id;
+      ID = validation.checkId(ID, "ID");
+      date = req.params.date;
+      date = helperMethodsForEvents.checkDate(date, "date");
+      
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+
+    try {
+      await userData.get(req.session.user.userID);
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    let uid = req.session.user.userID;
+
+    try {
+      const newSlot = await slotsData.removefromslot(ID, date);
+      if (!newSlot.updatedslot) throw "Internal Server Error";
+      
+
+      let venueList = await venueData.getvenuebyuserid(uid);
+
+      let empty = venueList.length == 0 ? true : false;
+
+      return res.render("myVenue", {
+        title: "My Venue",
+        venueList: venueList,
+        hidden: "hidden",
+        isempty: empty,
+      });
+     
     } catch (e) {
       return res.status(400).render("error", {
         title: "Error",

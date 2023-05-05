@@ -11,34 +11,32 @@ const create = async (
   userID,
   bookingType
 ) => {
-  try {
-    // validation
-    sportID = validation.checkId(sportID, "sport ID");
-    sportPlaceID = validation.checkId(sportPlaceID, "sportPlaceID");
-    Date = validation.checkString(Date, "Date");
-    slotID = validation.checkNumber(slotID, "slotID");
-    userID = validation.checkId(userID, "userID");
 
-    // add
-    let newTimeslot = {
-      sportID: sportID,
-      sportPlaceID: sportPlaceID,
-      Date: Date,
-      slotID: slotID,
-      availability: 1,
-      userID: userID,
-      bookingType: bookingType,
-      //pass booking type for ground booking 1, event:2, class:3
-    };
-    const slotCollection = await timeSlot();
-    const newdata = await slotCollection.insertOne(newTimeslot);
-    const newId = newdata.insertedId;
-    // await get(newId.toString());
+  // validation
+  sportID = validation.checkId(sportID, "sport ID");
+  sportPlaceID = validation.checkId(sportPlaceID, "sportPlaceID");
+  Date = validation.checkString(Date, "Date");
+  slotID = validation.checkNumber(slotID, "slotID");
+  userID = validation.checkId(userID, "userID");
 
-    return { insertedtimeSlot: true };
-  } catch (e) {
-    console.log(e);
-  }
+  // add
+  let newTimeslot = {
+    sportID: sportID,
+    sportPlaceID: sportPlaceID,
+    Date: Date,
+    slotID: slotID,
+    availability: 1,
+    userID: userID,
+    bookingType: bookingType,
+    //pass booking type for ground booking 1, event:2, class:3
+  };
+  const slotCollection = await timeSlot();
+  const newdata = await slotCollection.insertOne(newTimeslot);
+  const newId = newdata.insertedId;
+  // await get(newId.toString());
+
+  return { insertedtimeSlot: true };
+
 };
 
 const get = async (ID) => {
@@ -59,56 +57,71 @@ const getslotsByDate = async (sportPlaceid, date, slotarray) => {
     .toArray();
   return slots;
 };
-const removefromslot = async (slotID) => {
-  slotID = validation.checkId(slotID, "SlotID");
-  const slots = await timeSlot();
-  const deletionInfo = await slots.findOneAndDelete({
-    _id: new ObjectId(slotID),
-  });
-  if (deletionInfo.lastErrorObject.n === 0)
-    throw `Error: Could not delete slot with id of ${slotID}`;
+const removefromslot = async (sid,
+  date,) => {
+  sid = validation.helperMethodsForEvents.checkId(
+    sid,
+    "sID"
+  );
+  date = validation.helperMethodsForEvents.checkDate(date, "Date");
 
-  return { deleted: true };
+  // add valid event to db
+  let updatedslot = {
+    userID: "",
+    availability: 0,
+    bookingType: 0
+  };
+
+  const slotCollection = await timeSlot();
+  const updatedInfo = await slotCollection.findOneAndUpdate(
+    { _id: new ObjectId(sid), Date: date },
+    { $set: updatedslot },
+    { returnDocument: "after" }
+  );
+  if (updatedInfo.lastErrorObject.n === 0) {
+    throw `Error: no slot exists.`;
+  }
+
+  return { updatedslot: true };
+
 };
 
 const updateslot = async (
   sid,
-   date,
+  date,
   uid
 ) => {
-  try {
-    // validation
-    sid = validation.helperMethodsForEvents.checkId(
-      sid,
-      "sID"
-    );
 
-    date = validation.helperMethodsForEvents.checkDate(date, "Date");
+  // validation
+  sid = validation.helperMethodsForEvents.checkId(
+    sid,
+    "sID"
+  );
 
-    uid = validation.helperMethodsForEvents.checkId(
-      uid, 'uid'
-    );
-    // add valid event to db
-    let updatedslot = {
-      userID: uid,
-      availability: 1,
-      bookingType: 1
-    };
+  date = validation.helperMethodsForEvents.checkDate(date, "Date");
 
-    const slotCollection = await timeSlot();
-    const updatedInfo = await slotCollection.findOneAndUpdate(
-      { _id: new ObjectId(sid), Date: date},
-      { $set: updatedslot },
-      { returnDocument: "after" }
-    );
-    if (updatedInfo.lastErrorObject.n === 0) {
-      throw `Error: no Event exists.`;
-    }
-  
-    return { updatedslot: true };
-  } catch (e) {
-    console.log(e);
+  uid = validation.helperMethodsForEvents.checkId(
+    uid, 'uid'
+  );
+  // add valid event to db
+  let updatedslot = {
+    userID: uid,
+    availability: 1,
+    bookingType: 1
+  };
+
+  const slotCollection = await timeSlot();
+  const updatedInfo = await slotCollection.findOneAndUpdate(
+    { _id: new ObjectId(sid), Date: date },
+    { $set: updatedslot },
+    { returnDocument: "after" }
+  );
+  if (updatedInfo.lastErrorObject.n === 0) {
+    throw `Error: no slot exists.`;
   }
+
+  return { updatedslot: true };
+
 };
 
 export { create, get, getslotsByDate, removefromslot, updateslot };

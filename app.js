@@ -291,7 +291,7 @@ app.use("/venueBook", (req, res, next) => {
   next();
 });
 
-app.use("/deleteVenue/:id", (req, res, next) => {
+app.use("/deleteVenue/:id/del/:date", (req, res, next) => {
   if (!req.session.user) {
     return res.redirect("/");
   }
