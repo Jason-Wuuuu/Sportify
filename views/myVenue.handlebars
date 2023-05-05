@@ -4,13 +4,13 @@
         <a href="/logout">Logout</a>
     </nav>
 </header>
-<h1 class="centertitle">My Booked Venue:</h1>
+<h1 class="centertitle">My Booked Venue</h1>
 {{#if isempty}}
 <p>No, Venue is Booked yet.</p>
 {{else}}
 <div class="centertitle">
     <p>==============================================================================</p>
-    <table cellspacing="10" >
+    <table cellspacing="10">
 
 
         <tr>
@@ -31,25 +31,25 @@
 
         {{#each venueList}}
 
-      
-            <tr>
-                <td>{{this.sportName}}</td>
-                <td>{{this.sportPlaceName}}</td>
-                <td>{{this.Date}}</td>
-                <td> {{this.slotName}}
-                <td>{{this.address}}</td>
-                <td>{{this.description}}</td>
-                <td>{{this.price}}</td>
-                <td>{{this.capacity}}</td>
 
-                {{!-- <td>
-                    <a class="manageevent" href="/removeevents/{{this._id}}" style="color: red;">
-                        Delete Event
-                    </a>
-                </td> --}}
+        <tr>
+            <td hidden>{{this._id}}</td>
+            <td>{{this.sportName}}</td>
+            <td>{{this.sportPlaceName}}</td>
+            <td>{{this.Date}}</td>
+            <td> {{this.slotName}}</td>
+            <td>{{this.address}}</td>
+            <td>{{this.description}}</td>
+            <td>{{this.price}}</td>
+            <td>{{this.capacity}}</td>
+            <td>
+                <a href="/deleteVenue/{{this._id}}" style="color: red;">
+                    Delete Venue
+                </a>
+            </td>
 
-            </tr>
-       
+        </tr>
+
 
 
         {{!-- <p>==============================================================================</p> --}}

@@ -7,7 +7,7 @@ import { helperMethodsForEvents } from "./helpers.js";
 const getslotsByDate = async (sportPlaceid, date) => {
     sportPlaceid = validation.checkId(sportPlaceid, "sportPlaceid");
     date = helperMethodsForEvents.checkDate(date, "date");
-    
+
     const slotCollection = await timeSlot();
     const slots = await slotCollection
         .find({
@@ -56,7 +56,7 @@ const getvenuebyuserid = async (ID) => {
     let arr = [];
 
     for (let i = 0; i < Venue.length; i++) {
-        let item = { "Date": Venue[i].Date, "slotID": Venue[i].slotID, "sportID": Venue[i].sportID, "sportPlaceID": Venue[i].sportPlaceID };
+        let item = { "id": Venue[i]._id, "Date": Venue[i].Date, "slotID": Venue[i].slotID, "sportID": Venue[i].sportID, "sportPlaceID": Venue[i].sportPlaceID };
 
         for (let j = 0; j < sport.length; j++) {
             if (sport[j]._id == Venue[i].sportID) {
@@ -140,4 +140,15 @@ const getvenuebyuserid = async (ID) => {
     return arr;
 };
 
-export { getvenuebyuserid ,getslotsByDate};
+const remove = async (ID) => {
+    ID = validation.checkId(ID, "ID");
+    const slotCollection = await timeSlot();
+    const deletionInfo = await slotCollection.findOneAndDelete({
+        _id: new ObjectId(ID),
+    });
+    if (deletionInfo.lastErrorObject.n === 0)
+        throw `Error: Could not delete venue`;
+    return { deleted: true };
+};
+
+export { getvenuebyuserid, getslotsByDate, remove };

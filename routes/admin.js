@@ -1028,7 +1028,7 @@ router
         thumbnail: classInfo.thumbnail,
         rating: classInfo.rating,
         n: classInfo.students.length,
-        users: classInfo.students,
+        students: classInfo.students,
         classTitle: classInfo.title,
         sportID: sportInfo._id,
         sportName: sportInfo.name,

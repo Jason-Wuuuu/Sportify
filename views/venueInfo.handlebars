@@ -4,59 +4,59 @@
         <a href="/logout">Logout</a>
     </nav>
 </header>
+
 <h1>{{title}}</h1>
 <h2>Venue Details for : {{venueinfo.name}}</h2>
 
-<form id="venueInfo-form">
-    <div id="error" class="error" {{hidden}}>{{error}}</div>
-    <div class="screen left">
-        {{#if thumbnail}}
-        <img class="thumbnail" src="{{thumbnail}}">
-        {{else}}
-        <img class="thumbnail" src="/public/images/No_Image_Available.jpg">
-        {{/if}}
-    </div>
-    <div class="screen right">
-        <ul>
-            <li>Sport: {{venueinfo.sportname}}</li>
-            <li>Venue name: {{venueinfo.name}}</li>
-            <li>Description: {{venueinfo.description}}</li>
-            <li>Address: {{venueinfo.address}}</li>
-            <li>price: {{venueinfo.price}}</li>
-            <li>capacity: {{venueinfo.capacity}}</li>
-            <li>Rating: {{venueinfo.rating}}</li>
-        </ul>
+
+<div id="error" class="error" {{hidden}}>{{error}}</div>
+<div class="screen left">
+    {{#if thumbnail}}
+    <img class="thumbnail" src="{{thumbnail}}">
+    {{else}}
+    <img class="thumbnail" src="/public/images/No_Image_Available.jpg">
+    {{/if}}
+</div>
+<div class="screen right">
+    <ul>
+        <li>Sport: {{venueinfo.sportname}}</li>
+        <li>Venue name: {{venueinfo.name}}</li>
+        <li>Description: {{venueinfo.description}}</li>
+        <li>Address: {{venueinfo.address}}</li>
+        <li>price: {{venueinfo.price}}</li>
+        <li>capacity: {{venueinfo.capacity}}</li>
+        <li>Rating: {{venueinfo.rating}}</li>
+    </ul>
+    <br>
+    <form id="VenueInfo-form" method="post" action="/venueGetslot/{{venueinfo._id}}">
+
+        {{!-- <input type="hidden" id="idh" name="idh" {{venueinfo._id}}>
+        <input type="hidden" id="sportIDh" name="sportIDh" {{venueinfo.sportID}}> --}}
+        <label for="dateInput">Select Date:</label>
         <br>
-        <form id="VenueInfo-form" >
+        <input type="date" id="dateInput" name="dateInput" value="{{date}}" />
+        <br>
+        <input type="submit" value="Get Slots" />
+        {{!--
+        <a href="/venueGetslot/{{venueinfo._id}}/date/{{dateInput}}">Get Slots</a> --}}
 
-            {{!-- <input type="hidden" id="idh" name="idh" {{venueinfo._id}}>
-            <input type="hidden" id="sportIDh" name="sportIDh" {{venueinfo.sportID}}> --}}
-            <label for="dateInput">Select Date:</label>
-            <br>
-            <input type="date" id="dateInput" name="dateInput" value="{{date}}" />
-            <br>
-            <button type="submit">Get Slots</button>
+        {{!-- <input type="submit" value="Get Slots" /> --}}
+        <br>
 
-            <a href="/venueGetslot/{{venueinfo._id}}/date/{{dateInput}}">Get Slots</a>
+    </form>
+    <form action="/venueBook" method="post" id="VenueInfo-form">
+      
+        <label for="slotInput">Select Slot:</label>
+        <select name="slotInput" id="slotInput">
+            <option value="">-</option>
+            {{#each venues}}
+            <option value="{{this._id}}">{{this.slotName}}</option>
+            {{!-- {{else}}
+            <p>Sorry!<br /> No Slot found for Venue: {{venues.name}} for this date: {{date}}.</p> --}}
+            {{/each}}
+        </select>
+        <br>
+        <input type="submit" value="Book Slot" />
 
-            {{!-- <input type="submit" value="Get Slots" /> --}}
-            <br>
-
-        </form>
-        <form action="/venueInfo" method="post" id="VenueInfo-form">
-
-            <label for="slotInput">Select Slot:</label>
-            <select name="slotInput" id="slotInput">
-                <option value="">-</option>
-                {{#each venues}}
-                <option value="{{this.slotID}}">{{this.slotName}}</option>
-                {{!-- {{else}}
-                <p>Sorry!<br /> No Slot found for Venue: {{venues.name}} for this date: {{date}}.</p> --}}
-                {{/each}}
-            </select>
-            <br>
-            <input type="submit" value="Book Slot" />
-
-        </form>
-    </div>
-</form>
+    </form>
+</div>
