@@ -233,6 +233,34 @@ app.use("/events/:sports/deregister/:eventid", (req, res, next) => {
   next();
 });
 
+// app.use("/myclasses", (req, res, next) => {
+//   if (!req.session.user) {
+//     return res.redirect("/");
+//   }
+//   next();
+// });
+
+// app.use("/myclasses/:classID", (req, res, next) => {
+//   if (!req.session.user) {
+//     return res.redirect("/");
+//   }
+//   next();
+// });
+
+// app.use("/myclasses/remove/:classID", (req, res, next) => {
+//   if (!req.session.user) {
+//     return res.redirect("/");
+//   }
+//   next();
+// });
+
+// app.use("/classes/:sports", (req, res, next) => {
+//   if (!req.session.user) {
+//     return res.redirect("/");
+//   }
+//   next();
+// });
+
 app.use("/login", (req, res, next) => {
   if (req.session.user) {
     return res.redirect("/");
@@ -283,6 +311,30 @@ app.use("/venueInfo/:id", (req, res, next) => {
   next();
 });
 
+app.use("/venueBook", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  if (req.method === "POST") req.method = "PUT";
+  next();
+});
+
+app.use("/deleteVenue/:id/del/:date", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  if (req.method === "POST") req.method = "PUT";
+  next();
+});
+
+app.use("admin/allVenue", (req, res, next) => {
+   if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  next();
+});
+
+
 app.use(async (req, res, next) => {
   const currentTime = new Date().toUTCString();
   const req_method = req.method;
@@ -292,7 +344,7 @@ app.use(async (req, res, next) => {
   if (req.session.admin) authenticated = "Admin";
 
   const log_msg = `[${currentTime}]: ${req_method} ${req_route} (${authenticated})`;
-  console.log(log_msg);
+  //console.log(log_msg);
 
   next();
 });

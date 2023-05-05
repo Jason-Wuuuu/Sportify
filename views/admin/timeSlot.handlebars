@@ -7,21 +7,31 @@
         <a href="/admin/events">Events</a>
         <a href="/admin/users">Users</a>
         <a href="/admin/timeSlot">Slots</a>
+         <a href="/admin/allVenue">Reserved Venue</a>
         <a href="/admin/logout">Logout</a>
     </nav>
 </header>
 <script>
+
     function filterplaces(id) {
         //  alert(sportPlaces[0]["sportPlaceName"]);
         //var temp = [];
         var sportsPlacesArr = document.getElementById("sportplaceIDInput");
         var sportsPlacesArrFiltered = document.getElementById("sportplaceIDInput1");
-       // debugger;
+
+        for (var i = 0; i < sportsPlacesArrFiltered.options.length; i++) {
+            if (sportsPlacesArrFiltered.options[i].innerText != '-') {
+                sportsPlacesArrFiltered.remove(i);
+            }
+        }
+
+
+        // debugger;
         for (var i = 0; i < sportsPlacesArr.options.length; i++) {
             if (id == sportsPlacesArr.options[i].className) {
                 //temp.push({ "Id": sportsPlacesArr.options[i].value, "Name": sportsPlacesArr.options[i].innerText });
                 var myoption = document.createElement('option');
-                myoption.value =  sportsPlacesArr.options[i].value;
+                myoption.value = sportsPlacesArr.options[i].value;
                 myoption.innerHTML = sportsPlacesArr.options[i].innerText;
                 sportsPlacesArrFiltered.appendChild(myoption);
             }
@@ -30,16 +40,24 @@
         //sportsPlacesArrFiltered.options = temp;
         // for(var i=0;i<)
     }
+    function setMinDate() {
+        var dateInput = document.getElementById("dateInput");
+        var d = new Date();
+        if (dateInput) {
+
+            dateInput.setAttribute('min', new Date().toISOString().split("T")[0]);
+        }
+    }
 </script>
 
 <h1>{{title}}</h1>
 
 <label for="add">Add Time Slot:</label>
-<button type="button" id="expand">Add</button>
+<button type="button" id="expand" onclick="setMinDate()">Add</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
-    <form action="/admin/timeSlot" method="post" id="sport-form">
+    <form action="/admin/timeSlot" method="post">
 
         <label for="sportIDInput">Select Sport:</label><br>
         <select id="sportIDInput" , name="sportIDInput" onchange="filterplaces(this.value)">
@@ -57,7 +75,7 @@
             <option value="{{sportPlaceID}}" class="{{sportId1}}">{{sportPlaceName}}</option>
             {{/each}}
         </select>
-        <select id="sportplaceIDInput1" , name="sportplaceIDInput1" >
+        <select id="sportplaceIDInput1" , name="sportplaceIDInput1">
             <option value="">-</option>
 
         </select>
