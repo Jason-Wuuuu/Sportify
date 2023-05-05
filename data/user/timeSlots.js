@@ -111,4 +111,4 @@ const updateslot = async (
   }
 };
 
-export { create, get, getslotsByDate, remove, updateslot };
+export { create, get, getslotsByDate, removefromslot, updateslot };

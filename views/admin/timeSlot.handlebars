@@ -12,12 +12,8 @@
 </header>
 <script>
 
-   // var dateInput = document.getElementById("dateInput");
-   // var d = new Date();
-   // if(dateInput){
-  //      dateInput.setAttribute('min', d.setDate(d.getDate() - 1));
-  //  }
-    
+
+
 
     function filterplaces(id) {
         //  alert(sportPlaces[0]["sportPlaceName"]);
@@ -46,12 +42,19 @@
         //sportsPlacesArrFiltered.options = temp;
         // for(var i=0;i<)
     }
+    function setMinDate() {
+        var dateInput = document.getElementById("dateInput");
+        var d = new Date();
+        if (dateInput) {
+            dateInput.setAttribute('min', d.setDate(d.getDate() - 1));
+        }
+    }
 </script>
 
 <h1>{{title}}</h1>
 
 <label for="add">Add Time Slot:</label>
-<button type="button" id="expand">Add</button>
+<button type="button" id="expand" onclick="setMinDate()">Add</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
