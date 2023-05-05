@@ -1088,14 +1088,14 @@ router.route("/venueBook")
         error: e,
       });
     }
-    let bdate ="";
+    let bdate = "";
     let uid = req.session.user.userID;
     try {
       venueInfo.slotInput = validation.checkId(
         venueInfo.slotInput,
         "id"
       );
-       bdate = helperMethodsForEvents.checkDate(
+      bdate = helperMethodsForEvents.checkDate(
         req.session.user.bookingdate,
         "date"
       );
@@ -1220,17 +1220,25 @@ router.route("/myVenue").get(async (req, res) => {
   }
 });
 
-router.route("/deleteVenue/:id").get(async (req, res) => {
-  try {
-    let ID = req.params.id;
-    ID = validation.checkId(ID, "ID");
-    let removeinfo = await venueData.remove(ID);
-    return res.redirect("/myVenue");
-  } catch (e) {
-    return res.status(400).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
-});
+router.route("/deleteVenue/:id")
+  .put(async (req, res) => {
+    try {
+      let ID = req.params.id;
+      ID = validation.checkId(ID, "ID");
+    } catch (e) {
+      return res.status(500).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let removeinfo = await venueData.removefromslot(ID);
+      return res.redirect("/myVenue");
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
 export default router;

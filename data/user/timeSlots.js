@@ -59,7 +59,7 @@ const getslotsByDate = async (sportPlaceid, date, slotarray) => {
     .toArray();
   return slots;
 };
-const remove = async (slotID) => {
+const removefromslot = async (slotID) => {
   slotID = validation.checkId(slotID, "SlotID");
   const slots = await timeSlot();
   const deletionInfo = await slots.findOneAndDelete({

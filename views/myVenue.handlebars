@@ -33,7 +33,7 @@
 
 
         <tr>
-            <td hidden>{{this._id}}</td>
+            {{!-- <td hidden>{{this._id}}</td> --}}
             <td>{{this.sportName}}</td>
             <td>{{this.sportPlaceName}}</td>
             <td>{{this.Date}}</td>
@@ -43,7 +43,7 @@
             <td>{{this.price}}</td>
             <td>{{this.capacity}}</td>
             <td>
-                <a href="/deleteVenue/{{this._id}}" style="color: red;">
+                <a href="/deleteVenue/{{this.id}}" style="color: red;">
                     Delete Venue
                 </a>
             </td>
