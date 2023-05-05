@@ -439,6 +439,33 @@ router.route("/events/:sports").get(async (req, res) => {
   });
 });
 
+router
+  .route("/classes/:sports")
+  .get(async (req, res) => {
+    let sportName = req.params.sports;
+    let sportObj = await sportsData.getByName(sportName);
+    let sportObjectId = sportObj._id.toString();
+    let classList = await classesData.getClassesBySport(sportObjectId);
+    return res.render("classes", {
+      sport: sportObj.name,
+      classList: classList,
+    });
+  })
+  .post(async (req, res) => {
+    let classID = req.body.classId;
+    let userID = req.session.user.userID;
+    let result = await classesData.reserve(classID, userID);
+    let sportName = req.params.sports;
+    let sportObj = await sportsData.getByName(sportName);
+    let sportObjectId = sportObj._id.toString();
+    let classList = await classesData.getClassesBySport(sportObjectId);
+    return res.render("classes", {
+      sport: sportObj.name,
+      classList: classList,
+      message: result.msg,
+    });
+  });
+
 //shared Event
 router.route("/event/:eventid").get(async (req, res) => {
   try {
