@@ -460,7 +460,6 @@ router.route("/event/:eventid").get(async (req, res) => {
       eventdata.auth = false;
     }
 
-    console.log(eventdata);
     if (eventdata) {
       return res.render("event", {
         title: "event",
@@ -478,7 +477,7 @@ router.route("/removeevents/:eventid").get(async (req, res) => {
     let eventID = req.params.eventid.toString();
     eventID = validation.checkId(eventID, "Event ID");
     let removeinfo = await eventsData.remove(eventID);
-    return res.redirect("/profile");
+    return res.redirect("/myevents");
   } catch (e) {
     return res.status(400).render("error", {
       title: "Error",
@@ -517,6 +516,7 @@ router
         req.body.owner,
         "userID"
       );
+      let userInfo = await userData.get(owner);
       let eventname = validation.helperMethodsForEvents.checkEventName(
         req.body.eventname,
         "Event Name"
@@ -603,6 +603,10 @@ router
       );
 
       if (event.insertedEvent == true) {
+        await sendEmail(
+          userInfo.email,
+          `Hi ${userInfo.firstName}, You have succesfully created new event: ${eventname}! Thank you. `
+        );
         return res.redirect(`/events/${sportname}`);
       } else {
         throw "Event could not be added!";
@@ -676,6 +680,7 @@ router
         req.body.owner,
         "userID"
       );
+      let userInfo = await userData.get(owner);
 
       let evenntname = validation.helperMethodsForEvents.checkEventName(
         req.body.eventname,
@@ -760,6 +765,10 @@ router
       );
 
       if (event.updateEvent == true) {
+        await sendEmail(
+          userInfo.email,
+          `Hi ${userInfo.firstName}, You have succesfully updated your event: ${evenntname}! Thank you. `
+        );
         return res.redirect(`/myevents`);
       } else {
         throw "Event could not be updated!";
@@ -844,8 +853,13 @@ router.route("/events/:sports/register/:eventid").get(async (req, res) => {
     let eventid = req.params.eventid;
     if (req.session.user) {
       let uid = req.session.user.userID;
+      let userInfo = await userData.get(uid);
       let updateParticipantlist = await eventsData.join(eventid, uid);
       if (updateParticipantlist.updatedEventParticipants == true) {
+        await sendEmail(
+          userInfo.email,
+          `Hi ${userInfo.firstName}, You have succesfully registered to the event! Thank you. `
+        );
         let eventList = await eventsData.getEventsBySport(req.params.sports);
         for (let item of eventList) {
           if (item.participants.includes(req.session.user.userID)) {
@@ -878,8 +892,13 @@ router.route("/events/:sports/deregister/:eventid").get(async (req, res) => {
     let eventid = req.params.eventid;
     if (req.session.user) {
       let uid = req.session.user.userID;
+      let userInfo = await userData.get(uid);
       let updateParticipantlist = await eventsData.quit(eventid, uid);
       if (updateParticipantlist.updatedEventParticipants == true) {
+        await sendEmail(
+          userInfo.email,
+          `Hi ${userInfo.firstName}, You have unsubscribed from the event! Thank you. `
+        );
         let eventList = await eventsData.getEventsBySport(req.params.sports);
         for (let item of eventList) {
           if (item.participants.includes(uid)) {
@@ -913,9 +932,13 @@ router
     try {
       let eventid = req.params.eventid.toString();
       let uid = req.params.userid.toString();
-
+      let userInfo = await userData.get(uid);
       let updateParticipantlist = await eventsData.quit(eventid, uid);
       if (updateParticipantlist.updatedEventParticipants == true) {
+        await sendEmail(
+          userInfo.email,
+          `Hi ${userInfo.firstName}, Sorry to inform you that the admin has removed you from the event! `
+        );
         return res.redirect("/myevents");
       } else {
         throw "Failed to remove User in Participant list.";

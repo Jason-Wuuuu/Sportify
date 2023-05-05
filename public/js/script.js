@@ -561,6 +561,7 @@ else {
   if (eventform) {
     eventform.addEventListener("submit", (event) => {
       let errorDiv = document.getElementById("errors");
+      console.log(errorDiv);
       let userID = document.getElementById("owner").value;
       let eventname = document.getElementById("eventname").value;
       let description = document.getElementById("desc").value;
@@ -586,6 +587,7 @@ else {
         url = checkURL(url, "Thumbnail Url");
         let correcttime = checkTimeRange(startTime, endTime);
       } catch (e) {
+        console.log(e);
         event.preventDefault();
         errorDiv.textContent = e;
         errorDiv.hidden = false;
