@@ -1092,37 +1092,37 @@ router.route("/venueInfo/:id").get(async (req, res) => {
   }
 });
 
-router.route("/venueInfo/:id").get(async (req, res) => {
-  try {
-    req.params.id = helperMethodsForUsers.checkId(
-      req.params.id,
-      "sports place id Param"
-    );
-  } catch (e) {
-    return res.status(400).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
+// router.route("/venueInfo/:id").get(async (req, res) => {
+//   try {
+//     req.params.id = helperMethodsForUsers.checkId(
+//       req.params.id,
+//       "sports place id Param"
+//     );
+//   } catch (e) {
+//     return res.status(400).render("error", {
+//       title: "Error",
+//       error: e,
+//     });
+//   }
 
-  try {
-    // let sport = req.params.sports;
-    let venueslot = await venueData.getslotsByDate(
-      req.params.id,
-      req.params.dateInput
-    );
-    return res.render("venueInfo", {
-      // sport: sport,
-      venues: venueslot,
-      title: "Reserve Venue",
-    });
-  } catch (e) {
-    return res.status(404).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
-});
+//   try {
+//     // let sport = req.params.sports;
+//     let venueslot = await venueData.getslotsByDate(
+//       req.params.id,
+//       req.params.dateInput
+//     );
+//     return res.render("venueInfo", {
+//       // sport: sport,
+//       venues: venueslot,
+//       title: "Reserve Venue",
+//     });
+//   } catch (e) {
+//     return res.status(404).render("error", {
+//       title: "Error",
+//       error: e,
+//     });
+//   }
+// });
 
 router.route("/venueBook")
   .put(async (req, res) => {

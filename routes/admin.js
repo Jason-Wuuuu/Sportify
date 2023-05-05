@@ -9,7 +9,7 @@ import * as sportData from "../data/admin/sports.js";
 import * as sportPlaceData from "../data/admin/sportPlaces.js";
 import validation, { checkUsedEmail } from "../data/admin/helpers.js";
 import xss from "xss";
-import * as timeSlot from "../data/admin/timeSlot.js";
+import * as slotData from "../data/admin/timeSlot.js";
 import { sendEmail } from "../data/admin/mail.js";
 
 const router = Router();
@@ -1532,7 +1532,7 @@ router
     }
 
     try {
-      const newSlot = await timeSlot.create(
+      const newSlot = await slotData.create(
         timeSlotInfo.sportIDInput,
         timeSlotInfo.sportplaceIDInput1,
         timeSlotInfo.dateInput,
@@ -1542,6 +1542,28 @@ router
       return res.redirect("timeSlot");
     } catch (e) {
       return res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
+
+router.route("/allVenue")
+  .get(async (req, res) => {
+   
+    try {
+      let venueList = await slotData.getallvenue();
+
+      let empty = venueList.length == 0 ? true : false;
+
+      return res.render("admin/allVenue", {
+        title: "All Reserved Venue",
+        venueList: venueList,
+        hidden: "hidden",
+        isempty: empty,
+      });
+    } catch (e) {
+      return res.status(400).render("admin/error", {
         title: "Error",
         error: e,
       });

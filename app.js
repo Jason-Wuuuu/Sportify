@@ -327,6 +327,13 @@ app.use("/deleteVenue/:id/del/:date", (req, res, next) => {
   next();
 });
 
+app.use("admin/allVenue", (req, res, next) => {
+   if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  next();
+});
+
 
 app.use(async (req, res, next) => {
   const currentTime = new Date().toUTCString();

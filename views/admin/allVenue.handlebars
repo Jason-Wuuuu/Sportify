@@ -1,18 +1,23 @@
 <header>
     <nav class="navbar">
-        <a href="/">Back</a>
-        <a href="/logout">Logout</a>
+        <a href="/admin/profile">Profile</a>
+        <a href="/admin/sports">Sports</a>
+        <a href="/admin/sportPlaces">SportPlaces</a>
+        <a href="/admin/classes">Classes</a>
+        <a href="/admin/events">Events</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/timeSlot">Slots</a>
+        <a href="/allVenue">Reserved Venue</a>
+        <a href="/admin/logout">Logout</a>
     </nav>
 </header>
-<h1 class="centertitle">My Booked Venue</h1>
+<h1 class="centertitle">All Reserved Venue</h1>
 {{#if isempty}}
 <p>No, Venue is Booked yet.</p>
 {{else}}
 <div class="centertitle">
     <p>==============================================================================</p>
     <table cellspacing="10">
-
-
         <tr>
             <th>Sport</th>
             <th>Venue Name</th>
@@ -42,11 +47,11 @@
             <td>{{this.description}}</td>
             <td>{{this.price}}</td>
             <td>{{this.capacity}}</td>
-            <td>
+            {{!-- <td>
                 <a href="/deleteVenue/{{this.id}}/del/{{this.Date}}" style="color: red;">
                     Delete Reservation
                 </a>
-            </td>
+            </td> --}}
 
         </tr>
 
