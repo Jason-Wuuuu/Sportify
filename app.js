@@ -283,6 +283,15 @@ app.use("/venueInfo/:id", (req, res, next) => {
   next();
 });
 
+app.use("/venueBook", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  if (req.method === "POST") req.method = "PUT";
+  next();
+});
+
+
 app.use(async (req, res, next) => {
   const currentTime = new Date().toUTCString();
   const req_method = req.method;

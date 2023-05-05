@@ -71,4 +71,44 @@ const remove = async (slotID) => {
   return { deleted: true };
 };
 
-export { create, get, getslotsByDate, remove };
+const updateslot = async (
+  sid,
+   date,
+  uid
+) => {
+  try {
+    // validation
+    sid = validation.helperMethodsForEvents.checkId(
+      sid,
+      "sID"
+    );
+
+    date = validation.helperMethodsForEvents.checkDate(date, "Date");
+
+    uid = validation.helperMethodsForEvents.checkId(
+      uid, 'uid'
+    );
+    // add valid event to db
+    let updatedslot = {
+      userID: uid,
+      availability: 1,
+      bookingType: 1
+    };
+
+    const slotCollection = await timeSlot();
+    const updatedInfo = await slotCollection.findOneAndUpdate(
+      { _id: new ObjectId(sid), Date: date},
+      { $set: updatedslot },
+      { returnDocument: "after" }
+    );
+    if (updatedInfo.lastErrorObject.n === 0) {
+      throw `Error: no Event exists.`;
+    }
+  
+    return { updatedslot: true };
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export { create, get, getslotsByDate, remove, updateslot };
