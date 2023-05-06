@@ -6,6 +6,7 @@ import * as classesData from "../data/user/classes.js";
 import {
   helperMethodsForUsers,
   helperMethodsForEvents,
+  helperMethodsForClasses
 } from "../data/user/helpers.js";
 import * as validation from "../data/user/helpers.js";
 import * as sportsplaceData from "../data/user/sportPlaces.js";
@@ -253,22 +254,65 @@ router.route("/myevents").get(async (req, res) => {
 });
 
 router.route("/myclasses").get(async (req, res) => {
-  let userID = req.session.user.userID;
-  let myClassList = await classesData.getClassesByUserID(userID);
-  return res.render("myclasses", { classList: myClassList });
+  try{
+    let userID = req.session.user.userID;
+    userID = helperMethodsForUsers.checkId(userID, "userID");
+    let myClassList = await classesData.getClassesByUserID(userID);
+    return res.render("myclasses", { classList: myClassList });
+  } catch (e) {
+    return res.status(404).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
 });
 
 router.route("/myclasses/:classID").get(async (req, res) => {
-  let classID = req.params.classID;
-  let classObj = await classesData.getClass(classID);
-  return res.render("classInfo", { class: classObj });
+  try{
+    let userID = req.session.user.userID;
+    userID = helperMethodsForUsers.checkId(userID, "userID");
+    let classID = req.params.classID;
+    classID = helperMethodsForClasses.checkId(classID, "classID");
+    let classObj = await classesData.getClass(classID);
+    classObj.rating ||= "NA"
+    return res.render("classInfo", { class: classObj, userId:  userID});
+  } catch (e) {
+    return res.status(404).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
 });
 
 router.route("/myclasses/remove/:classID").get(async (req, res) => {
-  let userID = req.session.user.userID;
-  let classID = req.params.classID;
-  await classesData.quit(classID, userID);
-  return res.redirect("/myclasses");
+  try{
+    let userID = req.session.user.userID;
+    let classID = req.params.classID;
+    classID = helperMethodsForClasses.checkId(classID, "classID");
+    userID = helperMethodsForUsers.checkId(userID, "userID");
+    await classesData.quit(classID, userID);
+    return res.redirect("/myclasses");
+  } catch (e) {
+    return res.status(404).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
+
+router.route("/myclasses/update_rating").post(async (req, res) => {
+  try{
+    let classID = req.body.classId;
+    let userID = req.body.userId;
+    let rating = req.body.rating;
+    await classesData.rate(classID, userID, rating);
+    return res.redirect("/myclasses");
+  }catch (e) {
+    return res.status(404).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
 });
 
 router
@@ -442,28 +486,42 @@ router.route("/events/:sports").get(async (req, res) => {
 router
   .route("/classes/:sports")
   .get(async (req, res) => {
-    let sportName = req.params.sports;
-    let sportObj = await sportsData.getByName(sportName);
-    let sportObjectId = sportObj._id.toString();
-    let classList = await classesData.getClassesBySport(sportObjectId);
-    return res.render("classes", {
-      sport: sportObj.name,
-      classList: classList,
-    });
+    try{
+      let sportName = req.params.sports;
+      let sportObj = await sportsData.getByName(sportName);
+      let sportObjectId = sportObj._id.toString();
+      let classList = await classesData.getClassesBySport(sportObjectId);
+      return res.render("classes", {
+        sport: sportObj.name,
+        classList: classList,
+      });
+    } catch (e) {
+      return res.status(404).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
   })
   .post(async (req, res) => {
-    let classID = req.body.classId;
-    let userID = req.session.user.userID;
-    let result = await classesData.reserve(classID, userID);
-    let sportName = req.params.sports;
-    let sportObj = await sportsData.getByName(sportName);
-    let sportObjectId = sportObj._id.toString();
-    let classList = await classesData.getClassesBySport(sportObjectId);
-    return res.render("classes", {
-      sport: sportObj.name,
-      classList: classList,
-      message: result.msg,
-    });
+    try{
+      let classID = req.body.classId;
+      let userID = req.session.user.userID;
+      let result = await classesData.reserve(classID, userID);
+      let sportName = req.params.sports;
+      let sportObj = await sportsData.getByName(sportName);
+      let sportObjectId = sportObj._id.toString();
+      let classList = await classesData.getClassesBySport(sportObjectId);
+      return res.render("classes", {
+        sport: sportObj.name,
+        classList: classList,
+        message: result.msg,
+      });
+    } catch (e) {
+      return res.status(404).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
   });
 
 //shared Event
@@ -1010,6 +1068,7 @@ router.route("/addcomment/:eventid").post(async (req, res) => {
     });
   }
 });
+
 router
   .route("/classes/:sports")
   .get(async (req, res) => {
