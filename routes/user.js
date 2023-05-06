@@ -1250,7 +1250,7 @@ router.route("/venueBook")
       const newSlot = await slotsData.updateslot(venueInfo.slotInput, bdate, uid);
       if (!newSlot.updatedslot) throw "Internal Server Error";
       let venueList = await venueData.getvenuebyuserid(uid);
-      
+
       let pData = [];
       let lData = [];
 
@@ -1396,9 +1396,9 @@ router.route("/deleteVenue/:id/del/:date")
         error: e,
       });
     }
-
+    let userInfo = [];
     try {
-      await userData.get(req.session.user.userID);
+      userInfo = await userData.get(req.session.user.userID);
     } catch (e) {
       return res.status(400).render("error", {
         title: "Error",
@@ -1409,7 +1409,19 @@ router.route("/deleteVenue/:id/del/:date")
 
     try {
       const newSlot = await slotsData.removefromslot(ID, date);
-      if (!newSlot.updatedslot) throw "Internal Server Error";
+      // if (!newSlot.updatedslot) throw "Internal Server Error";
+
+      if (newSlot.updatedslot == true) {
+        await sendEmail(
+          userInfo.email,
+          `Hi, You have Unreserve the Venue! `
+        );
+      } else {
+        return res.status(400).render("error", {
+          title: "Error",
+          error: e,
+        });
+      }
 
       let venueList = await venueData.getvenuebyuserid(uid);
 
