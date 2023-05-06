@@ -56,19 +56,7 @@ const getallvenue = async () => {
   const sport = await sportCollection.find({}).toArray();
   const sportplace = await sportplaceCollection.find({}).toArray();
   const Venue = await VenueCollection.find({ availability: 1, bookingType: 1 }).toArray();
-  // for (let i = 0; i < Venue.length; i++) {
-  //     let item = {};
-  //     if (Venue[i]["slotID"] = 1) {
-  //         item["slotName"] = "12:00AM to 08:00AM";
-  //     }
-  //     else if (Venue[i]["slotID"] = 2) {
-  //         item["slotName"] = "08:00AM to 04:00PM";
-  //     }
-  //     else {
-  //         item["slotName"] = "04:00PM to 12:00AM";
-  //     }
-  //     Venue.push(item);
-  // }
+ 
   let arr = [];
 
   for (let i = 0; i < Venue.length; i++) {
