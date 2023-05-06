@@ -1197,76 +1197,99 @@ router.route("/venueInfo/:id").get(async (req, res) => {
 //   }
 // });
 
-router.route("/venueBook").put(async (req, res) => {
-  let venueInfo = req.body;
-  if (!venueInfo || Object.keys(venueInfo).length === 0) {
-    return res.status(400).render("error", {
-      title: "Error",
-      error: "There are no fields in the request body",
-    });
-  }
-  applyXSS(venueInfo);
-  // validation
-  try {
-    await userData.get(req.session.user.userID);
-  } catch (e) {
-    return res.status(400).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
-  let bdate = "";
-  let uid = req.session.user.userID;
-  try {
-    venueInfo.slotInput = validation.checkId(venueInfo.slotInput, "id");
-    bdate = helperMethodsForEvents.checkDate(
-      req.session.user.bookingdate,
-      "date"
-    );
-    req.session.user.bookingdate = null;
-  } catch (e) {
-    // const sports = await getSportOptions(timeSlotInfo.sportIDInput);
-    // const sportPlacetList = await sportPlaceData.getAll();
-    // const sportPlaces = sportPlacetList.map((sportPlace) =>
-    //   Object({
-    //     sportPlaceID: sportPlace._id,
-    //     sportPlaceName: sportPlace.name,
-    //   })
-    // );
-
-    // return res.status(400).render("timeSlot", {
-    //   title: "Add TimeSlots",
-    //   hidden: "",
-    //   error: e,
-    //   sports: sports,
-    //   sportPlaces: sportPlaces,
-    //   name: timeSlotInfo.sportIDInput,
-    //   address: timeSlotInfo.sportplaceIDInput,
-    //   description: timeSlotInfo.dateInput,
-    //   capacity: timeSlotInfo.slotInput,
-
-    // });
-    return res.status(400).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
-
-  try {
-    const newSlot = await slotsData.updateslot(venueInfo.slotInput, bdate, uid);
-    if (!newSlot.updatedslot) throw "Internal Server Error";
-    let venueList = await venueData.getvenuebyuserid(uid);
-
-    let pData = [];
-    let lData = [];
-
-    for (let i = 0; i < venueList.length; i++) {
-      if (venueList[i].Date >= new Date().toISOString().split("T")[0]) {
-        lData.push(venueList[i]);
-      } else {
-        pData.push(venueList[i]);
-      }
+router.route("/venueBook")
+  .put(async (req, res) => {
+    let venueInfo = req.body;
+    if (!venueInfo || Object.keys(venueInfo).length === 0) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
     }
+    applyXSS(venueInfo);
+    let userInfo = [];
+    // validation
+    try {
+      userInfo = await userData.get(req.session.user.userID);
+    }
+    catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    
+    let bdate = "";
+    let uid = req.session.user.userID;
+    try {
+      venueInfo.slotInput = validation.checkId(
+        venueInfo.slotInput,
+        "id"
+      );
+      bdate = helperMethodsForEvents.checkDate(
+        req.session.user.bookingdate,
+        "date"
+      );
+      req.session.user.bookingdate = null;
+    } catch (e) {
+      // const sports = await getSportOptions(timeSlotInfo.sportIDInput);
+      // const sportPlacetList = await sportPlaceData.getAll();
+      // const sportPlaces = sportPlacetList.map((sportPlace) =>
+      //   Object({
+      //     sportPlaceID: sportPlace._id,
+      //     sportPlaceName: sportPlace.name,
+      //   })
+      // );
+
+      // return res.status(400).render("timeSlot", {
+      //   title: "Add TimeSlots",
+      //   hidden: "",
+      //   error: e,
+      //   sports: sports,
+      //   sportPlaces: sportPlaces,
+      //   name: timeSlotInfo.sportIDInput,
+      //   address: timeSlotInfo.sportplaceIDInput,
+      //   description: timeSlotInfo.dateInput,
+      //   capacity: timeSlotInfo.slotInput,
+
+      // });
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+
+    try {
+      const newSlot = await slotsData.updateslot(venueInfo.slotInput, bdate, uid);
+      //if (!newSlot.updatedslot) throw "Internal Server Error";
+
+      if (newSlot.updatedslot == true) {
+        await sendEmail(
+          userInfo.email,
+          `Hi, You have reserve the Venue! `
+        );
+      } else {
+        return res.status(400).render("error", {
+          title: "Error",
+          error: e,
+        });
+      }
+
+      let venueList = await venueData.getvenuebyuserid(uid);
+
+      let pData = [];
+      let lData = [];
+
+      for (let i = 0; i < venueList.length; i++) {
+        if (venueList[i].Date >= new Date().toISOString().split('T')[0]
+        ) {
+          lData.push(venueList[i]);
+        }
+        else {
+          pData.push(venueList[i]);
+        }
+      }
+
 
     let empty = lData.length == 0 ? true : false;
     let emptyold = pData.length == 0 ? true : false;
@@ -1395,19 +1418,34 @@ router.route("/deleteVenue/:id/del/:date").get(async (req, res) => {
     });
   }
 
-  try {
-    await userData.get(req.session.user.userID);
-  } catch (e) {
-    return res.status(400).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
-  let uid = req.session.user.userID;
+  
+    let userInfo = [];
+    try {
+      userInfo = await userData.get(req.session.user.userID);
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    let uid = req.session.user.userID;
 
-  try {
-    const newSlot = await slotsData.removefromslot(ID, date);
-    if (!newSlot.updatedslot) throw "Internal Server Error";
+    try {
+      const newSlot = await slotsData.removefromslot(ID, date);
+      // if (!newSlot.updatedslot) throw "Internal Server Error";
+
+      if (newSlot.updatedslot == true) {
+        await sendEmail(
+          userInfo.email,
+          `Hi, You have Unreserve the Venue! `
+        );
+      } else {
+        return res.status(400).render("error", {
+          title: "Error",
+          error: e,
+        });
+      }
+
 
     let venueList = await venueData.getvenuebyuserid(uid);
 
