@@ -32,6 +32,7 @@ let checkNumber = (numVal, varName) => {
   if (isNaN(numVal)) throw `Error: ${varName} is not a number.`;
   return numVal;
 };
+
 const helperMethodsForSports = {
   checkString(strVal, varName) {
     if (!strVal) throw `Error: You must supply a ${varName}!`;

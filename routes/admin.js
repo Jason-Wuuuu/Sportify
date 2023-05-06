@@ -1554,13 +1554,29 @@ router.route("/allVenue")
     try {
       let venueList = await slotData.getallvenue();
 
-      let empty = venueList.length == 0 ? true : false;
+      let pData = [];
+      let lData = [];
+
+      for (let i = 0; i < venueList.length; i++) {
+        if (venueList[i].Date >= new Date().toISOString().split('T')[0]
+        ) {
+          lData.push(venueList[i]);
+        }
+        else {
+          pData.push(venueList[i]);
+        }
+      }
+
+      let empty = lData.length == 0 ? true : false;
+      let emptyold = pData.length == 0 ? true : false;
 
       return res.render("admin/allVenue", {
         title: "All Reserved Venue",
-        venueList: venueList,
+        venueList: lData,
+        venuelistold: pData,
         hidden: "hidden",
         isempty: empty,
+        isemptyold: emptyold,
       });
     } catch (e) {
       return res.status(400).render("admin/error", {

@@ -255,7 +255,7 @@ router.route("/myevents").get(async (req, res) => {
 });
 
 router.route("/myclasses").get(async (req, res) => {
-  try{
+  try {
     let userID = req.session.user.userID;
     userID = helperMethodsForUsers.checkId(userID, "userID");
     let myClassList = await classesData.getClassesByUserID(userID);
@@ -269,14 +269,14 @@ router.route("/myclasses").get(async (req, res) => {
 });
 
 router.route("/myclasses/:classID").get(async (req, res) => {
-  try{
+  try {
     let userID = req.session.user.userID;
     userID = helperMethodsForUsers.checkId(userID, "userID");
     let classID = req.params.classID;
     classID = helperMethodsForClasses.checkId(classID, "classID");
     let classObj = await classesData.getClass(classID);
     classObj.rating ||= "NA"
-    return res.render("classInfo", { class: classObj, userId:  userID});
+    return res.render("classInfo", { class: classObj, userId: userID });
   } catch (e) {
     return res.status(404).render("error", {
       title: "Error",
@@ -286,7 +286,7 @@ router.route("/myclasses/:classID").get(async (req, res) => {
 });
 
 router.route("/myclasses/remove/:classID").get(async (req, res) => {
-  try{
+  try {
     let userID = req.session.user.userID;
     let classID = req.params.classID;
     classID = helperMethodsForClasses.checkId(classID, "classID");
@@ -302,13 +302,13 @@ router.route("/myclasses/remove/:classID").get(async (req, res) => {
 });
 
 router.route("/myclasses/update_rating").post(async (req, res) => {
-  try{
+  try {
     let classID = req.body.classId;
     let userID = req.body.userId;
     let rating = req.body.rating;
     await classesData.rate(classID, userID, rating);
     return res.redirect("/myclasses");
-  }catch (e) {
+  } catch (e) {
     return res.status(404).render("error", {
       title: "Error",
       error: e,
@@ -487,7 +487,7 @@ router.route("/events/:sports").get(async (req, res) => {
 router
   .route("/classes/:sports")
   .get(async (req, res) => {
-    try{
+    try {
       let sportName = req.params.sports;
       let sportObj = await sportsData.getByName(sportName);
       let sportObjectId = sportObj._id.toString();
@@ -504,7 +504,7 @@ router
     }
   })
   .post(async (req, res) => {
-    try{
+    try {
       let classID = req.body.classId;
       let userID = req.session.user.userID;
       let result = await classesData.reserve(classID, userID);
@@ -1332,13 +1332,29 @@ router.route("/myVenue")
     try {
       let venueList = await venueData.getvenuebyuserid(uid);
 
-      let empty = venueList.length == 0 ? true : false;
+      let pData = [];
+      let lData = [];
+
+      for (let i = 0; i < venueList.length; i++) {
+        if (venueList[i].Date >= new Date().toISOString().split('T')[0]
+        ) {
+          lData.push(venueList[i]);
+        }
+        else {
+          pData.push(venueList[i]);
+        }
+      }
+
+      let empty = lData.length == 0 ? true : false;
+      let emptyold = pData.length == 0 ? true : false;
 
       return res.render("myVenue", {
         title: "My Venue",
-        venueList: venueList,
+        venueList: lData,
+        venuelistold: pData,
         hidden: "hidden",
         isempty: empty,
+        isemptyold: emptyold,
       });
     } catch (e) {
       return res.status(400).render("error", {

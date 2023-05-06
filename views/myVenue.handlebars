@@ -5,7 +5,7 @@
     </nav>
 </header>
 <script>
-    function submitForm(id) {
+    function formpost(id) {
 
         var form = document.getElementById("myForm");
         form.setAttribute("method", "POST");
@@ -56,7 +56,7 @@
 {{/if}}
 
 <h1 class="centertitle">Past Reserved Venue</h1>
-{{#if isempty}}
+{{#if isemptyold}}
 <p>No,Venue is Booked in past.</p>
 {{else}}
 <form id="myForm">
@@ -75,7 +75,7 @@
                 <th>Rating</th>
             </tr>
 
-            {{#each venueList}}
+            {{#each venuelistold}}
             <tr>
                 <td>{{this.sportName}}</td>
                 <td>{{this.sportPlaceName}}</td>
@@ -86,11 +86,11 @@
                 <td>{{this.price}}</td>
                 <td>{{this.capacity}}</td>
                 <td>
-                    <input type="number" id="ratingInput" name="ratingInput" width="10%" value="{{rating}}" min="1"
+                    <input type="number" id="ratingInput" name="ratingInput" width="10%" value="{{ratingV}}" min="1"
                         max="5" />
                 </td>
                 <td>
-                    <input type="submit" value="Update Rating" onclick="submitForm('{{this.sportPlaceID}}')" />
+                    <input type="submit" value="Update Rating" onclick="formpost('{{this.sportPlaceID}}')" />
                     {{!-- <a href="/updateRating/{{this.sportPlaceID}}" style="color: red;">
                         Update Rating
                     </a> --}}
