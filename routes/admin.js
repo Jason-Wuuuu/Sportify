@@ -11,6 +11,7 @@ import validation, { checkUsedEmail } from "../data/admin/helpers.js";
 import xss from "xss";
 import * as slotData from "../data/admin/timeSlot.js";
 import { sendEmail } from "../data/admin/mail.js";
+import * as slotUserData from "../data/user/venue.js";
 
 const router = Router();
 
@@ -1585,6 +1586,81 @@ router.route("/allVenue")
       });
     }
   });
+
+
+router
+.route("/searchSlot")
+.post(async (req, res) => {
+  let timeSlotInfo = req.body;
+  if (!timeSlotInfo || Object.keys(timeSlotInfo).length === 0) {
+    return res.status(400).render("admin/error", {
+      title: "Error",
+      error: "There are no fields in the request body",
+    });
+  }
+  
+  applyXSS(timeSlotInfo);
+  // validation
+  try {
+    timeSlotInfo.sportIDInput = validation.checkId(
+      timeSlotInfo.sportIDInput,
+      "sportID"
+    );
+    timeSlotInfo.sportplaceIDInput1 = validation.checkId(
+      timeSlotInfo.sportplaceIDInput1,
+      "sportPlaceID"
+    );
+    timeSlotInfo.dateInput = validation.checkString(
+      timeSlotInfo.dateInput,
+      "date"
+    );
+   
+  } catch (e) {
+    // const sports = await getSportOptions(timeSlotInfo.sportIDInput);
+    // const sportPlacetList = await sportPlaceData.getAll();
+    // const sportPlaces = sportPlacetList.map((sportPlace) =>
+    //   Object({
+    //     sportPlaceID: sportPlace._id,
+    //     sportPlaceName: sportPlace.name,
+    //   })
+    // );
+
+    // return res.status(400).render("admin/timeSlot", {
+    //   title: "Add TimeSlots",
+    //   hidden: "",
+    //   error: e,
+    //   sports: sports,
+    //   sportPlaces: sportPlaces,
+    //   name: timeSlotInfo.sportIDInput,
+    //   address: timeSlotInfo.sportplaceIDInput,
+    //   description: timeSlotInfo.dateInput,
+    //   capacity: timeSlotInfo.slotInput,
+
+    // });
+    return res.status(500).render("admin/error", {
+      title: "Error",
+      error: e,
+    });
+  }
+  
+  try {
+    let slotList = await slotUserData.getslotsByDateSerach();
+
+    let empty = slotList.length == 0 ? true : false;   
+
+    return res.render("admin/timeSlot", {
+      //title: "All  Venue",
+      venueListsearch: slotList,      
+      hidden: "hidden",
+      isempty1: empty,     
+    });
+  } catch (e) {
+    return res.status(400).render("admin/error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
 
 // all other admin urls
 router.route("*").get(async (req, res) => {

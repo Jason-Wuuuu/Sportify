@@ -40,6 +40,33 @@
         //sportsPlacesArrFiltered.options = temp;
         // for(var i=0;i<)
     }
+     function filterplaces1(id) {
+        //  alert(sportPlaces[0]["sportPlaceName"]);
+        //var temp = [];
+        var sportsPlacesArr = document.getElementById("sportplaceIDInputs");
+        var sportsPlacesArrFiltered = document.getElementById("sportplaceIDInput1s");
+
+        for (var i = 0; i < sportsPlacesArrFiltered.options.length; i++) {
+            if (sportsPlacesArrFiltered.options[i].innerText != '-') {
+                sportsPlacesArrFiltered.remove(i);
+            }
+        }
+
+
+        // debugger;
+        for (var i = 0; i < sportsPlacesArr.options.length; i++) {
+            if (id == sportsPlacesArr.options[i].className) {
+                //temp.push({ "Id": sportsPlacesArr.options[i].value, "Name": sportsPlacesArr.options[i].innerText });
+                var myoption = document.createElement('option');
+                myoption.value = sportsPlacesArr.options[i].value;
+                myoption.innerHTML = sportsPlacesArr.options[i].innerText;
+                sportsPlacesArrFiltered.appendChild(myoption);
+            }
+        }
+        //console.log(temp);
+        //sportsPlacesArrFiltered.options = temp;
+        // for(var i=0;i<)
+    }
     function setMinDate() {
         var dateInput = document.getElementById("dateInput");
         var d = new Date();
@@ -98,8 +125,69 @@
         <input type="submit" value="Submit" >
     </form>
 </div>
+<div>
+    <p>-----------------------------------------------------------------------</p>
+    <h2>Get Slot Details</h2>
+     <form action="/admin/searchSlot" method="post" id="timeslot-form1">
 
+        <label for="sportIDInputS">Select Sport:</label><br>
+        <select id="sportIDInputS"  name="sportIDInputS" onchange="filterplaces1(this.value)">
+            <option value="">-</option>
+            {{#each sports}}
+            <option value="{{sportID}}">{{name}}</option>
+            {{/each}}
+        </select>
+        <br>
 
+        <label for="sportplaceIDInput1s">Select Sport Place:</label><br>
+        <select id="sportplaceIDInputs"  name="sportplaceIDInputs" hidden>
+            <option value="">-</option>
+            {{#each sportPlaces}}
+            <option value="{{sportPlaceID}}" class="{{sportId1}}">{{sportPlaceName}}</option>
+            {{/each}}
+        </select>
+        <select id="sportplaceIDInput1s"  name="sportplaceIDInput1s">
+            <option value="">-</option>
+
+        </select>
+        <br>
+
+        <label for="dateInputs">Select Date:</label>
+        <br>
+        <input type="date" id="dateInputs" name="dateInputs" value="{{date}}" >
+        <br>      
+
+        <input type="submit" value="Search Slot" >
+    </form>
+</div>
+<div>
+{{#if isempty1}}
+<p>No, timeslot added.</p>
+{{else}}
+<div class="centertitle">
+    <p>==============================================================================</p>
+    <table>
+        <tr>           
+            <th>Slot Timing</th>
+            <th>Availability</th>         
+        </tr>
+
+        {{#each venueListsearch}}
+        <tr>           
+            <td> {{this.slotName}}</td>
+            <td>{{this.address}}</td>           
+            <td>
+                <a href="/deleteVenue/{{this.id}}/del/{{this.Date}}" style="color: #ff7f7f;">
+                    Delete Reservation
+                </a>
+            </td>
+
+        </tr>
+        {{/each}}
+    </table>
+</div>
+{{/if}}
+</div>
 {{!-- <h3>List of Slots:</h3>
 <div id="sportList">
     <ul>
