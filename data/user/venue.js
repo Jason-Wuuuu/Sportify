@@ -87,55 +87,7 @@ const getvenuebyuserid = async (ID) => {
         }
 
     }
-    // return arr;
-
-    // const Venue1 = await VenueCollection.aggregate([
-    //     {
-    //         $match: {
-    //             userID: ID
-    //         }
-    //     },
-    //     {
-    //         $match: {
-    //             bookingType: 1
-    //         }
-    //     },
-    //     {
-    //         $lookup: {
-    //             from: 'sports',
-    //             localField: 'sportID',
-    //             foreignField: '_id',
-    //             as: 'sports'
-    //         }
-    //     },
-    //     {
-    //         $lookup: {
-    //             from: sportplaceCollection,
-    //             localField: 'sportPlaceID',
-    //             foreignField: '_id',
-    //             as: 'sportPlace'
-    //         }
-    //     },
-    //     // {
-    //     //     $unwind: '$sportPlaces'
-    //     // },
-    //     // {
-    //     //     $project: {            
-    //     //       'sports.name': 1,
-    //     //       'sportPlaces.price': 1,
-    //     //       'sportPlaces.name': 1,
-    //     //       'sportPlaces.address': 1,
-    //     //       'sportPlaces.description': 1,
-    //     //       'sportPlaces.capacity': 1,
-    //     //       'sportPlaces.rating': 1
-    //     //     }
-    //     //   }
-
-
-    // ]).toArray();
-
-
-    //
+    
     if (!arr) throw "Error: Venue can not be found";
     return arr;
 };
