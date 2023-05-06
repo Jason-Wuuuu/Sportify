@@ -155,13 +155,15 @@ const validationMethods = {
   },
 
   checkDate(date, varName) {
-    date = this.checkString(date, varName);
-
-    const d = new Date(date);
-    if (!d) throw `Error: Invalid ${varName}.`;
+    date = checkString(date, varName);
 
     const today = new Date();
-    if (d < today) throw `Error: Valid date starts from tomorrow`;
+    let yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    let inputDate = new Date(date);
+    if (inputDate < yesterday) {
+      throw new Error("Input date cannot be less than today's date.");
+    }
 
     return date;
   },
