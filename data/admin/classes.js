@@ -37,8 +37,9 @@ const create = async (
     startTime: startTime,
     endTime: endTime,
     thumbnail: "",
-    rating: 0,
+    rating: null,
     students: [],
+    ratingProvider: []
   };
 
   const classCollection = await classes();

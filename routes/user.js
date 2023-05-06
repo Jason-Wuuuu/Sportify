@@ -269,10 +269,12 @@ router.route("/myclasses").get(async (req, res) => {
 
 router.route("/myclasses/:classID").get(async (req, res) => {
   try{
+    let userID = req.session.user.userID;
+    userID = helperMethodsForUsers.checkId(userID, "userID");
     let classID = req.params.classID;
     classID = helperMethodsForClasses.checkId(classID, "classID");
     let classObj = await classesData.getClass(classID);
-    return res.render("classInfo", { class: classObj });
+    return res.render("classInfo", { class: classObj, userId:  userID});
   } catch (e) {
     return res.status(404).render("error", {
       title: "Error",
@@ -290,6 +292,21 @@ router.route("/myclasses/remove/:classID").get(async (req, res) => {
     await classesData.quit(classID, userID);
     return res.redirect("/myclasses");
   } catch (e) {
+    return res.status(404).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
+
+router.route("/myclasses/update_rating").post(async (req, res) => {
+  try{
+    let classID = req.body.classId;
+    let userID = req.body.userId;
+    let rating = req.body.rating;
+    await classesData.rate(classID, userID, rating);
+    return res.redirect("/myclasses");
+  }catch (e) {
     return res.status(404).render("error", {
       title: "Error",
       error: e,

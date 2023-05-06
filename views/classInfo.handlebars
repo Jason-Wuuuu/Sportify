@@ -14,11 +14,19 @@
     <li>Date: {{class.date}}</li>
     <li>Start Time: {{class.startTime}}</li>
     <li>End Time: {{class.endTime}}</li>
-    <li>Rating: {{class.rating}}</li> 
+    <li>Overall Rating: {{class.rating}}</li> 
   </ul>   
 
   <form action="/myclasses/remove/{{class._id}}" method="get">    
       <label for="remove">Remove Class:</label>
       <button type="submit" id="remove">Remove</button>
+  </form>
+
+  <form action="/myclasses/update_rating" method="post">    
+      <input name="classId" value="{{class._id}}" type="hidden"/>
+      <input name="userId" value="{{userId}}" type="hidden"/>
+      <label for="rate">Rate Class:</label>
+      <input type="number" id="rate" name="rating" min="0" max="5">
+      <button type="submit" id="update">Update</button>
   </form>
 </div>

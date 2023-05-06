@@ -37,20 +37,40 @@ const quit = async (classID, userID) => {
     { _id: new ObjectId(classID) },   
     { $set: { capacity: updatedClass.value.capacity+1 } }
   );  
+  await classCollection.findOneAndUpdate(
+    { _id: new ObjectId(classID) },
+    { $pull:  { ratingProvider: { userID: userID } }  }
+  );
+  const classObj = await classCollection.findOne({ _id: new ObjectId(classID) });
+  let ratingProvider = classObj.ratingProvider;
+  let n = ratingProvider.length;
+  let newRating = (n > 0) ? ((ratingProvider.reduce((sum, obj) => sum+obj.rating, 0.0))/n) : null; 
+  await classCollection.findOneAndUpdate(
+    { _id: new ObjectId(classID) },
+    { $set: { rating: newRating } }
+  );
 };
 
-const rate = async (classID, userID, rate) => {
+const rate = async (classID, userID, rating) => {
   classID = helperMethodsForClasses.checkId(classID, "classID");
   userID = helperMethodsForClasses.checkId(userID, "userID");
   const classCollection = await classes();
-  const updateInfo = await classCollection.findOneAndUpdate(
+  await classCollection.findOneAndUpdate(
     { _id: new ObjectId(classID) },
-    { $set: { rating: rate } },
-    { returnDocument: "after" }
+    { $pull:  { ratingProvider: { userID: userID } }  }
   );
-  if (updateInfo.lastErrorObject.n === 0)
-    throw `Error: Update failed, could not find a class with id of ${classID}`;
-  return { rated: true };
+  await classCollection.findOneAndUpdate(
+    { _id: new ObjectId(classID) },
+    { $push: { ratingProvider: { userID: userID, rating:  +rating } }  }
+  );
+  const classObj = await classCollection.findOne({ _id: new ObjectId(classID) });
+  let ratingProvider = classObj.ratingProvider;
+  let n = ratingProvider.length;
+  let newRating = (n > 0) ? ((ratingProvider.reduce((sum, obj) => sum+obj.rating, 0.0))/n) : null; 
+  await classCollection.findOneAndUpdate(
+    { _id: new ObjectId(classID) },
+    { $set: { rating: newRating } }
+  );
 };
 
 const getClass = async (classID) => {
@@ -124,4 +144,4 @@ const getAvailableClasses = async () => {
   return availableClasses;
 }; // classes that the capacity is not full
 
-export {reserve, getClassesBySport, getClassesByUserID, getClass, quit};
+export {reserve, getClassesBySport, getClassesByUserID, getClass, quit, rate};
