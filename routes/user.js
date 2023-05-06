@@ -1196,9 +1196,10 @@ router.route("/venueBook")
       });
     }
     applyXSS(venueInfo);
+    let userInfo = [];
     // validation
     try {
-      await userData.get(req.session.user.userID);
+      userInfo = await userData.get(req.session.user.userID);
     }
     catch (e) {
       return res.status(400).render("error", {
@@ -1206,6 +1207,7 @@ router.route("/venueBook")
         error: e,
       });
     }
+    
     let bdate = "";
     let uid = req.session.user.userID;
     try {
@@ -1248,7 +1250,20 @@ router.route("/venueBook")
 
     try {
       const newSlot = await slotsData.updateslot(venueInfo.slotInput, bdate, uid);
-      if (!newSlot.updatedslot) throw "Internal Server Error";
+      //if (!newSlot.updatedslot) throw "Internal Server Error";
+
+      if (newSlot.updatedslot == true) {
+        await sendEmail(
+          userInfo.email,
+          `Hi, You have reserve the Venue! `
+        );
+      } else {
+        return res.status(400).render("error", {
+          title: "Error",
+          error: e,
+        });
+      }
+
       let venueList = await venueData.getvenuebyuserid(uid);
 
       let pData = [];
