@@ -44,7 +44,7 @@
             <td>{{this.price}}</td>
             <td>{{this.capacity}}</td>
             <td>
-                <a href="/deleteVenue/{{this.id}}/del/{{this.Date}}" style="color: red;">
+                <a href="/deleteVenue/{{this.id}}/del/{{this.Date}}" style="color: #ff7f7f;">
                     Delete Reservation
                 </a>
             </td>
@@ -57,7 +57,7 @@
 
 <h1 class="centertitle">Past Reserved Venue</h1>
 {{#if isemptyold}}
-<p>No,Venue is Booked in past.</p>
+<p>No, Venue is Booked in past.</p>
 {{else}}
 <form id="myForm">
     <div class="centertitle">
@@ -86,11 +86,11 @@
                 <td>{{this.price}}</td>
                 <td>{{this.capacity}}</td>
                 <td>
-                    <input type="number" id="ratingInput" name="ratingInput" value="{{ratingV}}" min="1"
-                        max="5" >
+                    <label for="ratingInput"></label>
+                    <input type="number" id="ratingInput" name="ratingInput" value="{{ratingV}}" min="1" max="5">
                 </td>
                 <td>
-                    <input type="submit" value="Update Rating" onclick="formpost('{{this.sportPlaceID}}')" >
+                    <input type="submit" value="Update Rating" onclick="formpost('{{this.sportPlaceID}}')">
 
                 </td>
 

@@ -6,84 +6,77 @@
 </header>
 <h1 class="centertitle">My Events:</h1>
 {{#if isempty}}
-  <p>Sorry! You have not created events yet.</p>
+<p>Sorry! You have not created events yet.</p>
 {{else}}
-  <div class="centertitle">
-    <p
-    >==============================================================================</p>
-    {{#each myevents}}
+<div class="centertitle">
+  <p>==============================================================================</p>
+  {{#each myevents}}
 
-      <table>
-        <tr>
-          <th>Event Name</th>
-          <th>Sport</th>
-          <th>Venue</th>
-          <th>Date</th>
-          <th>Capacity : {{this.capacity}}</th>
-          <td>
-            <a href = "/updateevent/{{this._id}}" class="manageevent" style="color: rgb(43, 103, 37);">
-              Update Event
-            </a></td>
-        </tr>
-        <tr>
-          <td>{{this.name}}</td>
-          <td>{{this.sport}}</td>
-          <td>{{this.sportPlace}}</td>
-          <td>{{this.date}}</td>
-          <td>
-            <a class="manageevent togglelist" style="color: rgb(139, 15, 241);">
-              See Participants List
-            </a></td>
-          <td>
-            <a
-              class="manageevent"
-              href="/removeevents/{{this._id}}"
-              style="color: red;"
-            >
-              Delete Event
-            </a></td>
+  <table>
+    <tr>
+      <th>Event Name</th>
+      <th>Sport</th>
+      <th>Venue</th>
+      <th>Date</th>
+      <th>Capacity : {{this.capacity}}</th>
+      <td>
+        <a href="/updateevent/{{this._id}}" class="manageevent" style="color: #0b4900;">
+          Update Event
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td>{{this.name}}</td>
+      <td>{{this.sport}}</td>
+      <td>{{this.sportPlace}}</td>
+      <td>{{this.date}}</td>
+      <td>
+        <a class="manageevent togglelist" style="color: #5b00a2;">
+          See Participants List
+        </a>
+      </td>
+      <td>
+        <a class="manageevent" href="/removeevents/{{this._id}}" style="color: #830000;">
+          Delete Event
+        </a>
+      </td>
 
-        </tr>
-      </table>
+    </tr>
+  </table>
 
-      <div style="display:none" class="participantlist">
-        <h2>Participants List:</h2>
-        {{#if this.members}}
-          <table >
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Gender</th>
-              <th>D.O.B</th>
-              <th>Contact No.</th>
-              <th></th>
-            </tr>
+  <div style="display:none" class="participantlist">
+    <h2>Participants List:</h2>
+    {{#if this.members}}
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Gender</th>
+        <th>D.O.B</th>
+        <th>Contact No.</th>
+        <th></th>
+      </tr>
 
-            {{#each this.memberdetails}}
-              <tr>
-                <td>{{this.firstName}} {{this.lastName}}</td>
-                <td>{{this.email}}</td>
-                <td>{{this.gender}}</td>
-                <td>{{this.dateOfBirth}}</td>
-                <td>{{this.contactNumber}}</td>
-                <td>
-                  <a
-                    class="manageevent"
-                    href="/events/{{../this._id}}/deregisteruser/{{this._id}}"
-                    style="color: red;"
-                  >
-                    Remove
-                  </a>
-                </td>
-              </tr>
-            {{/each}}
-          </table>
-        {{else}}
-          <p>No Participants yet!</p>
-        {{/if}}
-      </div>
-      <p
-      >==============================================================================</p>
-    {{/each}}
+      {{#each this.memberdetails}}
+      <tr>
+        <td>{{this.firstName}} {{this.lastName}}</td>
+        <td>{{this.email}}</td>
+        <td>{{this.gender}}</td>
+        <td>{{this.dateOfBirth}}</td>
+        <td>{{this.contactNumber}}</td>
+        <td>
+          <a class="manageevent" href="/events/{{../this._id}}/deregisteruser/{{this._id}}" style="color: #830000;">
+            Remove
+          </a>
+        </td>
+      </tr>
+      {{/each}}
+    </table>
+    {{else}}
+    <p>No Participants yet!</p>
+    {{/if}}
   </div>
+  <p>==============================================================================</p>
+  {{/each}}
+</div>
 {{/if}}
