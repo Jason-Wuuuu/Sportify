@@ -13,74 +13,66 @@
   </nav>
 </header>
 
-<h2>Latest Events For : {{sport}}</h2>
+<h1>Latest Events For : {{sport}}</h1>
 <div>
   <a href="/addevent/{{sport}}" class="addevent">Create New Event!</a>
 </div>
 
 {{#each events}}
-  <div class="bgcard">
-    <div class="info">
-      <div class="bgimg" style="background-image: url({{this.image}})"></div>
-      <ul class="info-list">
-        <li class="author">Event By : {{this.username}}</li>
-        <li class="date">Date : {{this.date}}</li>
-        <li class="location">Location : {{this.sportPlace}}</li>
-        <li class="time"> Time : {{this.startTime}} to {{this.endTime}}</li>
-      </ul>
-    </div>
-    <div class="textDetails">
-      <h1>{{this.name}}</h1>
-      <p>{{this.description}}</p>
-      {{#if this.registered}}
-        <p style="color: green; ">
-          Event Joined! ✅
-        </p>
-        <a href="/commentbox/{{this._id}}" style="color: rgb(139, 15, 241);">
-          Chat With Participants! 💬
-        </a>
-      {{/if}}
-      <button
-        onclick="popup()"
-        class="copylink{{this._id}} copylink"
-        data-clipboard-text="http://localhost:3000/event/{{this._id}}"
-      >Share Event</button><br />
-      <script>
-        var copy = new ClipboardJS(".copylink{{this._id}}"); function popup() {
-        alert("Event Link Copied!"); }
-      </script>
-      <p class="joinLink">
-        {{#if this.available}}
-          {{#if this.registered}}
-            <a
-              style="color: rgb(241, 15, 15);"
-              href="/events/{{sport}}/deregister/{{this._id}}"
-            >
-              Deregister Event? ⚠️
-            </a>
-          {{else}}
-            <a href="/events/{{sport}}/register/{{this._id}}">
-              RSVP Event! [
-              {{this.participants.length}}/{{this.capacity}}]
-            </a>
-          {{/if}}
-        {{else}}
-          {{#if this.registered}}
-            <a
-              style="color: rgb(241, 15, 15);"
-              href="/events/{{sport}}/deregister/{{this._id}}"
-            >
-              Deregister Event? ⚠️
-            </a>
-          {{else}}
-            <a style="color: red;">Event Full! 😢 [
-              {{this.participants.length}}/{{this.capacity}}]
-            </a>
-          {{/if}}
-        {{/if}}
-      </p>
-    </div>
+<div class="bgcard">
+  <div class="info">
+    <div class="bgimg" style="background-image: url({{this.image}})"></div>
+    <ul class="info-list">
+      <li class="author">Event By : {{this.username}}</li>
+      <li class="date">Date : {{this.date}}</li>
+      <li class="location">Location : {{this.sportPlace}}</li>
+      <li class="time"> Time : {{this.startTime}} to {{this.endTime}}</li>
+    </ul>
   </div>
+  <div class="textDetails">
+    <h1>{{this.name}}</h1>
+    <p>{{this.description}}</p>
+    {{#if this.registered}}
+    <p style="color: green; ">
+      Event Joined! ✅
+    </p>
+    <a href="/commentbox/{{this._id}}" style="color: rgb(139, 15, 241);">
+      Chat With Participants! 💬
+    </a>
+    {{/if}}
+    <button onclick="popup()" class="copylink{{this._id}} copylink"
+      data-clipboard-text="http://localhost:3000/event/{{this._id}}">Share Event</button><br />
+    <script>
+      var copy = new ClipboardJS(".copylink{{this._id}}"); function popup() {
+        alert("Event Link Copied!");
+      }
+    </script>
+    <p class="joinLink">
+      {{#if this.available}}
+      {{#if this.registered}}
+      <a style="color: #ee0000;" href="/events/{{sport}}/deregister/{{this._id}}">
+        Deregister Event? ⚠️
+      </a>
+      {{else}}
+      <a href="/events/{{sport}}/register/{{this._id}}">
+        RSVP Event! [
+        {{this.participants.length}}/{{this.capacity}}]
+      </a>
+      {{/if}}
+      {{else}}
+      {{#if this.registered}}
+      <a style="color: #ee0000;" href="/events/{{sport}}/deregister/{{this._id}}">
+        Deregister Event? ⚠️
+      </a>
+      {{else}}
+      <a style="color: red;">Event Full! 😢 [
+        {{this.participants.length}}/{{this.capacity}}]
+      </a>
+      {{/if}}
+      {{/if}}
+    </p>
+  </div>
+</div>
 {{else}}
-  <p>Sorry!<br /> No events found for {{sport}}.</p>
+<p>Sorry!<br /> No events found for {{sport}}.</p>
 {{/each}}

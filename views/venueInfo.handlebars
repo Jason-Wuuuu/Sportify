@@ -12,9 +12,9 @@
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 <div class="screen left">
     {{#if thumbnail}}
-    <img class="thumbnail" src="{{thumbnail}}">
+    <img class="thumbnail" alt="{{venueinfo.name}}" src="{{thumbnail}}">
     {{else}}
-    <img class="thumbnail" src="/public/images/No_Image_Available.jpg">
+    <img class="thumbnail" alt="{{venueinfo.name}}" src="/public/images/No_Image_Available.jpg">
     {{/if}}
 </div>
 <div class="screen right">
@@ -28,15 +28,15 @@
         <li>Rating: {{venueinfo.rating}}</li>
     </ul>
     <br>
-    <form id="VenueInfo-form" method="post" action="/venueGetslot/{{venueinfo._id}}">
+    <form id="VenueInfo-form1" method="post" action="/venueGetslot/{{venueinfo._id}}">
 
         {{!-- <input type="hidden" id="idh" name="idh" {{venueinfo._id}}>
         <input type="hidden" id="sportIDh" name="sportIDh" {{venueinfo.sportID}}> --}}
         <label for="dateInput">Select Date:</label>
         <br>
-        <input type="date" id="dateInput" name="dateInput" value="{{date}}" />
+        <input type="date" id="dateInput" name="dateInput" value="{{date}}" >
         <br>
-        <input type="submit" value="Get Slots" />
+        <input type="submit" value="Get Slots" >
         {{!--
         <a href="/venueGetslot/{{venueinfo._id}}/date/{{dateInput}}">Get Slots</a> --}}
 
@@ -44,7 +44,7 @@
         <br>
 
     </form>
-    <form action="/venueBook" method="post" id="VenueInfo-form">
+    <form action="/venueBook" method="post" id="VenueInfo-form2">
       
         <label for="slotInput">Select Slot:</label>
         <select name="slotInput" id="slotInput">
@@ -56,7 +56,7 @@
             {{/each}}
         </select>
         <br>
-        <input type="submit" value="Book Slot" />
+        <input type="submit" value="Book Slot" >
 
     </form>
 </div>
