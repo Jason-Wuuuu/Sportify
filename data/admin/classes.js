@@ -39,7 +39,7 @@ const create = async (
     thumbnail: "",
     rating: null,
     students: [],
-    ratingProvider: []
+    ratingProvider: [],
   };
 
   const classCollection = await classes();
@@ -50,6 +50,56 @@ const create = async (
   return { insertedClass: true };
 };
 
+const createdb = async (
+  title,
+  sportID,
+  sportPlaceID,
+  capacity,
+  instructor,
+  price,
+  date,
+  startTime,
+  endTime,
+  thumbnail,
+  students
+) => {
+  // validation
+  title = validation.checkTitle(title, "Title");
+  sportID = validation.checkId(sportID, "SportID");
+  sportPlaceID = validation.checkId(sportPlaceID, "Sport PlaceID");
+  capacity = validation.checkCapacity(capacity, "Capacity");
+  instructor = validation.checkName(instructor, "Instructor");
+  price = validation.checkPrice(price, "Price");
+  date = validation.checkDate(date, "Date");
+  startTime = validation.checkTime(startTime, "Start Time");
+  endTime = validation.checkTime(endTime, "End Time");
+  validation.checkTimeRange(startTime, endTime);
+
+  // add valid class to db
+  let newClass = {
+    title: title,
+    sportID: sportID,
+    sportPlaceID: sportPlaceID,
+    capacity: capacity,
+    instructor: instructor,
+    price: price,
+    date: date,
+    startTime: startTime,
+    endTime: endTime,
+    thumbnail: thumbnail,
+    rating: null,
+    students: students,
+    ratingProvider: [],
+  };
+
+  const classCollection = await classes();
+  const newInsertInformation = await classCollection.insertOne(newClass);
+  const newId = newInsertInformation.insertedId;
+  await get(newId.toString());
+
+  return { insertedClass: true, classID: newId.toString() };
+};
+
 const getAll = async () => {
   const classCollection = await classes();
   const classList = await classCollection.find({}).toArray();
@@ -57,7 +107,7 @@ const getAll = async () => {
 };
 
 const get = async (classID) => {
-  classID = validation.checkId(classID,"classID");
+  classID = validation.checkId(classID, "classID");
   const classCollection = await classes();
   const foundClass = await classCollection.findOne({
     _id: new ObjectId(classID),
@@ -67,7 +117,7 @@ const get = async (classID) => {
 };
 
 const remove = async (classID) => {
-  classID = validation.checkId(classID,"classID");
+  classID = validation.checkId(classID, "classID");
   const classCollection = await classes();
   const deletionInfo = await classCollection.findOneAndDelete({
     _id: new ObjectId(classID),
@@ -132,4 +182,4 @@ const update = async (
   return { updatedClass: true };
 };
 
-export { create, getAll, get, remove, update };
+export { create, getAll, get, remove, update, createdb };
