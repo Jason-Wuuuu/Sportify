@@ -274,6 +274,7 @@ router.route("/myclasses/:classID").get(async (req, res) => {
     let classID = req.params.classID;
     classID = helperMethodsForClasses.checkId(classID, "classID");
     let classObj = await classesData.getClass(classID);
+    classObj.rating ||= "NA"
     return res.render("classInfo", { class: classObj, userId:  userID});
   } catch (e) {
     return res.status(404).render("error", {

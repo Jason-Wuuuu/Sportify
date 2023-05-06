@@ -37,18 +37,18 @@ const quit = async (classID, userID) => {
     { _id: new ObjectId(classID) },   
     { $set: { capacity: updatedClass.value.capacity+1 } }
   );  
-  await classCollection.findOneAndUpdate(
-    { _id: new ObjectId(classID) },
-    { $pull:  { ratingProvider: { userID: userID } }  }
-  );
-  const classObj = await classCollection.findOne({ _id: new ObjectId(classID) });
-  let ratingProvider = classObj.ratingProvider;
-  let n = ratingProvider.length;
-  let newRating = (n > 0) ? ((ratingProvider.reduce((sum, obj) => sum+obj.rating, 0.0))/n) : null; 
-  await classCollection.findOneAndUpdate(
-    { _id: new ObjectId(classID) },
-    { $set: { rating: newRating } }
-  );
+  // await classCollection.findOneAndUpdate(
+  //   { _id: new ObjectId(classID) },
+  //   { $pull:  { ratingProvider: { userID: userID } }  }
+  // );
+  // const classObj = await classCollection.findOne({ _id: new ObjectId(classID) });
+  // let ratingProvider = classObj.ratingProvider;
+  // let n = ratingProvider.length;
+  // let newRating = (n > 0) ? ((ratingProvider.reduce((sum, obj) => sum+obj.rating, 0.0))/n) : null; 
+  // await classCollection.findOneAndUpdate(
+  //   { _id: new ObjectId(classID) },
+  //   { $set: { rating: newRating } }
+  // );
 };
 
 const rate = async (classID, userID, rating) => {
