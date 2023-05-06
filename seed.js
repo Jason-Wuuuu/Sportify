@@ -31,7 +31,7 @@ let eventNames = ["NFL", "FIFA", "SuperBowl", "Grand Prix", "ICC World Cup"];
 let eventThumbnail = [
   "https://kubrick.htvapps.com/htv-prod-media.s3.amazonaws.com/images/nfl-1651510872.jpg?crop=1.00xw:0.989xh;0,0&resize=1200:*",
   "https://cdn1.epicgames.com/offer/f5deacee017b4b109476933f7dd2edbd/EGS_EASPORTSFIFA23StandardEdition_EACanada_S1_2560x1440-aaf9c5273c27a485f2cce8cb7e804f5c",
-  "https://gray-kptv-prod.cdn.arcpublishing.com/resizer/7i8kof_GBtSXnvxiSgOueqAWgmQ=/1200x675/smart/filters:quality(85)/cloudfront-us-east-1.images.arcpublishing.com/gray/ABPAVDCWDJAKNIRP4XQH6DDJAI.PNG",
+  "https://athlonsports.com/.image/t_share/MTk1NTE1NTI4ODk3MzczMjM1/superbowl_lvii_2023_state_logo_dl.jpg",
   "https://images.crazygames.com/games/crazy-grand-prix/cover-1669033093125.png?auto=format%2Ccompress&q=45&cs=strip&ch=DPR&w=1200&h=630&fit=crop",
   "https://pbs.twimg.com/card_img/1652524733081202688/eL_GGcFw?format=jpg&name=large",
 ];
