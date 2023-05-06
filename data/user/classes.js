@@ -50,26 +50,47 @@ const quit = async (classID, userID) => {
   //   { $set: { rating: newRating } }
   // );
 };
-
+//newRating = Math.floor(((user_rating) / (dataset.length)) * 10) / 10;
 const rate = async (classID, userID, rating) => {
+  // classID = helperMethodsForClasses.checkId(classID, "classID");
+  // userID = helperMethodsForClasses.checkId(userID, "userID");
+  // const classCollection = await classes();
+  // await classCollection.findOneAndUpdate(
+  //   { _id: new ObjectId(classID) },
+  //   { $pull:  { ratingProvider: { userID: userID } }  }
+  // );
+  // await classCollection.findOneAndUpdate(
+  //   { _id: new ObjectId(classID) },
+  //   { $push: { ratingProvider: { userID: userID, rating:  +rating } }  }
+  // );
+  // const classObj = await classCollection.findOne({ _id: new ObjectId(classID) });
+  // let ratingProvider = classObj.ratingProvider;
+  // let n = ratingProvider.length;
+  // let newRating = (n > 0) ? ((ratingProvider.reduce((sum, obj) => sum+obj.rating, 0.0))/n) : null; 
+  
+  // await classCollection.findOneAndUpdate(
+  //   { _id: new ObjectId(classID) },
+  //   { $set: { rating: newRating } }
+  // );
   classID = helperMethodsForClasses.checkId(classID, "classID");
   userID = helperMethodsForClasses.checkId(userID, "userID");
   const classCollection = await classes();
-  await classCollection.findOneAndUpdate(
+  await classCollection.updateOne(
     { _id: new ObjectId(classID) },
     { $pull:  { ratingProvider: { userID: userID } }  }
   );
-  await classCollection.findOneAndUpdate(
+  await classCollection.updateOne(
     { _id: new ObjectId(classID) },
-    { $push: { ratingProvider: { userID: userID, rating:  +rating } }  }
+    { $push: { ratingProvider: { userID: userID, rating:  parseFloat(rating).toFixed(2) } }  }
   );
   const classObj = await classCollection.findOne({ _id: new ObjectId(classID) });
   let ratingProvider = classObj.ratingProvider;
   let n = ratingProvider.length;
-  let newRating = (n > 0) ? ((ratingProvider.reduce((sum, obj) => sum+obj.rating, 0.0))/n) : null; 
-  await classCollection.findOneAndUpdate(
+  let newRating = (n > 0) ? parseFloat((ratingProvider.reduce((sum, obj) => sum+parseFloat(obj.rating), 0.0))/n).toFixed(2) : null; 
+  
+  await classCollection.updateOne(
     { _id: new ObjectId(classID) },
-    { $set: { rating: newRating } }
+    { $set: { rating: parseFloat(newRating) } }
   );
 };
 
