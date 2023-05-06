@@ -43,7 +43,7 @@ let checkRating = (numVal, varName) => {
   }
   if (isNaN(numVal)) throw `Error: ${varName} is not a number.`;
   if (numVal < 1 || numVal > 5) throw "range needed 1=<Rating<=5";
-  let regex = /^(\d*)\.{0,1}(\d){0,1}$/
+  let regex = /^(\d*)\.{0,1}(\d){0,1}$/;
   if (!regex.test(numVal)) throw "one decimal point only";
   return numVal;
 };
@@ -346,5 +346,5 @@ export {
   checkId,
   checkString,
   checkNumber,
-  checkRating
+  checkRating,
 };
