@@ -13,6 +13,7 @@ import * as sportsplaceData from "../data/user/sportPlaces.js";
 import * as commentsData from "../data/user/comments.js";
 import * as slotsData from "../data/user/timeSlots.js";
 import * as venueData from "../data/user/venue.js";
+import * as ratingVenueData from "../data/user/ratingVenue.js";
 
 import xss from "xss";
 import { sendEmail } from "../data/admin/mail.js";
@@ -1096,60 +1097,62 @@ router
     });
   });
 
-router.route("/venue/:sports").get(async (req, res) => {
-  try {
-    req.params.sports = helperMethodsForUsers.checkString(
-      req.params.sports,
-      "sports Param"
-    );
-  } catch (e) {
-    return res.status(400).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
-  try {
-    let sport = req.params.sports;
-    let venueList = await sportsplaceData.getSportPlacesBySport(sport);
-    return res.render("venue", {
-      sport: sport,
-      venues: venueList,
-      title: "Venue List",
-    });
-  } catch (e) {
-    return res.status(404).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
-});
+router.route("/venue/:sports")
+  .get(async (req, res) => {
+    try {
+      req.params.sports = helperMethodsForUsers.checkString(
+        req.params.sports,
+        "sports Param"
+      );
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let sport = req.params.sports;
+      let venueList = await sportsplaceData.getSportPlacesBySport(sport);
+      return res.render("venue", {
+        sport: sport,
+        venues: venueList,
+        title: "Venue List",
+      });
+    } catch (e) {
+      return res.status(404).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
 
-router.route("/venueInfo/:id").get(async (req, res) => {
-  try {
-    req.params.id = helperMethodsForUsers.checkId(
-      req.params.id,
-      "sports place id Param"
-    );
-  } catch (e) {
-    return res.status(400).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
-  try {
-    let sportplaceid = req.params.id;
-    let venuedetails = await sportsplaceData.getSportPlace(sportplaceid);
-    return res.render("venueInfo", {
-      venueinfo: venuedetails,
-      title: "Reserve Venue",
-    });
-  } catch (e) {
-    return res.status(404).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
-});
+router.route("/venueInfo/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = helperMethodsForUsers.checkId(
+        req.params.id,
+        "sports place id Param"
+      );
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let sportplaceid = req.params.id;
+      let venuedetails = await sportsplaceData.getSportPlace(sportplaceid);
+      return res.render("venueInfo", {
+        venueinfo: venuedetails,
+        title: "Reserve Venue",
+      });
+    } catch (e) {
+      return res.status(404).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
 
 // router.route("/venueInfo/:id").get(async (req, res) => {
 //   try {
@@ -1256,7 +1259,7 @@ router.route("/venueBook")
         hidden: "hidden",
         isempty: empty,
       });
-     // return res.redirect("myVenue");
+      // return res.redirect("myVenue");
     } catch (e) {
       return res.status(400).render("error", {
         title: "Error",
@@ -1265,54 +1268,55 @@ router.route("/venueBook")
     }
   });
 
-router.route("/venueGetslot/:id").post(async (req, res) => {
-  let venueInfo = req.body;
-  if (!venueInfo || Object.keys(venueInfo).length === 0) {
-    return res.status(400).render("error", {
-      title: "Error",
-      error: "There are no fields in the request body",
-    });
-  }
+router.route("/venueGetslot/:id")
+  .post(async (req, res) => {
+    let venueInfo = req.body;
+    if (!venueInfo || Object.keys(venueInfo).length === 0) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
 
-  try {
-    req.params.id = helperMethodsForUsers.checkId(
-      req.params.id,
-      "sports place id Param"
-    );
-    venueInfo.dateInput = helperMethodsForEvents.checkDate(
-      venueInfo.dateInput,
-      "Date"
-    );
-  } catch (e) {
-    return res.status(400).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
-  try {
-    // let sport = req.params.sports;
-    let venuedetails = await sportsplaceData.getSportPlace(req.params.id);
-    let venueslot = await venueData.getslotsByDate(
-      req.params.id,
-      venueInfo.dateInput
-    );
+    try {
+      req.params.id = helperMethodsForUsers.checkId(
+        req.params.id,
+        "sports place id Param"
+      );
+      venueInfo.dateInput = helperMethodsForEvents.checkDate(
+        venueInfo.dateInput,
+        "Date"
+      );
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      // let sport = req.params.sports;
+      let venuedetails = await sportsplaceData.getSportPlace(req.params.id);
+      let venueslot = await venueData.getslotsByDate(
+        req.params.id,
+        venueInfo.dateInput
+      );
 
-    req.session.user.bookingdate = venueInfo.dateInput;
+      req.session.user.bookingdate = venueInfo.dateInput;
 
-    return res.render("venueInfo", {
-      // sport: sport,
-      venueinfo: venuedetails,
-      venues: venueslot,
-      date: venueInfo.dateInput,
-      title: "Reserve Venue",
-    });
-  } catch (e) {
-    return res.status(404).render("error", {
-      title: "Error",
-      error: e,
-    });
-  }
-});
+      return res.render("venueInfo", {
+        // sport: sport,
+        venueinfo: venuedetails,
+        venues: venueslot,
+        date: venueInfo.dateInput,
+        title: "Reserve Venue",
+      });
+    } catch (e) {
+      return res.status(404).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
 
 router.route("/myVenue")
   .get(async (req, res) => {
@@ -1353,7 +1357,7 @@ router.route("/deleteVenue/:id/del/:date")
       ID = validation.checkId(ID, "ID");
       date = req.params.date;
       date = helperMethodsForEvents.checkDate(date, "date");
-      
+
     } catch (e) {
       return res.status(400).render("error", {
         title: "Error",
@@ -1374,7 +1378,7 @@ router.route("/deleteVenue/:id/del/:date")
     try {
       const newSlot = await slotsData.removefromslot(ID, date);
       if (!newSlot.updatedslot) throw "Internal Server Error";
-      
+
 
       let venueList = await venueData.getvenuebyuserid(uid);
 
@@ -1386,9 +1390,76 @@ router.route("/deleteVenue/:id/del/:date")
         hidden: "hidden",
         isempty: empty,
       });
-     
+
     } catch (e) {
       return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
+
+router.route("/updateRating/:id")
+  .post(async (req, res) => {
+    let venueInfo = req.body;
+    if (!venueInfo || Object.keys(venueInfo).length === 0) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+
+    try {
+      req.params.id = helperMethodsForUsers.checkId(
+        req.params.id,
+        "sports place id Param"
+      );
+      venueInfo.ratingInput = validation.checkNumber(
+        venueInfo.ratingInput,
+        "Rating"
+      );
+
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      await userData.get(req.session.user.userID);
+    } catch (e) {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    let uid = req.session.user.userID;
+
+    try {
+      let ratinglist = await ratingVenueData.getatingbyuser(uid, req.params.id);
+
+      if (ratinglist != 0) {
+        const insertrating = await ratingVenueData.update(
+          req.params.id,
+          uid,
+          venueInfo.ratingInput
+        );
+        if (!insertrating.insertedratingVenue) throw "Internal Server Error";
+        return res.redirect("../myVenue");
+      }
+      else {
+        const insertrating = await ratingVenueData.create(
+          req.params.id,
+          uid,
+          venueInfo.ratingInput
+        );
+        if (!insertrating.insertedratingVenue) throw "Internal Server Error";
+        return res.redirect("../myVenue");
+      }
+
+
+    } catch (e) {
+      return res.status(404).render("error", {
         title: "Error",
         error: e,
       });

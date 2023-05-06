@@ -74,6 +74,7 @@ const getvenuebyuserid = async (ID) => {
                 arr[i]["description"] = sportplace[k].description;
                 arr[i]["price"] = sportplace[k].price;
                 arr[i]["capacity"] = sportplace[k].capacity;
+                arr[i]["rating"] = sportplace[k].rating;
                 if (arr[i]["slotID"] == 1) {
                     arr[i]["slotName"] = "12:00AM to 08:00AM";
                 }
