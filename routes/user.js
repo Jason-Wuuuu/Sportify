@@ -1195,7 +1195,7 @@ router.route("/venueBook")
         error: "There are no fields in the request body",
       });
     }
-
+    applyXSS(venueInfo);
     // validation
     try {
       await userData.get(req.session.user.userID);
@@ -1250,14 +1250,30 @@ router.route("/venueBook")
       const newSlot = await slotsData.updateslot(venueInfo.slotInput, bdate, uid);
       if (!newSlot.updatedslot) throw "Internal Server Error";
       let venueList = await venueData.getvenuebyuserid(uid);
+      
+      let pData = [];
+      let lData = [];
 
-      let empty = venueList.length == 0 ? true : false;
+      for (let i = 0; i < venueList.length; i++) {
+        if (venueList[i].Date >= new Date().toISOString().split('T')[0]
+        ) {
+          lData.push(venueList[i]);
+        }
+        else {
+          pData.push(venueList[i]);
+        }
+      }
+
+      let empty = lData.length == 0 ? true : false;
+      let emptyold = pData.length == 0 ? true : false;
 
       return res.render("myVenue", {
         title: "My Venue",
-        venueList: venueList,
+        venueList: lData,
+        venuelistold: pData,
         hidden: "hidden",
         isempty: empty,
+        isemptyold: emptyold,
       });
       // return res.redirect("myVenue");
     } catch (e) {
@@ -1277,7 +1293,7 @@ router.route("/venueGetslot/:id")
         error: "There are no fields in the request body",
       });
     }
-
+    applyXSS(venueInfo);
     try {
       req.params.id = helperMethodsForUsers.checkId(
         req.params.id,
@@ -1395,16 +1411,31 @@ router.route("/deleteVenue/:id/del/:date")
       const newSlot = await slotsData.removefromslot(ID, date);
       if (!newSlot.updatedslot) throw "Internal Server Error";
 
-
       let venueList = await venueData.getvenuebyuserid(uid);
 
-      let empty = venueList.length == 0 ? true : false;
+      let pData = [];
+      let lData = [];
+
+      for (let i = 0; i < venueList.length; i++) {
+        if (venueList[i].Date >= new Date().toISOString().split('T')[0]
+        ) {
+          lData.push(venueList[i]);
+        }
+        else {
+          pData.push(venueList[i]);
+        }
+      }
+
+      let empty = lData.length == 0 ? true : false;
+      let emptyold = pData.length == 0 ? true : false;
 
       return res.render("myVenue", {
         title: "My Venue",
-        venueList: venueList,
+        venueList: lData,
+        venuelistold: pData,
         hidden: "hidden",
         isempty: empty,
+        isemptyold: emptyold,
       });
 
     } catch (e) {
@@ -1424,13 +1455,13 @@ router.route("/updateRating/:id")
         error: "There are no fields in the request body",
       });
     }
-
+    applyXSS(venueInfo);
     try {
       req.params.id = helperMethodsForUsers.checkId(
         req.params.id,
         "sports place id Param"
       );
-      venueInfo.ratingInput = validation.checkNumber(
+      venueInfo.ratingInput = validation.checkRating(
         venueInfo.ratingInput,
         "Rating"
       );

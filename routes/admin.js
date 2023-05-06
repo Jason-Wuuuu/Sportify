@@ -1484,7 +1484,7 @@ router
         error: "There are no fields in the request body",
       });
     }
-
+    applyXSS(timeSlotInfo);
     // validation
     try {
       timeSlotInfo.sportIDInput = validation.checkId(

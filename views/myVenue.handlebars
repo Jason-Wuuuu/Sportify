@@ -21,7 +21,7 @@
 {{else}}
 <div class="centertitle">
     <p>==============================================================================</p>
-    <table cellspacing="10">
+    <table>
         <tr>
             <th>Sport</th>
             <th>Venue Name</th>
@@ -62,7 +62,7 @@
 <form id="myForm">
     <div class="centertitle">
         <p>==============================================================================</p>
-        <table cellspacing="10">
+        <table>
             <tr>
                 <th>Sport</th>
                 <th>Venue Name</th>
@@ -86,14 +86,12 @@
                 <td>{{this.price}}</td>
                 <td>{{this.capacity}}</td>
                 <td>
-                    <input type="number" id="ratingInput" name="ratingInput" width="10%" value="{{ratingV}}" min="1"
-                        max="5" />
+                    <input type="number" id="ratingInput" name="ratingInput" value="{{ratingV}}" min="1"
+                        max="5" >
                 </td>
                 <td>
-                    <input type="submit" value="Update Rating" onclick="formpost('{{this.sportPlaceID}}')" />
-                    {{!-- <a href="/updateRating/{{this.sportPlaceID}}" style="color: red;">
-                        Update Rating
-                    </a> --}}
+                    <input type="submit" value="Update Rating" onclick="formpost('{{this.sportPlaceID}}')" >
+
                 </td>
 
             </tr>

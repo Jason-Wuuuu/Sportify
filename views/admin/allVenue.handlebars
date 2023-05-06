@@ -17,7 +17,7 @@
 {{else}}
 <div class="centertitle">
     <p>==============================================================================</p>
-    <table cellspacing="10">
+    <table>
         <tr>
             <th>Sport</th>
             <th>Venue Name</th>
@@ -27,18 +27,14 @@
             <th>Description</th>
             <th>Price</th>
             <th>Capacity</th>
-            {{!-- <td>
-                <a class="manageevent" style="color: rgb(43, 103, 37);">
-                    Update Event
-                </a>
-            </td> --}}
+
         </tr>
 
         {{#each venueList}}
 
 
         <tr>
-            {{!-- <td hidden>{{this._id}}</td> --}}
+
             <td>{{this.sportName}}</td>
             <td>{{this.sportPlaceName}}</td>
             <td>{{this.Date}}</td>
@@ -47,11 +43,7 @@
             <td>{{this.description}}</td>
             <td>{{this.price}}</td>
             <td>{{this.capacity}}</td>
-            {{!-- <td>
-                <a href="/deleteVenue/{{this.id}}/del/{{this.Date}}" style="color: red;">
-                    Delete Reservation
-                </a>
-            </td> --}}
+
 
         </tr>
         {{/each}}
@@ -66,7 +58,7 @@
 <form id="myForm">
     <div class="centertitle">
         <p>==============================================================================</p>
-        <table cellspacing="10">
+        <table>
             <tr>
                 <th>Sport</th>
                 <th>Venue Name</th>
@@ -89,7 +81,7 @@
                 <td>{{this.description}}</td>
                 <td>{{this.price}}</td>
                 <td>{{this.capacity}}</td>
-               
+
             </tr>
             {{/each}}
         </table>
