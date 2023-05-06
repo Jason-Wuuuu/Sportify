@@ -155,7 +155,7 @@ const validationMethods = {
   },
 
   checkDate(date, varName) {
-    date = checkString(date, varName);
+    date = this.checkString(date, varName);
 
     const today = new Date();
     let yesterday = new Date(today);
