@@ -19,7 +19,7 @@
 </header>
 
 {{#if authenticated}}
-<h2>Welcome Back! {{firstName}}</h2>
+<h1>Welcome Back! {{firstName}}</h1>
 
 <div id="cardsdiv">
   <div class="cards">
@@ -31,7 +31,7 @@
       <img src="/public/images/No_Image_Available.jpg" alt="{{this.name}}" style="width:100%" />
       {{/if}}
       <div class="container">
-        <h4><a class="cardlink" href="/events/{{this.name}}">{{this.name}}</a></h4>
+        <h2><a class="cardlink" href="/events/{{this.name}}">{{this.name}}</a></h2>
       </div>
     </div>
     {{/each}}
@@ -50,7 +50,7 @@
       <img src="/public/images/No_Image_Available.jpg" alt="{{this.name}}" style="width:100%" />
       {{/if}}
       <div class="container">
-        <h4><a class="cardlink err" href="/events/{{this.name}}">{{this.name}}</a></h4>
+        <h2><a class="cardlink err" href="/events/{{this.name}}">{{this.name}}</a></h2>
       </div>
     </div>
     {{/each}}
