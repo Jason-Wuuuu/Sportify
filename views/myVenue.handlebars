@@ -4,15 +4,24 @@
         <a href="/logout">Logout</a>
     </nav>
 </header>
-<h1 class="centertitle">My Booked Venue</h1>
+<script>
+    function submitForm(id) {
+
+        var form = document.getElementById("myForm");
+        form.setAttribute("method", "POST");
+        form.setAttribute("action", "updateRating/" + id);
+
+
+        form.submit();
+    }
+</script>
+<h1 class="centertitle">My Reserved Venue</h1>
 {{#if isempty}}
 <p>No, Venue is Booked yet.</p>
 {{else}}
 <div class="centertitle">
     <p>==============================================================================</p>
     <table cellspacing="10">
-
-
         <tr>
             <th>Sport</th>
             <th>Venue Name</th>
@@ -22,18 +31,10 @@
             <th>Description</th>
             <th>Price</th>
             <th>Capacity</th>
-            {{!-- <td>
-                <a class="manageevent" style="color: rgb(43, 103, 37);">
-                    Update Event
-                </a>
-            </td> --}}
         </tr>
 
         {{#each venueList}}
-
-
         <tr>
-            {{!-- <td hidden>{{this._id}}</td> --}}
             <td>{{this.sportName}}</td>
             <td>{{this.sportPlaceName}}</td>
             <td>{{this.Date}}</td>
@@ -49,11 +50,55 @@
             </td>
 
         </tr>
-
-
-
-        {{!-- <p>==============================================================================</p> --}}
         {{/each}}
     </table>
 </div>
+{{/if}}
+
+<h1 class="centertitle">Past Reserved Venue</h1>
+{{#if isempty}}
+<p>No,Venue is Booked in past.</p>
+{{else}}
+<form id="myForm">
+    <div class="centertitle">
+        <p>==============================================================================</p>
+        <table cellspacing="10">
+            <tr>
+                <th>Sport</th>
+                <th>Venue Name</th>
+                <th>Booking Date</th>
+                <th>Timing</th>
+                <th>Address</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Capacity</th>
+                <th>Rating</th>
+            </tr>
+
+            {{#each venueList}}
+            <tr>
+                <td>{{this.sportName}}</td>
+                <td>{{this.sportPlaceName}}</td>
+                <td>{{this.Date}}</td>
+                <td> {{this.slotName}}</td>
+                <td>{{this.address}}</td>
+                <td>{{this.description}}</td>
+                <td>{{this.price}}</td>
+                <td>{{this.capacity}}</td>
+                <td>
+                    <input type="number" id="ratingInput" name="ratingInput" width="10%" value="{{rating}}" min="1"
+                        max="5" />
+                </td>
+                <td>
+                    <input type="submit" value="Update Rating" onclick="submitForm('{{this.sportPlaceID}}')" />
+                    {{!-- <a href="/updateRating/{{this.sportPlaceID}}" style="color: red;">
+                        Update Rating
+                    </a> --}}
+                </td>
+
+            </tr>
+            {{/each}}
+        </table>
+    </div>
+</form>
 {{/if}}

@@ -233,33 +233,19 @@ app.use("/events/:sports/deregister/:eventid", (req, res, next) => {
   next();
 });
 
-// app.use("/myclasses", (req, res, next) => {
-//   if (!req.session.user) {
-//     return res.redirect("/");
-//   }
-//   next();
-// });
+app.use("/myclasses/*", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
 
-// app.use("/myclasses/:classID", (req, res, next) => {
-//   if (!req.session.user) {
-//     return res.redirect("/");
-//   }
-//   next();
-// });
-
-// app.use("/myclasses/remove/:classID", (req, res, next) => {
-//   if (!req.session.user) {
-//     return res.redirect("/");
-//   }
-//   next();
-// });
-
-// app.use("/classes/:sports", (req, res, next) => {
-//   if (!req.session.user) {
-//     return res.redirect("/");
-//   }
-//   next();
-// });
+app.use("/classes/*", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
 
 app.use("/login", (req, res, next) => {
   if (req.session.user) {
@@ -332,6 +318,13 @@ app.use("admin/allVenue", (req, res, next) => {
     return res.redirect("/admin/login");
   }
   next();
+});
+
+app.use("/updateRating/:id", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+   next();
 });
 
 
