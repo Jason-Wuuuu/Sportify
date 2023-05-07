@@ -801,4 +801,20 @@ async function submitRating(classId, userId) {
     });
   }
 
+  let rateInfo = document.getElementById("rating");
+  if (rateInfo) {
+    rateInfo.addEventListener("submit", (event) => {
+      try {
+        console.log("input");
+        let rate = document.getElementById("rate").value;
+        if(rate < 1 || rate > 5){
+          event.preventDefault();
+          throw `Error: Rating must between 1 to 5`;
+        }
+      } catch (e) {
+        event.preventDefault();
+        show_error(e);
+      }
+    });
+  }
 }

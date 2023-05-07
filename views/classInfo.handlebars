@@ -22,11 +22,13 @@
       <button type="submit" id="remove">Remove</button>
   </form>
 
-  <form action="/myclasses/update_rating" method="post">    
+  <form action="/myclasses/update_rating" id="rating" method="post">    
       <input name="classId" value="{{class._id}}" type="hidden"/>
       <input name="userId" value="{{userId}}" type="hidden"/>
       <label for="rate">Rate Class:</label>
       <input type="number" id="rate" name="rating" min="1" max="5">
       <button type="submit" id="update">Update</button>
   </form>
+  
+  <div id="error" class="error">{{error}}</div>
 </div>
