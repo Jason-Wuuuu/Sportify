@@ -1077,8 +1077,8 @@ router
         classInfo.sportIDInput,
         "SportID"
       );
-      classInfo.sportPlaceIDInput = validation.checkId(
-        classInfo.sportPlaceIDInput,
+      classInfo.sportplaceIDInput1 = validation.checkId(
+        classInfo.sportplaceIDInput1,
         "Sport PlaceID"
       );
       classInfo.capacityInput = validation.checkCapacity(
@@ -1117,6 +1117,19 @@ router
       const sports = await getSportOptions();
       const sportPlaces = await getSportPlaceOptions();
 
+      let sportInfo = {};
+      try {
+        sportInfo = await sportData.get(classInfo.sportIDInput);
+      } catch (e) {
+        sportInfo.name = "Please reselect";
+      }
+      let sportPlaceInfo = {};
+      try {
+        sportPlaceInfo = await sportPlaceData.get(classInfo.sportplaceIDInput1);
+      } catch (e) {
+        sportPlaceInfo.name = "Please reselect";
+      }
+
       let origClassInfo = await classData.get(req.params.id);
 
       return res.status(400).render("admin/classInfo", {
@@ -1147,6 +1160,10 @@ router
         newStartTime: classInfo.startTimeInput,
         newEndTime: classInfo.endTimeInput,
         newThumbnail: classInfo.thumbnailInput,
+        sportID: sportInfo._id,
+        sportName: sportInfo.name,
+        sportPlaceID: sportPlaceInfo._id,
+        sportPlaceName: sportPlaceInfo.name,
       });
     }
 
@@ -1156,7 +1173,7 @@ router
         classID,
         classInfo.titleInput,
         classInfo.sportIDInput,
-        classInfo.sportPlaceIDInput,
+        classInfo.sportplaceIDInput1,
         classInfo.capacityInput,
         classInfo.instructorInput,
         classInfo.priceInput,
@@ -1441,6 +1458,7 @@ router.route("/events/:id").get(async (req, res) => {
       endTime: event.endTime,
       n: event.participants.length,
       participants: event.participants,
+      thumbnail: event.image,
     });
   } catch (e) {
     return res.status(404).render("admin/error", {
@@ -1654,8 +1672,8 @@ router
           sportId1: sportPlace.sportID,
         })
       );
-      let slotList = await slotUserData.getslotsByDateSerach( timeSlotInfo.sportIDInputS,timeSlotInfo.sportplaceIDInput1s, timeSlotInfo.dateInputs);
-      
+      let slotList = await slotUserData.getslotsByDateSerach(timeSlotInfo.sportIDInputS, timeSlotInfo.sportplaceIDInput1s, timeSlotInfo.dateInputs);
+
       let empty = slotList.length == 0 ? true : false;
 
       return res.render("admin/timeSlot", {
@@ -1667,7 +1685,7 @@ router
         isempty1: empty,
         sports: sportssearch,
         sportPlaces: sportPlacesSearch,
-       // datesearch: timeSlotInfo.dateInput,
+        // datesearch: timeSlotInfo.dateInput,
 
       });
     } catch (e) {
