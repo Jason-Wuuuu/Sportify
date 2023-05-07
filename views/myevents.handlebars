@@ -34,14 +34,13 @@
 
     </tr>
   </table>
-  <p>==============================================================================</p>
   {{/each}}
 </div>
 {{else}}
 <p>Sorry! You have no joined events yet.</p>
 {{/if}}
 
-
+<br>
 <h1 class="centertitle">My Created Events:</h1>
 {{#if isempty}}
 <p>Sorry! You have not created events yet.</p>
@@ -114,7 +113,32 @@
     <p>No Participants yet!</p>
     {{/if}}
   </div>
-  <p>==============================================================================</p>
   {{/each}}
 </div>
+{{/if}}
+
+<br>
+<h1 class="centertitle">My Passed Events:</h1>
+{{#if passed}}
+<div class="centertitle">
+  <p>==============================================================================</p>
+  {{#each passedEvents}}
+  <table>
+    <tr>
+      <th>Event Name</th>
+      <th>Sport</th>
+      <th>Venue</th>
+      <th>Date</th>
+    </tr>
+    <tr>
+      <td>{{this.name}}</td>
+      <td>{{this.sport}}</td>
+      <td>{{this.sportPlace}}</td>
+      <td>{{this.date}}</td>
+    </tr>
+  </table>
+  {{/each}}
+</div>
+{{else}}
+<p>Sorry! You have no passed events yet.</p>
 {{/if}}
