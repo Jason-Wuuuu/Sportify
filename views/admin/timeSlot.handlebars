@@ -127,13 +127,14 @@
 </div>
 <div>
     <p>-----------------------------------------------------------------------</p>
-    <h2>Get Slot Details</h2>
+    <h2>Get Slot information:</h2>
+
     <form action="/admin/searchSlot" method="post" id="timeslot-form1">
 
         <label for="sportIDInputS">Select Sport:</label><br>
         <select id="sportIDInputS" name="sportIDInputS" onchange="filterplaces1(this.value)">
             <option value="">-</option>
-            {{#each sports}}
+            {{#each sportsearchs}}
             <option value="{{sportID}}">{{name}}</option>
             {{/each}}
         </select>
@@ -142,7 +143,7 @@
         <label for="sportplaceIDInput1s">Select Sport Place:</label><br>
         <select id="sportplaceIDInputs" name="sportplaceIDInputs" hidden>
             <option value="">-</option>
-            {{#each sportPlaces}}
+            {{#each sportPlacessearches}}
             <option value="{{sportPlaceID}}" class="{{sportId1}}">{{sportPlaceName}}</option>
             {{/each}}
         </select>
@@ -154,7 +155,7 @@
 
         <label for="dateInputs">Select Date:</label>
         <br>
-        <input type="date" id="dateInputs" name="dateInputs" value="{{date}}">
+        <input type="date" id="dateInputs" name="dateInputs" value="{{datesearch}}">
         <br>
 
         <input type="submit" value="Search Slot">
@@ -168,31 +169,23 @@
         <p>==============================================================================</p>
         <table>
             <tr>
+                <th>Sport Name</th>
+                <th>Venue Name</th>
+                <th>Date</th>
                 <th>Slot Timing</th>
                 <th>Availability</th>
             </tr>
 
             {{#each venueListsearch}}
             <tr>
+                <td> {{this.SportName}}</td>
+                <td>{{this.SportPlaceName}}</td>
+                <td> {{this.Date}}</td>
                 <td> {{this.slotName}}</td>
-                <td>{{this.address}}</td>
-                <td>
-                    <a href="/deleteVenue/{{this.id}}/del/{{this.Date}}" style="color: #ff7f7f;">
-                        Delete Reservation
-                    </a>
-                </td>
-
+                <td>{{this.status}}</td>
             </tr>
             {{/each}}
         </table>
     </div>
     {{/if}}
 </div>
-{{!-- <h3>List of Slots:</h3>
-<div id="sportList">
-    <ul>
-        {{#each sports}}
-        <li><a href="/admin/sports/{{sportID}}">{{sportName}}</a></li>
-        {{/each}}
-    </ul>
-</div> --}}

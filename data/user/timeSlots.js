@@ -69,7 +69,6 @@ const remove = async (slotID) => {
   return { deleted: true };
 };
 
-
 const removefromslot = async (sid,
   date,) => {
   sid = validation.helperMethodsForEvents.checkId(

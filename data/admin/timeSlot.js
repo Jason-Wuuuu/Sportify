@@ -20,10 +20,13 @@ const create = async (
   sportPlaceID = validation.checkId(sportPlaceID, "sportPlaceID");
   Date = validation.checkString(Date, "Date");
   slotID = validation.checkNumber(slotID, "slotID");
-  // availability = validation.checkNumber(availability, "availability");
-  // userID = validation.checkId(userID, "userID");
+
+  const slotCollection = await timeSlot();
+  const checktimeslot = await slotCollection.findOne({ sportID: sportID, sportPlaceID: sportPlaceID, Date: Date, slotID: slotID });
+  if (checktimeslot) throw "Error: can not enter duplicate slot.";
 
   // add
+
   let newTimeslot = {
     sportID: sportID,
     sportPlaceID: sportPlaceID,
@@ -34,7 +37,7 @@ const create = async (
     bookingType: 0,
     //pass booking type for ground booking 1, event:2, class:3
   };
-  const slotCollection = await timeSlot();
+  
   const newdata = await slotCollection.insertOne(newTimeslot);
   const newId = newdata.insertedId;
   // await get(newId.toString());

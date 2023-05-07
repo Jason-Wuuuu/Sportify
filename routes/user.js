@@ -249,22 +249,94 @@ router.route("/myevents").get(async (req, res) => {
   eventList = eventList.reverse();
   let empty = eventList.length == 0 ? true : false;
 
+  let events = await eventsData.getJoinedEvents(uid);
+  let joinedEvents = [];
+  let passedEvents = [];
+
+  if (events) {
+    events.forEach((event) => {
+      const eventDate = new Date(event.date);
+      if (eventDate < new Date()) {
+        passedEvents.push(event);
+      } else {
+        event.tempUid = uid;
+        joinedEvents.push(event);
+      }
+    });
+  }
+  const joined = joinedEvents.length;
+  const passed = passedEvents.length;
+
   return res.render("myevents", {
     title: "My Events",
+    joined: joined,
+    joinedEvents: joinedEvents,
     myevents: eventList,
+    passed: passed,
+    passedEvents: passedEvents,
     hidden: "hidden",
     isempty: empty,
   });
 });
-
+// router.route("/myclasses").get(async (req, res) => {
+//   try {
+//     let userID = req.session.user.userID;
+//     userID = helperMethodsForUsers.checkId(userID, "userID");
+//     let myClassList = await classesData.getClassesByUserID(userID);
+//     let pData=[];
+//     let lData=[];
+//     for (let i = 0; i <myClassList.length; i++) {
+//       if (myClassList[i].Date > new Date().toISOString().split("T")[0]) {
+//         lData.push(myClassList[i]);
+//       } else {
+//         pData.push(myClassList[i]);
+//       }
+//     }
+//     let empty = lData.length == 0 ? true : false;
+//     let emptyold = pData.length == 0 ? true : false;
+//     return res.render("myclasses", {
+//       title: "My Classes",
+//       classList: lData,
+//       classlistold: pData,
+//       hidden: "hidden",
+//       isempty: empty,
+//       isemptyold: emptyold,
+//     });
+//   } catch (e) {
+//     return res.status(404).render("error", {
+//       title: "Error",
+//       error: e,
+//     });
+//   }
+// });
 router.route("/myclasses").get(async (req, res) => {
   try {
     let userID = req.session.user.userID;
     userID = helperMethodsForUsers.checkId(userID, "userID");
     let myClassList = await classesData.getClassesByUserID(userID);
+
+    let joinedClasses = [];
+    let passedClasses = [];
+
+    if (myClassList) {
+      myClassList.forEach((classInfo) => {
+        const classDate = new Date(`${classInfo.date}:${classInfo.endTime}`);
+        if (classDate < new Date()) {
+          passedClasses.push(classInfo);
+        } else {
+          joinedClasses.push(classInfo);
+        }
+      });
+    }
+    const joined = joinedClasses.length;
+    const passed = passedClasses.length;
+
     return res.render("myclasses", {
       title: "My Classes",
-      classList: myClassList,
+      joined: joined,
+      classList: joinedClasses,
+      passed: passed,
+      passedClassList: passedClasses,
     });
   } catch (e) {
     return res.status(404).render("error", {
@@ -282,10 +354,12 @@ router.route("/myclasses/:classID").get(async (req, res) => {
     classID = helperMethodsForClasses.checkId(classID, "classID");
     let classObj = await classesData.getClass(classID);
     classObj.rating ||= "NA";
-    return res.render("classInfo", { class: classObj, userId: userID });
-    classObj.rating ||= "NA";
+
+    const classDate = new Date(`${classObj.date}:${classObj.endTime}`);
+    const passed = classDate < new Date();
     return res.render("classInfo", {
       title: classObj.title,
+      passed: passed,
       class: classObj,
       userId: userID,
     });
@@ -304,6 +378,12 @@ router.route("/myclasses/remove/:classID").get(async (req, res) => {
     classID = helperMethodsForClasses.checkId(classID, "classID");
     userID = helperMethodsForUsers.checkId(userID, "userID");
     await classesData.quit(classID, userID);
+    const user = await userData.get(userID);
+    // console.log(user.email);
+    await sendEmail(
+      user.email,
+      `Hi ${user.firstName}, You have succesfully removed this class from your classList! Thank you. `
+    );
     return res.redirect("/myclasses");
   } catch (e) {
     return res.status(404).render("error", {
@@ -317,7 +397,7 @@ router.route("/myclasses/update_rating").post(async (req, res) => {
   try {
     let classID = req.body.classId;
     let userID = req.body.userId;
-    let rating = req.body.rating;
+    let rating = xss(req.body.rating);
     await classesData.rate(classID, userID, rating);
     return res.redirect("/myclasses");
   } catch (e) {
@@ -504,10 +584,22 @@ router
       let sportObj = await sportsData.getByName(sportName);
       let sportObjectId = sportObj._id.toString();
       let classList = await classesData.getClassesBySport(sportObjectId);
+
+      let classes = [];
+
+      if (classList) {
+        classList.forEach((classInfo) => {
+          const classDate = new Date(classInfo.date);
+          if (classDate >= new Date()) {
+            classes.push(classInfo);
+          }
+        });
+      }
+
       return res.render("classes", {
         title: sportObj.name,
         sport: sportObj.name,
-        classList: classList,
+        classList: classes,
       });
     } catch (e) {
       return res.status(404).render("error", {
@@ -521,6 +613,16 @@ router
       let classID = req.body.classId;
       let userID = req.session.user.userID;
       let result = await classesData.reserve(classID, userID);
+
+      const user = await userData.get(userID);
+      // const c= await classesData.get(classID)
+      // if(c.students.includes(userID)){}
+      // else{
+      // console.log(user.email);
+      await sendEmail(
+        user.email,
+        `Hi ${user.firstName}, You have succesfully registered to the class! Thank you. `
+      );
       let sportName = req.params.sports;
       let sportObj = await sportsData.getByName(sportName);
       let sportObjectId = sportObj._id.toString();
@@ -1206,16 +1308,18 @@ router.route("/venueBook").put(async (req, res) => {
       error: "There are no fields in the request body",
     });
   }
-
+  applyXSS(venueInfo);
+  let userInfo = [];
   // validation
   try {
-    await userData.get(req.session.user.userID);
+    userInfo = await userData.get(req.session.user.userID);
   } catch (e) {
     return res.status(400).render("error", {
       title: "Error",
       error: e,
     });
   }
+
   let bdate = "";
   let uid = req.session.user.userID;
   try {
@@ -1255,16 +1359,40 @@ router.route("/venueBook").put(async (req, res) => {
 
   try {
     const newSlot = await slotsData.updateslot(venueInfo.slotInput, bdate, uid);
-    if (!newSlot.updatedslot) throw "Internal Server Error";
+    //if (!newSlot.updatedslot) throw "Internal Server Error";
+
+    if (newSlot.updatedslot == true) {
+      await sendEmail(userInfo.email, `Hi, You have reserve the Venue! `);
+    } else {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
+
     let venueList = await venueData.getvenuebyuserid(uid);
 
-    let empty = venueList.length == 0 ? true : false;
+    let pData = [];
+    let lData = [];
+
+    for (let i = 0; i < venueList.length; i++) {
+      if (venueList[i].Date > new Date().toISOString().split("T")[0]) {
+        lData.push(venueList[i]);
+      } else {
+        pData.push(venueList[i]);
+      }
+    }
+
+    let empty = lData.length == 0 ? true : false;
+    let emptyold = pData.length == 0 ? true : false;
 
     return res.render("myVenue", {
       title: "My Venue",
-      venueList: venueList,
+      venueList: lData,
+      venuelistold: pData,
       hidden: "hidden",
       isempty: empty,
+      isemptyold: emptyold,
     });
     // return res.redirect("myVenue");
   } catch (e) {
@@ -1283,7 +1411,7 @@ router.route("/venueGetslot/:id").post(async (req, res) => {
       error: "There are no fields in the request body",
     });
   }
-
+  applyXSS(venueInfo);
   try {
     req.params.id = helperMethodsForUsers.checkId(
       req.params.id,
@@ -1337,13 +1465,27 @@ router.route("/myVenue").get(async (req, res) => {
   try {
     let venueList = await venueData.getvenuebyuserid(uid);
 
-    let empty = venueList.length == 0 ? true : false;
+    let pData = [];
+    let lData = [];
+
+    for (let i = 0; i < venueList.length; i++) {
+      if (venueList[i].Date > new Date().toISOString().split("T")[0]) {
+        lData.push(venueList[i]);
+      } else {
+        pData.push(venueList[i]);
+      }
+    }
+
+    let empty = lData.length == 0 ? true : false;
+    let emptyold = pData.length == 0 ? true : false;
 
     return res.render("myVenue", {
       title: "My Venue",
-      venueList: venueList,
+      venueList: lData,
+      venuelistold: pData,
       hidden: "hidden",
       isempty: empty,
+      isemptyold: emptyold,
     });
   } catch (e) {
     return res.status(400).render("error", {
@@ -1368,8 +1510,9 @@ router.route("/deleteVenue/:id/del/:date").get(async (req, res) => {
     });
   }
 
+  let userInfo = [];
   try {
-    await userData.get(req.session.user.userID);
+    userInfo = await userData.get(req.session.user.userID);
   } catch (e) {
     return res.status(400).render("error", {
       title: "Error",
@@ -1380,18 +1523,42 @@ router.route("/deleteVenue/:id/del/:date").get(async (req, res) => {
 
   try {
     const newSlot = await slotsData.removefromslot(ID, date);
-    if (!newSlot.updatedslot) throw "Internal Server Error";
+    // if (!newSlot.updatedslot) throw "Internal Server Error";
+
+    if (newSlot.updatedslot == true) {
+      await sendEmail(userInfo.email, `Hi, You have Unreserve the Venue! `);
+    } else {
+      return res.status(400).render("error", {
+        title: "Error",
+        error: e,
+      });
+    }
 
     let venueList = await venueData.getvenuebyuserid(uid);
 
-    let empty = venueList.length == 0 ? true : false;
+    let pData = [];
+    let lData = [];
 
-    return res.render("myVenue", {
-      title: "My Venue",
-      venueList: venueList,
-      hidden: "hidden",
-      isempty: empty,
-    });
+    for (let i = 0; i < venueList.length; i++) {
+      if (venueList[i].Date > new Date().toISOString().split("T")[0]) {
+        lData.push(venueList[i]);
+      } else {
+        pData.push(venueList[i]);
+      }
+    }
+
+    let empty = lData.length == 0 ? true : false;
+    let emptyold = pData.length == 0 ? true : false;
+
+    return res.redirect("../../../myVenue");
+    // , {
+    //   title: "My Venue",
+    //   venueList: lData,
+    //   venuelistold: pData,
+    //   hidden: "hidden",
+    //   isempty: empty,
+    //   isemptyold: emptyold,
+    // });
   } catch (e) {
     return res.status(400).render("error", {
       title: "Error",
@@ -1408,13 +1575,13 @@ router.route("/updateRating/:id").post(async (req, res) => {
       error: "There are no fields in the request body",
     });
   }
-
+  applyXSS(venueInfo);
   try {
     req.params.id = helperMethodsForUsers.checkId(
       req.params.id,
       "sports place id Param"
     );
-    venueInfo.ratingInput = validation.checkNumber(
+    venueInfo.ratingInput = validation.checkRating(
       venueInfo.ratingInput,
       "Rating"
     );
@@ -1461,4 +1628,5 @@ router.route("/updateRating/:id").post(async (req, res) => {
     });
   }
 });
+
 export default router;

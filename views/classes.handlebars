@@ -1,6 +1,6 @@
 <header>
   <nav class="navbar">
-    <a href="/" class="logo">Sportify</a>
+    <a href="/">Home</a>
 
     <a href="/events/{{sport}}">Events</a>
     <a class="active" href="/classes/{{sport}}">Classes</a>
@@ -28,7 +28,11 @@
   </div>
   <div class="textDetails">
     <h1>{{this.title}}</h1>
+    {{#if rating}}
     <p>Rating: {{this.rating}}</p>
+    {{else}}
+    <p>Rating: No rating yet</p>
+    {{/if}}
     <p>Price: {{this.price}}</p>
     <p> Capacity: {{this.capacity}}</p>
     <form action="/classes/{{../sport}}" method="post" id="{{this._id}}" class="add-user-in-class">

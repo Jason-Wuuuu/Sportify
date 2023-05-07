@@ -9,10 +9,10 @@
 <h2>Venue Details for : {{venueinfo.name}}</h2>
 
 
-<div id="error" class="error" {{hidden}}>{{error}}</div>
+
 <div class="screen left">
-    {{#if thumbnail}}
-    <img class="thumbnail" alt="{{venueinfo.name}}" src="{{thumbnail}}">
+    {{#if venueinfo.thumbnail}}
+    <img class="thumbnail" alt="{{venueinfo.name}}" src="{{venueinfo.thumbnail}}">
     {{else}}
     <img class="thumbnail" alt="{{venueinfo.name}}" src="/public/images/No_Image_Available.jpg">
     {{/if}}
@@ -57,6 +57,6 @@
         </select>
         <br>
         <input type="submit" value="Book Slot" >
-
+<div id="error" class="error" {{hidden}}>{{error}}</div>
     </form>
 </div>
