@@ -1,18 +1,17 @@
 <header>
     <nav class="navbar">
         <a href="/" class="logo">Sportify</a>
-        <a href="/events/{{sport}}">Events</a>
-        <a href="/myevents">MyEvents</a>
-        <a href="/classes/{{sport}}">Classes</a>
-        <a href="/venue/{{sport}}">Reserve Venue</a>
-        <a href="/profile">Profile</a>
-        <a href="/logout">Logout</a>
 
+        <a href="/events/{{sport}}">Events</a>
+        <a href="/classes/{{sport}}">Classes</a>
+        <a class="active" href="/venue/{{sport}}">Reserve Venue</a>
+
+        <a href="/logout">Logout</a>
     </nav>
 </header>
 <h1>{{title}}</h1>
 <h2>List of Venues For : {{sport}}</h2>
- <div id="error" class="error" {{hidden}}>{{error}}</div>
+<div id="error" class="error" {{hidden}}>{{error}}</div>
 <form id="venue-form">
     {{#each venues}}
     <div class="bgcard">
@@ -37,7 +36,7 @@
         </div>
     </div>
 
-   
+
     {{else}}
     <p>Sorry!<br /> No Venue found for {{sport}}.</p>
     {{/each}}

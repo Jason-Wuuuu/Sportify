@@ -24,6 +24,8 @@
     <li>Number of Users: {{n}}</li>
 </ul>
 
+<p>-----------------------------------------------------------------------</p>
+
 <label>Edit Sport Place:</label>
 <button type="button" id="expand">Edit</button>
 
@@ -75,13 +77,14 @@
     <button type="submit" id="remove">Remove</button>
 </form>
 
+<p>-----------------------------------------------------------------------</p>
+
 <h3>List of Users:</h3>
 <div id="userList">
     {{#if n}}
     <ul>
         {{#each users}}
-        <dt>ID: {{userID}}</dt>
-        <li>Name: {{userFirstName}}, {{userLastName}}</li>
+        <li><a href="/admin/users/{{this.userId}}">{{this.userFirstName}} {{this.userLastName}}</a></li>
         {{/each}}
     </ul>
     {{else}}
