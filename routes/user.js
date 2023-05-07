@@ -249,8 +249,19 @@ router.route("/myevents").get(async (req, res) => {
   eventList = eventList.reverse();
   let empty = eventList.length == 0 ? true : false;
 
+  let joinedEvents = await eventsData.getJoinedEvents(uid);
+
+  if (joinedEvents) {
+    joinedEvents.forEach((event) => {
+      event.tempUid = uid;
+    });
+  }
+  const joined = joinedEvents.length;
+
   return res.render("myevents", {
     title: "My Events",
+    joined: joined,
+    joinedEvents: joinedEvents,
     myevents: eventList,
     hidden: "hidden",
     isempty: empty,
