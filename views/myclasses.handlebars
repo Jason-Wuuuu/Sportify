@@ -12,7 +12,7 @@
 <h1 class="centertitle">My Classes:</h1>
 
 <div id="myclasses">
-    {{#if classList}}
+    {{#if joined}}
     <ul>
         {{#each classList}}
         <li><a href="myclasses/{{this._id}}">{{this.title}}</a></li>
@@ -20,8 +20,24 @@
     </ul>
 
 </div>
-    {{else}}
-    <p>Sorry! No classes found.</p>
-    {{/if}}
+{{else}}
+<p>Sorry! No classes found.</p>
+{{/if}}
 </div>
 
+<br>
+<h1 class="centertitle">My Passed Classes:</h1>
+
+<div id="myPassedclasses">
+    {{#if passed}}
+    <ul>
+        {{#each passedClassList}}
+        <li><a href="myclasses/{{this._id}}">{{this.title}}</a></li>
+        {{/each}}
+    </ul>
+
+</div>
+{{else}}
+<p>Sorry! No classes found.</p>
+{{/if}}
+</div>
