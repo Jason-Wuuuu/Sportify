@@ -314,9 +314,29 @@ router.route("/myclasses").get(async (req, res) => {
     let userID = req.session.user.userID;
     userID = helperMethodsForUsers.checkId(userID, "userID");
     let myClassList = await classesData.getClassesByUserID(userID);
+
+    let joinedClasses = [];
+    let passedClasses = [];
+
+    if (myClassList) {
+      myClassList.forEach((classInfo) => {
+        const classDate = new Date(classInfo.date);
+        if (classDate < new Date()) {
+          passedClasses.push(classInfo);
+        } else {
+          joinedClasses.push(classInfo);
+        }
+      });
+    }
+    const joined = joinedClasses.length;
+    const passed = passedClasses.length;
+
     return res.render("myclasses", {
       title: "My Classes",
-      classList: myClassList,
+      joined: joined,
+      classList: joinedClasses,
+      passed: passed,
+      passedClassList: passedClasses,
     });
   } catch (e) {
     return res.status(404).render("error", {
@@ -562,10 +582,22 @@ router
       let sportObj = await sportsData.getByName(sportName);
       let sportObjectId = sportObj._id.toString();
       let classList = await classesData.getClassesBySport(sportObjectId);
+
+      let classes = [];
+
+      if (classList) {
+        classList.forEach((classInfo) => {
+          const classDate = new Date(classInfo.date);
+          if (classDate >= new Date()) {
+            classes.push(classInfo);
+          }
+        });
+      }
+
       return res.render("classes", {
         title: sportObj.name,
         sport: sportObj.name,
-        classList: classList,
+        classList: classes,
       });
     } catch (e) {
       return res.status(404).render("error", {
