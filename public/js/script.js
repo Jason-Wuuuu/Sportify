@@ -224,7 +224,7 @@ const get_valid_date_range = () => {
   return { min, max };
 };
 
-let checkRating = (numVal, varName) => {
+const checkRating = (numVal, varName) => {
   if (!numVal && numVal !== 0) throw `Error: You must supply a ${varName}!`;
   if (typeof numVal !== "number") {
     try {
@@ -877,26 +877,26 @@ else {
     });
   }
 
-   // VenueInfo2
-   let myvenueinfo = document.getElementById("myForm");
-   //console.log(timeslotInfo1);
-   if (myvenueinfo) {
-     // get elements
-     let ratingInput = document.getElementById("ratingInput");
-     // submit
-     myvenueinfo.addEventListener("submit", (event) => {
-       // get values   
-       let rate = ratingInput.value;
+  //  // VenueInfo2
+  //  let myvenueinfo = document.getElementById("myForm");
+  //  //console.log(timeslotInfo1);
+  //  if (myvenueinfo) {
+  //    // get elements
+  //    let ratingInput = document.getElementById("ratingInput");
+  //    // submit
+  //    myvenueinfo.addEventListener("submit", (event) => {
+  //      // get values   
+  //      let rate = ratingInput.value;
  
-       //validation
-       try {
-        rate = checkRating(rate, "rating");
-       } catch (e) {
-         event.preventDefault();
-         if (rate) ratingInput.value = rate;
-         show_error(e);
-       }
-     });
-   }
+  //      //validation
+  //      try {
+  //       rate = checkRating(rate, "rating");
+  //      } catch (e) {
+  //        event.preventDefault();
+  //        if (rate) ratingInput.value = rate;
+  //        show_error(e);
+  //      }
+  //    });
+  //  }
 
 }

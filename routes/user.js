@@ -1524,7 +1524,7 @@ router.route("/deleteVenue/:id/del/:date").get(async (req, res) => {
     let empty = lData.length == 0 ? true : false;
     let emptyold = pData.length == 0 ? true : false;
 
-    return res.redirect("../../myVenue");
+    return res.redirect("../../../myVenue");
     // , {
     //   title: "My Venue",
     //   venueList: lData,

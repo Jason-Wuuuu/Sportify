@@ -9,61 +9,55 @@
     </nav>
 </header>
 <script>
+    const show_error = (err_msg) => {
+        let errorDiv = document.getElementById("error");
+        errorDiv.hidden = false;
+        errorDiv.innerHTML = err_msg;
+    };
+
+    const checkRating = (numVal, varName) => {
+        if (!numVal && numVal !== 0) throw `Error: You must supply a ${varName}!`;
+        if (typeof numVal !== "number") {
+            try {
+                numVal = Number.parseInt(numVal);
+            } catch (e) {
+                throw `Error: Unable to convert ${varName} to number`;
+            }
+        }
+        if (isNaN(numVal)) throw `Error: ${varName} is not a number.`;
+        if (numVal < 1 || numVal > 5) throw "You can not rate more than 5 and less then 1.";
+        let regex = /^(\d*)\.{0,1}(\d){0,1}$/;
+        if (!regex.test(numVal)) throw "one decimal point only";
+        return numVal;
+    };
+
     function formpost(id) {
-
         var form = document.getElementById("myForm");
-        form.setAttribute("method", "POST");
-        form.setAttribute("action", "updateRating/" + id);
+        let ratingInput = document.getElementById("ratingInput");
+        // submit
+        form.addEventListener("submit", (event) => {
+            // get values   
+            let rate = ratingInput.value;
 
-
-        form.submit();
+            //validation
+            try {
+                rate = checkRating(rate, "rating");
+                form.setAttribute("method", "POST");
+                form.setAttribute("action", "updateRating/" + id);
+                form.submit();
+            } catch (e) {
+                event.preventDefault();
+                if (rate) ratingInput.value = rate;
+                show_error(e);
+            }
+        });
     }
 </script>
-<h1 class="centertitle">My Reserved Venue</h1>
-{{#if isempty}}
-<p>No, Venue is Booked yet.</p>
-{{else}}
-<div class="centertitle">
-    <p>==============================================================================</p>
-    <table>
-        <tr>
-            <th>Sport</th>
-            <th>Venue Name</th>
-            <th>Booking Date</th>
-            <th>Timing</th>
-            <th>Address</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Capacity</th>
-        </tr>
-
-        {{#each venueList}}
-        <tr>
-            <td>{{this.sportName}}</td>
-            <td>{{this.sportPlaceName}}</td>
-            <td>{{this.Date}}</td>
-            <td> {{this.slotName}}</td>
-            <td>{{this.address}}</td>
-            <td>{{this.description}}</td>
-            <td>{{this.price}}</td>
-            <td>{{this.capacity}}</td>
-            <td>
-                <a href="/deleteVenue/{{this.id}}/del/{{this.Date}}" style="color: #ff7f7f;">
-                    Delete Reservation
-                </a>
-            </td>
-
-        </tr>
-        {{/each}}
-    </table>
-</div>
-{{/if}}
-<div id="error" class="error" {{hidden}}>{{error}}</div>
-<h1 class="centertitle">Today's and Past Reserved Venue</h1>
-{{#if isemptyold}}
-<p>No, Venue is Booked in past.</p>
-{{else}}
-<form id="myForm">
+<div>
+    <h1 class="centertitle">My Reserved Venue</h1>
+    {{#if isempty}}
+    <p>No, Venue is Booked yet.</p>
+    {{else}}
     <div class="centertitle">
         <p>==============================================================================</p>
         <table>
@@ -76,10 +70,9 @@
                 <th>Description</th>
                 <th>Price</th>
                 <th>Capacity</th>
-                <th>Rating</th>
             </tr>
 
-            {{#each venuelistold}}
+            {{#each venueList}}
             <tr>
                 <td>{{this.sportName}}</td>
                 <td>{{this.sportPlaceName}}</td>
@@ -90,16 +83,62 @@
                 <td>{{this.price}}</td>
                 <td>{{this.capacity}}</td>
                 <td>
-                    <label for="ratingInput"></label>
-                    <input type="number" id="ratingInput" name="ratingInput" value="{{ratingV}}" min="1" max="5">
-                </td>
-                <td>
-                    <input type="submit" value="Update Rating" onclick="formpost('{{this.sportPlaceID}}')">
+                    <a href="/deleteVenue/{{this.id}}/del/{{this.Date}}" style="color: #ff7f7f;">
+                        Delete Reservation
+                    </a>
                 </td>
 
             </tr>
             {{/each}}
         </table>
     </div>
-</form>
-{{/if}}
+    {{/if}}
+</div>
+
+<div id="error" class="error" {{hidden}}>{{error}}</div>
+<div>
+    <h1 class="centertitle">Today's and Past Reserved Venue</h1>
+    {{#if isemptyold}}
+    <p>No, Venue is Booked in past.</p>
+    {{else}}
+    <form id="myForm">
+        <div class="centertitle">
+            <p>==============================================================================</p>
+            <table>
+                <tr>
+                    <th>Sport</th>
+                    <th>Venue Name</th>
+                    <th>Booking Date</th>
+                    <th>Timing</th>
+                    <th>Address</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Capacity</th>
+                    <th>Rating</th>
+                </tr>
+
+                {{#each venuelistold}}
+                <tr>
+                    <td>{{this.sportName}}</td>
+                    <td>{{this.sportPlaceName}}</td>
+                    <td>{{this.Date}}</td>
+                    <td> {{this.slotName}}</td>
+                    <td>{{this.address}}</td>
+                    <td>{{this.description}}</td>
+                    <td>{{this.price}}</td>
+                    <td>{{this.capacity}}</td>
+                    <td>
+                        <label for="ratingInput"></label>
+                        <input type="number" id="ratingInput" name="ratingInput" value="{{ratingV}}" min="1" max="5">
+                    </td>
+                    <td>
+                        <input type="submit" value="Update Rating" onclick="formpost('{{this.sportPlaceID}}')">
+                    </td>
+
+                </tr>
+                {{/each}}
+            </table>
+        </div>
+    </form>
+    {{/if}}
+</div>
