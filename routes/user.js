@@ -249,20 +249,31 @@ router.route("/myevents").get(async (req, res) => {
   eventList = eventList.reverse();
   let empty = eventList.length == 0 ? true : false;
 
-  let joinedEvents = await eventsData.getJoinedEvents(uid);
+  let events = await eventsData.getJoinedEvents(uid);
+  let joinedEvents = [];
+  let passedEvents = [];
 
-  if (joinedEvents) {
-    joinedEvents.forEach((event) => {
-      event.tempUid = uid;
+  if (events) {
+    events.forEach((event) => {
+      const eventDate = new Date(event.date);
+      if (eventDate < new Date()) {
+        passedEvents.push(event);
+      } else {
+        event.tempUid = uid;
+        joinedEvents.push(event);
+      }
     });
   }
   const joined = joinedEvents.length;
+  const passed = passedEvents.length;
 
   return res.render("myevents", {
     title: "My Events",
     joined: joined,
     joinedEvents: joinedEvents,
     myevents: eventList,
+    passed: passed,
+    passedEvents: passedEvents,
     hidden: "hidden",
     isempty: empty,
   });
@@ -346,11 +357,11 @@ router.route("/myclasses/remove/:classID").get(async (req, res) => {
     userID = helperMethodsForUsers.checkId(userID, "userID");
     await classesData.quit(classID, userID);
     const user = await userData.get(userID);
-     // console.log(user.email);
-        await sendEmail(
-        user.email,
-          `Hi ${user.firstName}, You have succesfully removed this class from your classList! Thank you. `
-        );
+    // console.log(user.email);
+    await sendEmail(
+      user.email,
+      `Hi ${user.firstName}, You have succesfully removed this class from your classList! Thank you. `
+    );
     return res.redirect("/myclasses");
   } catch (e) {
     return res.status(404).render("error", {
@@ -568,16 +579,16 @@ router
       let classID = req.body.classId;
       let userID = req.session.user.userID;
       let result = await classesData.reserve(classID, userID);
-      
+
       const user = await userData.get(userID);
       // const c= await classesData.get(classID)
       // if(c.students.includes(userID)){}
       // else{
-     // console.log(user.email);
-        await sendEmail(
+      // console.log(user.email);
+      await sendEmail(
         user.email,
-          `Hi ${user.firstName}, You have succesfully registered to the class! Thank you. `
-        );
+        `Hi ${user.firstName}, You have succesfully registered to the class! Thank you. `
+      );
       let sportName = req.params.sports;
       let sportObj = await sportsData.getByName(sportName);
       let sportObjectId = sportObj._id.toString();
@@ -626,7 +637,7 @@ router.route("/event/:eventid").get(async (req, res) => {
     } else {
       throw `No Event found with ID ${eventid}`;
     }
-  } catch (e) { }
+  } catch (e) {}
 });
 
 router.route("/removeevents/:eventid").get(async (req, res) => {
@@ -1255,8 +1266,7 @@ router.route("/venueInfo/:id").get(async (req, res) => {
 //   }
 // });
 
-router.route("/venueBook")
-.put(async (req, res) => {
+router.route("/venueBook").put(async (req, res) => {
   let venueInfo = req.body;
   if (!venueInfo || Object.keys(venueInfo).length === 0) {
     return res.status(400).render("error", {
@@ -1269,21 +1279,17 @@ router.route("/venueBook")
   // validation
   try {
     userInfo = await userData.get(req.session.user.userID);
-  }
-  catch (e) {
+  } catch (e) {
     return res.status(400).render("error", {
       title: "Error",
       error: e,
     });
   }
-  
+
   let bdate = "";
   let uid = req.session.user.userID;
   try {
-    venueInfo.slotInput = validation.checkId(
-      venueInfo.slotInput,
-      "id"
-    );
+    venueInfo.slotInput = validation.checkId(venueInfo.slotInput, "id");
     bdate = helperMethodsForEvents.checkDate(
       req.session.user.bookingdate,
       "date"
@@ -1322,10 +1328,7 @@ router.route("/venueBook")
     //if (!newSlot.updatedslot) throw "Internal Server Error";
 
     if (newSlot.updatedslot == true) {
-      await sendEmail(
-        userInfo.email,
-        `Hi, You have reserve the Venue! `
-      );
+      await sendEmail(userInfo.email, `Hi, You have reserve the Venue! `);
     } else {
       return res.status(400).render("error", {
         title: "Error",
@@ -1339,36 +1342,32 @@ router.route("/venueBook")
     let lData = [];
 
     for (let i = 0; i < venueList.length; i++) {
-      if (venueList[i].Date > new Date().toISOString().split('T')[0]
-      ) {
+      if (venueList[i].Date > new Date().toISOString().split("T")[0]) {
         lData.push(venueList[i]);
-      }
-      else {
+      } else {
         pData.push(venueList[i]);
       }
     }
 
+    let empty = lData.length == 0 ? true : false;
+    let emptyold = pData.length == 0 ? true : false;
 
-  let empty = lData.length == 0 ? true : false;
-  let emptyold = pData.length == 0 ? true : false;
-
-  return res.render("myVenue", {
-    title: "My Venue",
-    venueList: lData,
-    venuelistold: pData,
-    hidden: "hidden",
-    isempty: empty,
-    isemptyold: emptyold,
-  });
-  // return res.redirect("myVenue");
-} catch (e) {
-  return res.status(400).render("error", {
-    title: "Error",
-    error: e,
-  });
-}
+    return res.render("myVenue", {
+      title: "My Venue",
+      venueList: lData,
+      venuelistold: pData,
+      hidden: "hidden",
+      isempty: empty,
+      isemptyold: emptyold,
+    });
+    // return res.redirect("myVenue");
+  } catch (e) {
+    return res.status(400).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
 });
-
 
 router.route("/venueGetslot/:id").post(async (req, res) => {
   let venueInfo = req.body;
@@ -1419,7 +1418,6 @@ router.route("/venueGetslot/:id").post(async (req, res) => {
   }
 });
 
-
 router.route("/myVenue").get(async (req, res) => {
   try {
     await userData.get(req.session.user.userID);
@@ -1463,7 +1461,6 @@ router.route("/myVenue").get(async (req, res) => {
   }
 });
 
-
 router.route("/deleteVenue/:id/del/:date").get(async (req, res) => {
   let ID = "";
   let date = "";
@@ -1479,34 +1476,29 @@ router.route("/deleteVenue/:id/del/:date").get(async (req, res) => {
     });
   }
 
-  
-    let userInfo = [];
-    try {
-      userInfo = await userData.get(req.session.user.userID);
-    } catch (e) {
+  let userInfo = [];
+  try {
+    userInfo = await userData.get(req.session.user.userID);
+  } catch (e) {
+    return res.status(400).render("error", {
+      title: "Error",
+      error: e,
+    });
+  }
+  let uid = req.session.user.userID;
+
+  try {
+    const newSlot = await slotsData.removefromslot(ID, date);
+    // if (!newSlot.updatedslot) throw "Internal Server Error";
+
+    if (newSlot.updatedslot == true) {
+      await sendEmail(userInfo.email, `Hi, You have Unreserve the Venue! `);
+    } else {
       return res.status(400).render("error", {
         title: "Error",
         error: e,
       });
     }
-    let uid = req.session.user.userID;
-
-    try {
-      const newSlot = await slotsData.removefromslot(ID, date);
-      // if (!newSlot.updatedslot) throw "Internal Server Error";
-
-      if (newSlot.updatedslot == true) {
-        await sendEmail(
-          userInfo.email,
-          `Hi, You have Unreserve the Venue! `
-        );
-      } else {
-        return res.status(400).render("error", {
-          title: "Error",
-          error: e,
-        });
-      }
-
 
     let venueList = await venueData.getvenuebyuserid(uid);
 
@@ -1540,7 +1532,6 @@ router.route("/deleteVenue/:id/del/:date").get(async (req, res) => {
     });
   }
 });
-
 
 router.route("/updateRating/:id").post(async (req, res) => {
   let venueInfo = req.body;

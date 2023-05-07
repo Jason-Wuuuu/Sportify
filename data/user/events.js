@@ -246,6 +246,16 @@ const getJoinedEvents = async (userID) => {
   return eventList;
 };
 
+const getPassedEvents = async (userID) => {
+  const eventCollection = await events();
+  const eventList = await eventCollection
+    .find({
+      participants: userID,
+    })
+    .toArray();
+  return eventList;
+};
+
 const getEventsBySport = async (sport) => {
   sport = validation.helperMethodsForEvents.checkString(sport, "Sport");
 
