@@ -544,6 +544,39 @@ else {
       }
     });
   });
+// JavaScript for displaying the rating form and submitting the rating
+function showRatingForm(classId) {
+  document.getElementById("ratingForm").style.display = "block";
+  document.getElementById("ratingMsg").innerHTML = "";
+  const ratingInput = document.forms[0].elements[0];
+  ratingInput.value = "";
+  ratingInput.focus();
+  ratingInput.setAttribute("classId", classId);
+}
+
+async function submitRating(classId, userId) {
+  const rating = document.forms[0].elements[0].value;
+  const ratingInput = document.forms[0].elements[0];
+  if (isNaN(rating) || rating < 1 || rating > 5) {
+    document.getElementById("ratingMsg").innerHTML = "Error: Rating must be a number between 0 and 5.";
+    ratingInput.value = "";
+    ratingInput.focus();
+    return;
+  }
+  const response = await fetch("/api/rate-class", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ classId, userId, rating })
+  });
+  const data = await response.json();
+  if (data.rated) {
+    document.getElementById("ratingMsg").innerHTML = "Rating submitted successfully.";
+    ratingInput.value = "";
+  } else {
+    document.getElementById("ratingMsg").innerHTML = `Error: ${data.msg}`;
+    ratingInput.focus();
+  }
+}
 
   //homepage
   const links = document.querySelectorAll("a.err");

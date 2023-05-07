@@ -252,7 +252,37 @@ router.route("/myevents").get(async (req, res) => {
     isempty: empty,
   });
 });
-
+// router.route("/myclasses").get(async (req, res) => {
+//   try {
+//     let userID = req.session.user.userID;
+//     userID = helperMethodsForUsers.checkId(userID, "userID");
+//     let myClassList = await classesData.getClassesByUserID(userID);
+//     let pData=[];
+//     let lData=[];
+//     for (let i = 0; i <myClassList.length; i++) {
+//       if (myClassList[i].Date > new Date().toISOString().split("T")[0]) {
+//         lData.push(myClassList[i]);
+//       } else {
+//         pData.push(myClassList[i]);
+//       }
+//     }
+//     let empty = lData.length == 0 ? true : false;
+//     let emptyold = pData.length == 0 ? true : false;
+//     return res.render("myclasses", {
+//       title: "My Classes",
+//       classList: lData,
+//       classlistold: pData,
+//       hidden: "hidden",
+//       isempty: empty,
+//       isemptyold: emptyold,
+//     });
+//   } catch (e) {
+//     return res.status(404).render("error", {
+//       title: "Error",
+//       error: e,
+//     });
+//   }
+// });
 router.route("/myclasses").get(async (req, res) => {
   try{
     let userID = req.session.user.userID;
@@ -291,6 +321,12 @@ router.route("/myclasses/remove/:classID").get(async (req, res) => {
     classID = helperMethodsForClasses.checkId(classID, "classID");
     userID = helperMethodsForUsers.checkId(userID, "userID");
     await classesData.quit(classID, userID);
+    const user = await userData.get(userID);
+     // console.log(user.email);
+        await sendEmail(
+        user.email,
+          `Hi ${user.firstName}, You have succesfully removed this class from your classList! Thank you. `
+        );
     return res.redirect("/myclasses");
   } catch (e) {
     return res.status(404).render("error", {
@@ -304,7 +340,7 @@ router.route("/myclasses/update_rating").post(async (req, res) => {
   try{
     let classID = req.body.classId;
     let userID = req.body.userId;
-    let rating = req.body.rating;
+    let rating = xss(req.body.rating);
     await classesData.rate(classID, userID, rating);
     return res.redirect("/myclasses");
   }catch (e) {
@@ -507,6 +543,16 @@ router
       let classID = req.body.classId;
       let userID = req.session.user.userID;
       let result = await classesData.reserve(classID, userID);
+      
+      const user = await userData.get(userID);
+      // const c= await classesData.get(classID)
+      // if(c.students.includes(userID)){}
+      // else{
+     // console.log(user.email);
+        await sendEmail(
+        user.email,
+          `Hi ${user.firstName}, You have succesfully registered to the class! Thank you. `
+        );
       let sportName = req.params.sports;
       let sportObj = await sportsData.getByName(sportName);
       let sportObjectId = sportObj._id.toString();
