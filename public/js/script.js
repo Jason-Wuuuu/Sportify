@@ -224,6 +224,22 @@ const get_valid_date_range = () => {
   return { min, max };
 };
 
+let checkRating = (numVal, varName) => {
+  if (!numVal && numVal !== 0) throw `Error: You must supply a ${varName}!`;
+  if (typeof numVal !== "number") {
+    try {
+      numVal = Number.parseInt(numVal);
+    } catch (e) {
+      throw `Error: Unable to convert ${varName} to number`;
+    }
+  }
+  if (isNaN(numVal)) throw `Error: ${varName} is not a number.`;
+  if (numVal < 1 || numVal > 5) throw "range needed 1=<Rating<=5";
+  let regex = /^(\d*)\.{0,1}(\d){0,1}$/;
+  if (!regex.test(numVal)) throw "one decimal point only";
+  return numVal;
+};
+
 //client side js for admin
 if (document.URL.includes("/admin")) {
   // error showing function
@@ -299,7 +315,7 @@ if (document.URL.includes("/admin")) {
     dateOfBirthInput.setAttribute("min", min);
     dateOfBirthInput.setAttribute("max", max);
 
-    // submit
+    // submitnpm star
     adminInfo.addEventListener("submit", (event) => {
       // get values
       let firstName = firstNameInput.value;
@@ -521,6 +537,82 @@ if (document.URL.includes("/admin")) {
       }
     });
   }
+
+  // timeslot
+  let timeslotInfo = document.getElementById("timeslot-form");
+  //console.log(timeslotInfo);
+  if (timeslotInfo) {
+    // get elements
+    let sportIDInput = document.getElementById("sportIDInput");
+    let sportPlaceIDInput = document.getElementById("sportplaceIDInput1");
+    let dateInput = document.getElementById("dateInput");
+
+    const today = new Date();
+    let dd = today.getDate() + 1;
+    let mm = today.getMonth() + 1; //January is 0
+    let yyyy = today.getFullYear();
+    if (dd < 10) dd = "0" + dd;
+    if (mm < 10) mm = "0" + mm;
+    dateInput.setAttribute("min", `${yyyy}-${mm}-${dd}`);
+
+    // submit
+    timeslotInfo.addEventListener("submit", (event) => {
+      // get values   
+      //  console.log("test"); 
+      let sportID = sportIDInput.value;
+      let sportPlaceID = sportPlaceIDInput.value;
+      let date = dateInput.value;
+
+      //validation
+      try {
+        sportID = checkString(sportID, "SportID");
+        sportPlaceID = checkString(sportPlaceID, "Sport PlaceID");
+        date = checkDate(date, "Date");
+      } catch (e) {
+        event.preventDefault();
+        if (date) dateInput.value = date;
+        show_error(e);
+      }
+    });
+  }
+
+  // timeslot1
+  let timeslotInfo1 = document.getElementById("timeslot-form1");
+  //console.log(timeslotInfo1);
+  if (timeslotInfo1) {
+    // get elements
+    let sportIDInput = document.getElementById("sportIDInputS");
+    let sportPlaceIDInput = document.getElementById("sportplaceIDInput1s");
+    let dateInput = document.getElementById("dateInputs");
+
+    const today = new Date();
+    let dd = today.getDate() + 1;
+    let mm = today.getMonth() + 1; //January is 0
+    let yyyy = today.getFullYear();
+    if (dd < 10) dd = "0" + dd;
+    if (mm < 10) mm = "0" + mm;
+    dateInput.setAttribute("min", `${yyyy}-${mm}-${dd}`);
+
+    // submit
+    timeslotInfo1.addEventListener("submit", (event) => {
+      // get values   
+      // console.log("test"); 
+      let sportID = sportIDInput.value;
+      let sportPlaceID = sportPlaceIDInput.value;
+      let date = dateInput.value;
+
+      //validation
+      try {
+        sportID = checkString(sportID, "SportID");
+        sportPlaceID = checkString(sportPlaceID, "Sport PlaceID");
+        date = checkDate(date, "Date");
+      } catch (e) {
+        event.preventDefault();
+        if (date) dateInput.value = date;
+        show_error(e);
+      }
+    });
+  }
 }
 //client side js for user
 else {
@@ -544,39 +636,6 @@ else {
       }
     });
   });
-// JavaScript for displaying the rating form and submitting the rating
-function showRatingForm(classId) {
-  document.getElementById("ratingForm").style.display = "block";
-  document.getElementById("ratingMsg").innerHTML = "";
-  const ratingInput = document.forms[0].elements[0];
-  ratingInput.value = "";
-  ratingInput.focus();
-  ratingInput.setAttribute("classId", classId);
-}
-
-async function submitRating(classId, userId) {
-  const rating = document.forms[0].elements[0].value;
-  const ratingInput = document.forms[0].elements[0];
-  if (isNaN(rating) || rating < 1 || rating > 5) {
-    document.getElementById("ratingMsg").innerHTML = "Error: Rating must be a number between 0 and 5.";
-    ratingInput.value = "";
-    ratingInput.focus();
-    return;
-  }
-  const response = await fetch("/api/rate-class", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ classId, userId, rating })
-  });
-  const data = await response.json();
-  if (data.rated) {
-    document.getElementById("ratingMsg").innerHTML = "Rating submitted successfully.";
-    ratingInput.value = "";
-  } else {
-    document.getElementById("ratingMsg").innerHTML = `Error: ${data.msg}`;
-    ratingInput.focus();
-  }
-}
 
   //homepage
   const links = document.querySelectorAll("a.err");
@@ -765,12 +824,11 @@ async function submitRating(classId, userId) {
     });
   }
 
-  // timeslot
-  let timeslotInfo = document.getElementById("timeslot-form");
-  if (timeslotInfo) {
+  // VenueInfo1
+  let VenueInfo = document.getElementById("VenueInfo-form1");
+  //console.log(timeslotInfo1);
+  if (VenueInfo) {
     // get elements
-    let sportIDInput = document.getElementById("sportIDInput");
-    let sportPlaceIDInput = document.getElementById("sportplaceIDInput1");
     let dateInput = document.getElementById("dateInput");
 
     const today = new Date();
@@ -782,16 +840,12 @@ async function submitRating(classId, userId) {
     dateInput.setAttribute("min", `${yyyy}-${mm}-${dd}`);
 
     // submit
-    timeslotInfo.addEventListener("submit", (event) => {
-      // get values     
-      let sportID = sportIDInput.value;
-      let sportPlaceID = sportPlaceIDInput.value;
+    VenueInfo.addEventListener("submit", (event) => {
+      // get values   
       let date = dateInput.value;
 
       //validation
       try {
-        sportID = checkString(sportID, "SportID");
-        sportPlaceID = checkString(sportPlaceID, "Sport PlaceID");
         date = checkDate(date, "Date");
       } catch (e) {
         event.preventDefault();
@@ -801,20 +855,48 @@ async function submitRating(classId, userId) {
     });
   }
 
-  let rateInfo = document.getElementById("rating");
-  if (rateInfo) {
-    rateInfo.addEventListener("submit", (event) => {
+  // VenueInfo2
+  let VenueInfo1 = document.getElementById("VenueInfo-form2");
+  //console.log(timeslotInfo1);
+  if (VenueInfo1) {
+    // get elements
+    let slotInput = document.getElementById("slotInput");
+    // submit
+    VenueInfo1.addEventListener("submit", (event) => {
+      // get values   
+      let slot = slotInput.value;
+
+      //validation
       try {
-        console.log("input");
-        let rate = document.getElementById("rate").value;
-        if(rate < 1 || rate > 5){
-          event.preventDefault();
-          throw `Error: Rating must between 1 to 5`;
-        }
+        slot = checkId(slot, "Slot");
       } catch (e) {
         event.preventDefault();
+        //if (slot) slotInput.value = slot;
         show_error(e);
       }
     });
   }
+
+   // VenueInfo2
+   let myvenueinfo = document.getElementById("myForm");
+   //console.log(timeslotInfo1);
+   if (myvenueinfo) {
+     // get elements
+     let ratingInput = document.getElementById("ratingInput");
+     // submit
+     myvenueinfo.addEventListener("submit", (event) => {
+       // get values   
+       let rate = ratingInput.value;
+ 
+       //validation
+       try {
+        rate = checkRating(rate, "rating");
+       } catch (e) {
+         event.preventDefault();
+         if (rate) ratingInput.value = rate;
+         show_error(e);
+       }
+     });
+   }
+
 }

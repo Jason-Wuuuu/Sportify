@@ -327,6 +327,12 @@ app.use("/updateRating/:id", (req, res, next) => {
    next();
 });
 
+app.use("/admin/searchSlot", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  next();
+});
 
 app.use(async (req, res, next) => {
   const currentTime = new Date().toUTCString();

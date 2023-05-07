@@ -58,8 +58,8 @@
     </table>
 </div>
 {{/if}}
-
-<h1 class="centertitle">Past Reserved Venue</h1>
+<div id="error" class="error" {{hidden}}>{{error}}</div>
+<h1 class="centertitle">Today's and Past Reserved Venue</h1>
 {{#if isemptyold}}
 <p>No, Venue is Booked in past.</p>
 {{else}}
@@ -95,7 +95,6 @@
                 </td>
                 <td>
                     <input type="submit" value="Update Rating" onclick="formpost('{{this.sportPlaceID}}')">
-
                 </td>
 
             </tr>

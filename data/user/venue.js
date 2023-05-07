@@ -54,6 +54,12 @@ const getslotsByDateSerach = async (sportPlaceid, date) => {
         else {
             slots[i]["slotName"] = "04:00PM to 12:00AM";
         }
+        if(slots[i]["availability"] == 0){
+            slots[i]["status"] = "Not Reserved";
+        }
+        else{
+            slots[i]["status"] = "Reserved";
+        }
     }
     return slots;
 };
