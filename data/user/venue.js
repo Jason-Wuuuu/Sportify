@@ -16,6 +16,7 @@ const getslotsByDate = async (sportPlaceid, date) => {
             availability: 0
         })
         .toArray();
+
     // if (!slots) throw "Error: slot can not be found";
     for (let i = 0; i < slots.length; i++) {
         if (slots[i]["slotID"] == 1) {
@@ -31,9 +32,13 @@ const getslotsByDate = async (sportPlaceid, date) => {
     return slots;
 };
 
-const getslotsByDateSerach = async (sportPlaceid, date) => {
+const getslotsByDateSerach = async (sportid, sportPlaceid, date) => {
     sportPlaceid = validation.checkId(sportPlaceid, "sportPlaceid");
     date = helperMethodsForEvents.checkDate(date, "date");
+    const sportCollection = await sports();
+    const sportplaceCollection = await sportPlaces();
+    const sport = await sportCollection.findOne({ _id: new ObjectId(sportid) });
+    const sportplace = await sportplaceCollection.findOne({ _id: new ObjectId(sportPlaceid) });
 
     const slotCollection = await timeSlot();
     const slots = await slotCollection
@@ -45,6 +50,8 @@ const getslotsByDateSerach = async (sportPlaceid, date) => {
         .toArray();
     // if (!slots) throw "Error: slot can not be found";
     for (let i = 0; i < slots.length; i++) {
+        slots[i]["SportName"] = sport.name;
+        slots[i]["SportPlaceName"] = sportplace.name;
         if (slots[i]["slotID"] == 1) {
             slots[i]["slotName"] = "12:00AM to 08:00AM";
         }
@@ -54,10 +61,10 @@ const getslotsByDateSerach = async (sportPlaceid, date) => {
         else {
             slots[i]["slotName"] = "04:00PM to 12:00AM";
         }
-        if(slots[i]["availability"] == 0){
+        if (slots[i]["availability"] == 0) {
             slots[i]["status"] = "Not Reserved";
         }
-        else{
+        else {
             slots[i]["status"] = "Reserved";
         }
     }
@@ -74,7 +81,7 @@ const getvenuebyuserid = async (ID) => {
     const sport = await sportCollection.find({}).toArray();
     const sportplace = await sportplaceCollection.find({}).toArray();
     const Venue = await VenueCollection.find({ userID: ID, bookingType: 1 }).toArray();
-    const ratingVenuedata = await ratingVenueCollection.find({ userID: ID }).toArray();    
+    const ratingVenuedata = await ratingVenueCollection.find({ userID: ID }).toArray();
     let arr = [];
 
     for (let i = 0; i < Venue.length; i++) {
@@ -133,4 +140,4 @@ const remove = async (ID) => {
     return { deleted: true };
 };
 
-export { getvenuebyuserid, getslotsByDate, remove,getslotsByDateSerach };
+export { getvenuebyuserid, getslotsByDate, remove, getslotsByDateSerach };

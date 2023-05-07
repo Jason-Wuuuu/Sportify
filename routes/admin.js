@@ -1647,14 +1647,6 @@ router
     try {
       const sportssearch = await getSportOptions();
       const sportPlacetListsearch = await sportPlaceData.getAll();
-
-    //   const sportPlaces = sportPlacetListsearch.map((sportPlace) =>
-    //   Object({
-    //     sportPlaceID: sportPlace._id,
-    //     sportPlaceName: sportPlace.name,
-    //     sportId1: sportPlace.sportID,
-    //   })
-    // );
       const sportPlacesSearch = sportPlacetListsearch.map((sportPlace) =>
         Object({
           sportPlaceID: sportPlace._id,
@@ -1662,8 +1654,8 @@ router
           sportId1: sportPlace.sportID,
         })
       );
-      let slotList = await slotUserData.getslotsByDateSerach(timeSlotInfo.sportplaceIDInput1s, timeSlotInfo.dateInputs);
-
+      let slotList = await slotUserData.getslotsByDateSerach( timeSlotInfo.sportIDInputS,timeSlotInfo.sportplaceIDInput1s, timeSlotInfo.dateInputs);
+      
       let empty = slotList.length == 0 ? true : false;
 
       return res.render("admin/timeSlot", {

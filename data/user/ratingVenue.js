@@ -10,7 +10,7 @@ const create = async (
 
     // validation
     sportPlaceID = validation.checkId(sportPlaceID, "sportPlaceID");
-    rating = validation.checkNumber(rating, "rating");
+    rating = validation.checkRating(rating, "rating");
     userID = validation.checkId(userID, "userID");
 
     // add
@@ -35,7 +35,7 @@ const update = async (
     rating
 ) => {
     sportPlaceID = validation.checkId(sportPlaceID, "sportPlaceID");
-    rating = validation.checkNumber(rating, "rating");
+    rating = validation.checkRating(rating, "rating");
     userID = validation.checkId(userID, "userID");
 
     const Updaterating = {
