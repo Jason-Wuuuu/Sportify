@@ -320,7 +320,7 @@ router.route("/myclasses").get(async (req, res) => {
 
     if (myClassList) {
       myClassList.forEach((classInfo) => {
-        const classDate = new Date(classInfo.date);
+        const classDate = new Date(`${classInfo.date}:${classInfo.endTime}`);
         if (classDate < new Date()) {
           passedClasses.push(classInfo);
         } else {
@@ -354,10 +354,12 @@ router.route("/myclasses/:classID").get(async (req, res) => {
     classID = helperMethodsForClasses.checkId(classID, "classID");
     let classObj = await classesData.getClass(classID);
     classObj.rating ||= "NA";
-    return res.render("classInfo", { class: classObj, userId: userID });
-    classObj.rating ||= "NA";
+
+    const classDate = new Date(`${classObj.date}:${classObj.endTime}`);
+    const passed = classDate < new Date();
     return res.render("classInfo", {
       title: classObj.title,
+      passed: passed,
       class: classObj,
       userId: userID,
     });
