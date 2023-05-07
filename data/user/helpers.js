@@ -32,6 +32,22 @@ let checkNumber = (numVal, varName) => {
   if (isNaN(numVal)) throw `Error: ${varName} is not a number.`;
   return numVal;
 };
+let checkRating = (numVal, varName) => {
+  if (!numVal && numVal !== 0) throw `Error: You must supply a ${varName}!`;
+  if (typeof numVal !== "number") {
+    try {
+      numVal = Number.parseInt(numVal);
+    } catch (e) {
+      throw `Error: Unable to convert ${varName} to number`;
+    }
+  }
+  if (isNaN(numVal)) throw `Error: ${varName} is not a number.`;
+  if (numVal < 1 || numVal > 5) throw "range needed 1=<Rating<=5";
+  let regex = /^(\d*)\.{0,1}(\d){0,1}$/;
+  if (!regex.test(numVal)) throw "one decimal point only";
+  return numVal;
+};
+
 const helperMethodsForSports = {
   checkString(strVal, varName) {
     if (!strVal) throw `Error: You must supply a ${varName}!`;
@@ -330,4 +346,5 @@ export {
   checkId,
   checkString,
   checkNumber,
+  checkRating,
 };

@@ -57,6 +57,19 @@ const getslotsByDate = async (sportPlaceid, date, slotarray) => {
     .toArray();
   return slots;
 };
+const remove = async (slotID) => {
+  slotID = validation.checkId(slotID, "SlotID");
+  const slots = await timeSlot();
+  const deletionInfo = await slots.findOneAndDelete({
+    _id: new ObjectId(slotID),
+  });
+  if (deletionInfo.lastErrorObject.n === 0)
+    throw `Error: Could not delete slot with id of ${slotID}`;
+
+  return { deleted: true };
+};
+
+
 const removefromslot = async (sid,
   date,) => {
   sid = validation.helperMethodsForEvents.checkId(
@@ -124,4 +137,4 @@ const updateslot = async (
 
 };
 
-export { create, get, getslotsByDate, removefromslot, updateslot };
+export { create, get, getslotsByDate, removefromslot, updateslot,remove };

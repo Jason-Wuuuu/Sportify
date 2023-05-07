@@ -276,13 +276,6 @@ app.use("/myVenue", (req, res, next) => {
   next();
 });
 
-app.use("/admin/timeSlot", (req, res, next) => {
-  if (!req.session.admin) {
-    return res.redirect("/admin/login");
-  }
-  next();
-});
-
 app.use("/venue/:sports", (req, res, next) => {
   if (!req.session.user) {
     return res.redirect("/");
@@ -291,6 +284,13 @@ app.use("/venue/:sports", (req, res, next) => {
 });
 
 app.use("/venueInfo/:id", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
+app.use("/venueGetslot/:id", (req, res, next) => {
   if (!req.session.user) {
     return res.redirect("/");
   }
@@ -313,11 +313,18 @@ app.use("/deleteVenue/:id/del/:date", (req, res, next) => {
   next();
 });
 
-app.use("admin/allVenue", (req, res, next) => {
+app.use("/admin/allVenue", (req, res, next) => {
    if (!req.session.admin) {
     return res.redirect("/admin/login");
   }
   next();
+});
+
+app.use("/updateRating/:id", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+   next();
 });
 
 

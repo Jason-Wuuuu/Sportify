@@ -20,6 +20,23 @@ const create = async (name) => {
 
   return { sportID: sport._id.toString(), insertedSport: true };
 };
+const createWithThumbanil = async (name, thumbnail) => {
+  // validation
+  name = validation.checkTitle(name, "Name");
+
+  // add valid sport to db
+  let newSport = {
+    name: name,
+    thumbnail: thumbnail,
+  };
+
+  const sportCollection = await sports();
+  const newInsertInformation = await sportCollection.insertOne(newSport);
+  const newId = newInsertInformation.insertedId;
+  const sport = await get(newId.toString());
+
+  return { sportID: sport._id.toString(), insertedSport: true };
+};
 
 const getAll = async () => {
   const sportCollection = await sports();
@@ -28,7 +45,7 @@ const getAll = async () => {
 };
 
 const get = async (sportID) => {
-  sportID = validation.checkId(sportID,"sportID");
+  sportID = validation.checkId(sportID, "sportID");
   const sportCollection = await sports();
   const sport = await sportCollection.findOne({ _id: new ObjectId(sportID) });
   if (!sport) throw "Error: Sport not found";
@@ -36,7 +53,7 @@ const get = async (sportID) => {
 };
 
 const remove = async (sportID) => {
-  sportID = validation.checkId(sportID,"sportID");
+  sportID = validation.checkId(sportID, "sportID");
   const sportCollection = await sports();
   const deletionInfo = await sportCollection.findOneAndDelete({
     _id: new ObjectId(sportID),
@@ -49,7 +66,7 @@ const remove = async (sportID) => {
 
 const update = async (sportID, name, thumbnail) => {
   // validation
-  sportID = validation.checkId(sportID,"sportID");
+  sportID = validation.checkId(sportID, "sportID");
   name = validation.checkTitle(name, "Name");
 
   if (thumbnail) thumbnail = validation.checkURL(thumbnail, "Thumbnail");
@@ -71,4 +88,4 @@ const update = async (sportID, name, thumbnail) => {
   return { updatedSport: true };
 };
 
-export { create, getAll, get, remove, update };
+export { create, getAll, get, remove, update, createWithThumbanil };

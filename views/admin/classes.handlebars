@@ -3,11 +3,11 @@
         <a href="/admin/profile">Profile</a>
         <a href="/admin/sports">Sports</a>
         <a href="/admin/sportPlaces">SportPlaces</a>
-        <a href="/admin/classes">Classes</a>
+        <a class="active" href="/admin/classes">Classes</a>
         <a href="/admin/events">Events</a>
         <a href="/admin/users">Users</a>
         <a href="/admin/timeSlot">Slots</a>
-         <a href="/admin/allVenue">Reserved Venue</a>
+        <a href="/admin/allVenue">Reserved Venue</a>
         <a href="/admin/logout">Logout</a>
     </nav>
 </header>
@@ -44,6 +44,7 @@
 
 <label>Add New Class:</label>
 <button type="button" id="expand">Add</button>
+
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
 <div id="form" class="form" {{hidden}}>
@@ -116,6 +117,8 @@
         <input type="submit" value="Submit" />
     </form>
 </div>
+
+<p>-----------------------------------------------------------------------</p>
 
 <h3>List of Classes:</h3>
 <div id="classList">

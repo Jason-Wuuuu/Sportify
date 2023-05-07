@@ -7,7 +7,7 @@
         <a href="/admin/events">Events</a>
         <a href="/admin/users">Users</a>
         <a href="/admin/timeSlot">Slots</a>
-        <a href="/admin/allVenue">Reserved Venue</a>
+        <a class="active" href="/admin/allVenue">Reserved Venue</a>
         <a href="/admin/logout">Logout</a>
     </nav>
 </header>
@@ -17,7 +17,7 @@
 {{else}}
 <div class="centertitle">
     <p>==============================================================================</p>
-    <table cellspacing="10">
+    <table>
         <tr>
             <th>Sport</th>
             <th>Venue Name</th>
@@ -27,18 +27,14 @@
             <th>Description</th>
             <th>Price</th>
             <th>Capacity</th>
-            {{!-- <td>
-                <a class="manageevent" style="color: rgb(43, 103, 37);">
-                    Update Event
-                </a>
-            </td> --}}
+
         </tr>
 
         {{#each venueList}}
 
 
         <tr>
-            {{!-- <td hidden>{{this._id}}</td> --}}
+
             <td>{{this.sportName}}</td>
             <td>{{this.sportPlaceName}}</td>
             <td>{{this.Date}}</td>
@@ -47,18 +43,48 @@
             <td>{{this.description}}</td>
             <td>{{this.price}}</td>
             <td>{{this.capacity}}</td>
-            {{!-- <td>
-                <a href="/deleteVenue/{{this.id}}/del/{{this.Date}}" style="color: red;">
-                    Delete Reservation
-                </a>
-            </td> --}}
+
 
         </tr>
-
-
-
-        {{!-- <p>==============================================================================</p> --}}
         {{/each}}
     </table>
 </div>
+{{/if}}
+
+<h1 class="centertitle">Past Reserved Venue</h1>
+{{#if isemptyold}}
+<p>No,Venue is Booked in past.</p>
+{{else}}
+<form id="myForm">
+    <div class="centertitle">
+        <p>==============================================================================</p>
+        <table>
+            <tr>
+                <th>Sport</th>
+                <th>Venue Name</th>
+                <th>Booking Date</th>
+                <th>Timing</th>
+                <th>Address</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Capacity</th>
+
+            </tr>
+
+            {{#each venuelistold}}
+            <tr>
+                <td>{{this.sportName}}</td>
+                <td>{{this.sportPlaceName}}</td>
+                <td>{{this.Date}}</td>
+                <td> {{this.slotName}}</td>
+                <td>{{this.address}}</td>
+                <td>{{this.description}}</td>
+                <td>{{this.price}}</td>
+                <td>{{this.capacity}}</td>
+
+            </tr>
+            {{/each}}
+        </table>
+    </div>
+</form>
 {{/if}}

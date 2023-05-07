@@ -764,4 +764,41 @@ async function submitRating(classId, userId) {
       }
     });
   }
+
+  // timeslot
+  let timeslotInfo = document.getElementById("timeslot-form");
+  if (timeslotInfo) {
+    // get elements
+    let sportIDInput = document.getElementById("sportIDInput");
+    let sportPlaceIDInput = document.getElementById("sportplaceIDInput1");
+    let dateInput = document.getElementById("dateInput");
+
+    const today = new Date();
+    let dd = today.getDate() + 1;
+    let mm = today.getMonth() + 1; //January is 0
+    let yyyy = today.getFullYear();
+    if (dd < 10) dd = "0" + dd;
+    if (mm < 10) mm = "0" + mm;
+    dateInput.setAttribute("min", `${yyyy}-${mm}-${dd}`);
+
+    // submit
+    timeslotInfo.addEventListener("submit", (event) => {
+      // get values     
+      let sportID = sportIDInput.value;
+      let sportPlaceID = sportPlaceIDInput.value;
+      let date = dateInput.value;
+
+      //validation
+      try {
+        sportID = checkString(sportID, "SportID");
+        sportPlaceID = checkString(sportPlaceID, "Sport PlaceID");
+        date = checkDate(date, "Date");
+      } catch (e) {
+        event.preventDefault();
+        if (date) dateInput.value = date;
+        show_error(e);
+      }
+    });
+  }
+
 }

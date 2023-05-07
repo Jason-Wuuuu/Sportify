@@ -29,7 +29,7 @@ const create = async (eventID, userID, name, comment, timestamp) => {
     const newInsertInformation = await commentCollection.insertOne(newComment);
     const newId = newInsertInformation.insertedId;
 
-    return { insertedEvent: true };
+    return { insertedEvent: true, commID: newId.toString() };
   } catch (e) {
     console.log(e);
   }
