@@ -1,4 +1,8 @@
-import { timeSlot, sportPlaces, sports } from "../../config/mongoCollections.js";
+import {
+  timeSlot,
+  sportPlaces,
+  sports,
+} from "../../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import validation from "./helpers.js";
 
@@ -19,7 +23,7 @@ const create = async (
   // availability = validation.checkNumber(availability, "availability");
   // userID = validation.checkId(userID, "userID");
 
-  // add 
+  // add
   let newTimeslot = {
     sportID: sportID,
     sportPlaceID: sportPlaceID,
@@ -27,7 +31,7 @@ const create = async (
     slotID: slotID,
     availability: 0,
     userID: "",
-    bookingType: 0
+    bookingType: 0,
     //pass booking type for ground booking 1, event:2, class:3
   };
   const slotCollection = await timeSlot();
@@ -35,9 +39,8 @@ const create = async (
   const newId = newdata.insertedId;
   // await get(newId.toString());
 
-  return { insertedtimeSlot: true };
+  return { insertedtimeSlot: true, slotID: newId.toString() };
 };
-
 
 const get = async (ID) => {
   ID = validation.checkId(ID, "ID");
@@ -47,20 +50,39 @@ const get = async (ID) => {
   return timeSlot;
 };
 
-
 const getallvenue = async () => {
-
   const VenueCollection = await timeSlot();
   const sportCollection = await sports();
   const sportplaceCollection = await sportPlaces();
   const sport = await sportCollection.find({}).toArray();
   const sportplace = await sportplaceCollection.find({}).toArray();
-  const Venue = await VenueCollection.find({ availability: 1, bookingType: 1 }).toArray();
- 
+  const Venue = await VenueCollection.find({
+    availability: 1,
+    bookingType: 1,
+  }).toArray();
+  // for (let i = 0; i < Venue.length; i++) {
+  //     let item = {};
+  //     if (Venue[i]["slotID"] = 1) {
+  //         item["slotName"] = "12:00AM to 08:00AM";
+  //     }
+  //     else if (Venue[i]["slotID"] = 2) {
+  //         item["slotName"] = "08:00AM to 04:00PM";
+  //     }
+  //     else {
+  //         item["slotName"] = "04:00PM to 12:00AM";
+  //     }
+  //     Venue.push(item);
+  // }
   let arr = [];
 
   for (let i = 0; i < Venue.length; i++) {
-    let item = { "id": Venue[i]._id, "Date": Venue[i].Date, "slotID": Venue[i].slotID, "sportID": Venue[i].sportID, "sportPlaceID": Venue[i].sportPlaceID };
+    let item = {
+      id: Venue[i]._id,
+      Date: Venue[i].Date,
+      slotID: Venue[i].slotID,
+      sportID: Venue[i].sportID,
+      sportPlaceID: Venue[i].sportPlaceID,
+    };
 
     for (let j = 0; j < sport.length; j++) {
       if (sport[j]._id == Venue[i].sportID) {
@@ -72,7 +94,10 @@ const getallvenue = async () => {
   for (let i = 0; i < arr.length; i++) {
     // let item = { "Date": Venue[i].Date, "slotID": Venue[i].slotID, "sportPlaceID": Venue[i].sportPlaceID };
     for (let k = 0; k < sportplace.length; k++) {
-      if (sportplace[k].sportID == arr[i].sportID && sportplace[k]._id == arr[i].sportPlaceID) {
+      if (
+        sportplace[k].sportID == arr[i].sportID &&
+        sportplace[k]._id == arr[i].sportPlaceID
+      ) {
         arr[i]["sportPlaceName"] = sportplace[k].name;
         arr[i]["address"] = sportplace[k].address;
         arr[i]["description"] = sportplace[k].description;
@@ -80,20 +105,17 @@ const getallvenue = async () => {
         arr[i]["capacity"] = sportplace[k].capacity;
         if (arr[i]["slotID"] == 1) {
           arr[i]["slotName"] = "12:00AM to 08:00AM";
-        }
-        else if (arr[i]["slotID"] == 2) {
+        } else if (arr[i]["slotID"] == 2) {
           arr[i]["slotName"] = "08:00AM to 04:00PM";
-        }
-        else {
+        } else {
           arr[i]["slotName"] = "04:00PM to 12:00AM";
         }
       }
     }
-
   }
 
   if (!arr) throw "Error: Venue can not be found";
   return arr;
 };
 
-export { create, get, getallvenue }
+export { create, get, getallvenue };

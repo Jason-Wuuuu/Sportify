@@ -35,6 +35,46 @@ const create = async (name, sportID, address, description, capacity, price) => {
   return { sportPlaceID: sportPlace._id.toString(), insertedSportPlace: true };
 };
 
+const createplaceswiththumbnail = async (
+  name,
+  sportID,
+  address,
+  description,
+  capacity,
+  price,
+  thumbnail,
+  users
+) => {
+  // validation
+  name = validation.checkTitle(name, "Name");
+  sportID = validation.checkId(sportID, "SportID");
+  address = validation.checkString(address, "Address");
+  description = validation.checkString(description, "Description");
+  capacity = validation.checkCapacity(capacity, "Capacity");
+  price = validation.checkPrice(price, "Price");
+
+  // add valid sport place to db
+  let newSportPlace = {
+    name: name,
+    sportID: sportID,
+    address: address,
+    description: description,
+    capacity: capacity,
+    price: price,
+    thumbnail: thumbnail,
+    rating: 0,
+    users: users,
+  };
+
+  const sportPlaceCollection = await sportPlaces();
+  const newInsertInformation = await sportPlaceCollection.insertOne(
+    newSportPlace
+  );
+  const newId = newInsertInformation.insertedId;
+  const sportPlace = await get(newId.toString());
+
+  return { sportPlaceID: sportPlace._id.toString(), insertedSportPlace: true };
+};
 const getAll = async () => {
   const sportPlaceCollection = await sportPlaces();
   const sportPlaceList = await sportPlaceCollection.find({}).toArray();
@@ -42,7 +82,7 @@ const getAll = async () => {
 };
 
 const get = async (sportPlaceID) => {
-  sportPlaceID = validation.checkId(sportPlaceID,"sportPlaceID");
+  sportPlaceID = validation.checkId(sportPlaceID, "sportPlaceID");
   const sportPlaceCollection = await sportPlaces();
   const sportPlace = await sportPlaceCollection.findOne({
     _id: new ObjectId(sportPlaceID),
@@ -52,7 +92,7 @@ const get = async (sportPlaceID) => {
 };
 
 const getSportPlaceFromSport = async (sportID) => {
-  sportID = validation.checkId(sportID,"sportID");
+  sportID = validation.checkId(sportID, "sportID");
   const sportPlaceCollection = await sportPlaces();
   const sportPlace = await sportPlaceCollection.findOne({
     sportID: sportID,
@@ -62,7 +102,7 @@ const getSportPlaceFromSport = async (sportID) => {
 };
 
 const remove = async (sportPlaceID) => {
-  sportPlaceID = validation.checkId(sportPlaceID,"sportPlaceID");
+  sportPlaceID = validation.checkId(sportPlaceID, "sportPlaceID");
   const sportPlaceCollection = await sportPlaces();
   const deletionInfo = await sportPlaceCollection.findOneAndDelete({
     _id: new ObjectId(sportPlaceID),
@@ -84,7 +124,7 @@ const update = async (
   thumbnail
 ) => {
   // validation
-  sportPlaceID = validation.checkId(sportPlaceID,"sportPlaceID");
+  sportPlaceID = validation.checkId(sportPlaceID, "sportPlaceID");
   name = validation.checkTitle(name, "Name");
   sportID = validation.checkId(sportID, "SportID");
   address = validation.checkString(address, "Address");
@@ -119,4 +159,4 @@ const update = async (
 
 // const getAllUsers = async (sportPlaceID) => {};
 
-export { create, getAll, get, remove, update,getSportPlaceFromSport };
+export { create, getAll, get, remove, update, createplaceswiththumbnail };

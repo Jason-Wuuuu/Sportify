@@ -76,7 +76,7 @@ const create = async (
     const newId = newInsertInformation.insertedId;
     await get(newId.toString());
 
-    return { insertedEvent: true };
+    return { insertedEvent: true, eventID: newId.toString() };
   } catch (e) {
     console.log(e);
   }

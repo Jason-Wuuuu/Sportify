@@ -3,10 +3,9 @@
     <a href="/" class="logo">Sportify</a>
 
     <a href="/events/{{sport}}">Events</a>
-    <a href="/myevents">MyEvents</a>
-    <a href="/classes/{{sport}}">Classes</a>
+    <a class="active" href="/classes/{{sport}}">Classes</a>
     <a href="/venue/{{sport}}">Reserve Venue</a>
-    <a href="/profile">Profile</a>
+
     <a href="/logout">Logout</a>
 
   </nav>
@@ -20,6 +19,7 @@
 {{#each classList}}
 <div class="bgcard">
   <div class="info">
+    <div class="bgimg" style="background-image: url({{this.thumbnail}})"></div>
     <ul class="info-list">
       <li class="author">Instructor : {{this.instructor}}</li>
       <li class="date">Date : {{this.date}}</li>
