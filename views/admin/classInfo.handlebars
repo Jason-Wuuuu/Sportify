@@ -27,6 +27,8 @@
     <li>Number of Student: {{n}}</li>
 </ul>
 
+<p>-----------------------------------------------------------------------</p>
+
 <label>Edit Class:</label>
 <button type="button" id="expand">Edit</button>
 
@@ -95,12 +97,14 @@
     <button type="submit" id="remove">Remove</button>
 </form>
 
+<p>-----------------------------------------------------------------------</p>
+
 <h3>List of Student:</h3>
 <div id="userList">
     {{#if n}}
     <ul>
         {{#each students}}
-        <li><a href="/admin/users/{{this}}">{{this}}</a></li>
+        <li><a href="/admin/users/{{this.userId}}">{{this.userFirstName}} {{this.userLastName}}</a></li>
         {{/each}}
     </ul>
     {{else}}

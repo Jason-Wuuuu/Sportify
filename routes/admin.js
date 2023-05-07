@@ -1008,6 +1008,19 @@ router
         sportPlaceInfo.name = "Please reselect";
       }
 
+      let userIdList = classInfo.students;
+      let users = [];
+      for (let userId of userIdList) {
+        const userInfo = await userData.get(userId);
+        users.push(
+          Object({
+            userId: userInfo._id.toString(),
+            userFirstName: userInfo.firstName,
+            userLastName: userInfo.lastName,
+          })
+        );
+      }
+
       const sports = await getSportOptions(sportInfo._id);
       const sportPlaces = await getSportPlaceOptions(sportPlaceInfo._id);
 
@@ -1029,7 +1042,7 @@ router
         thumbnail: classInfo.thumbnail,
         rating: classInfo.rating,
         n: classInfo.students.length,
-        students: classInfo.students,
+        students: users,
         classTitle: classInfo.title,
         sportID: sportInfo._id,
         sportName: sportInfo.name,
@@ -1282,6 +1295,19 @@ router
         sportInfo.name = "Please reselect";
       }
 
+      let userIdList = sportPlace.users;
+      let users = [];
+      for (let userId of userIdList) {
+        const userInfo = await userData.get(userId);
+        users.push(
+          Object({
+            userId: userInfo._id.toString(),
+            userFirstName: userInfo.firstName,
+            userLastName: userInfo.lastName,
+          })
+        );
+      }
+
       const sports = await getSportOptions(sportInfo._id);
       return res.render("admin/sportPlaceInfo", {
         title: "SportPlace Info",
@@ -1297,7 +1323,7 @@ router
         thumbnail: sportPlace.thumbnail,
         rating: sportPlace.rating,
         n: sportPlace.users.length,
-        users: sportPlace.users,
+        users: users,
         sportID: sportInfo._id,
         sportName: sportInfo.name,
         newName: sportPlace.name,
@@ -1427,10 +1453,24 @@ router.route("/events/:id").get(async (req, res) => {
   try {
     let event = await eventData.get(req.params.id);
 
+    let userIdList = event.participants;
+    let users = [];
+    for (let userId of userIdList) {
+      const userInfo = await userData.get(userId);
+      users.push(
+        Object({
+          userId: userInfo._id.toString(),
+          userFirstName: userInfo.firstName,
+          userLastName: userInfo.lastName,
+        })
+      );
+    }
+
     return res.render("admin/eventInfo", {
       title: "Event Info",
       id: event._id,
       name: event.name,
+      thumbnail: event.image,
       userID: event.userID,
       description: event.description,
       sport: event.sport,
@@ -1440,7 +1480,7 @@ router.route("/events/:id").get(async (req, res) => {
       startTime: event.startTime,
       endTime: event.endTime,
       n: event.participants.length,
-      participants: event.participants,
+      participants: users,
     });
   } catch (e) {
     return res.status(404).render("admin/error", {
@@ -1549,48 +1589,41 @@ router
     }
   });
 
-router.route("/allVenue")
-  .get(async (req, res) => {
-   
-    try {
-      let venueList = await slotData.getallvenue();
+router.route("/allVenue").get(async (req, res) => {
+  try {
+    let venueList = await slotData.getallvenue();
 
-      let pData = [];
-      let lData = [];
+    let pData = [];
+    let lData = [];
 
-      for (let i = 0; i < venueList.length; i++) {
-        if (venueList[i].Date >= new Date().toISOString().split('T')[0]
-        ) {
-          lData.push(venueList[i]);
-        }
-        else {
-          pData.push(venueList[i]);
-        }
+    for (let i = 0; i < venueList.length; i++) {
+      if (venueList[i].Date >= new Date().toISOString().split("T")[0]) {
+        lData.push(venueList[i]);
+      } else {
+        pData.push(venueList[i]);
       }
-
-      let empty = lData.length == 0 ? true : false;
-      let emptyold = pData.length == 0 ? true : false;
-
-      return res.render("admin/allVenue", {
-        title: "All Reserved Venue",
-        venueList: lData,
-        venuelistold: pData,
-        hidden: "hidden",
-        isempty: empty,
-        isemptyold: emptyold,
-      });
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
     }
-  });
 
+    let empty = lData.length == 0 ? true : false;
+    let emptyold = pData.length == 0 ? true : false;
 
-router
-.route("/searchSlot")
-.post(async (req, res) => {
+    return res.render("admin/allVenue", {
+      title: "All Reserved Venue",
+      venueList: lData,
+      venuelistold: pData,
+      hidden: "hidden",
+      isempty: empty,
+      isemptyold: emptyold,
+    });
+  } catch (e) {
+    return res.status(400).render("admin/error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
+
+router.route("/searchSlot").post(async (req, res) => {
   let timeSlotInfo = req.body;
   if (!timeSlotInfo || Object.keys(timeSlotInfo).length === 0) {
     return res.status(400).render("admin/error", {
@@ -1598,7 +1631,7 @@ router
       error: "There are no fields in the request body",
     });
   }
-  
+
   applyXSS(timeSlotInfo);
   // validation
   try {
@@ -1614,7 +1647,6 @@ router
       timeSlotInfo.dateInput,
       "date"
     );
-   
   } catch (e) {
     // const sports = await getSportOptions(timeSlotInfo.sportIDInput);
     // const sportPlacetList = await sportPlaceData.getAll();
@@ -1642,17 +1674,17 @@ router
       error: e,
     });
   }
-  
+
   try {
     let slotList = await slotUserData.getslotsByDateSerach();
 
-    let empty = slotList.length == 0 ? true : false;   
+    let empty = slotList.length == 0 ? true : false;
 
     return res.render("admin/timeSlot", {
       //title: "All  Venue",
-      venueListsearch: slotList,      
+      venueListsearch: slotList,
       hidden: "hidden",
-      isempty1: empty,     
+      isempty1: empty,
     });
   } catch (e) {
     return res.status(400).render("admin/error", {

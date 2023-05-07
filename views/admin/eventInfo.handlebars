@@ -6,6 +6,14 @@
 
 <h1>{{name}}</h1>
 
+<div>
+    {{#if thumbnail}}
+    <img class="thumbnail" src="{{thumbnail}}" alt="{{name}}">
+    {{else}}
+    <img class="thumbnail" src="/public/images/No_Image_Available.jpg" alt="{{name}}">
+    {{/if}}
+</div>
+
 <ul>
     <li>UserID: {{userID}}</li>
     <li>Description: {{description}}</li>
@@ -18,17 +26,21 @@
     <li>Number of Participants: {{n}}</li>
 </ul>
 
+<p>-----------------------------------------------------------------------</p>
+
 <form action="/admin/events/remove/{{id}}" method="get">
     <label for="remove">Remove Event:</label>
     <button type="submit" id="remove">Remove</button>
 </form>
+
+<p>-----------------------------------------------------------------------</p>
 
 <h3>List of Participants:</h3>
 <div id="userList">
     {{#if n}}
     <ul>
         {{#each participants}}
-        <li><a href="/admin/users/{{this}}">{{this}}</a></li>
+        <li><a href="/admin/users/{{this.userId}}">{{this.userFirstName}} {{this.userLastName}}</a></li>
         {{/each}}
     </ul>
     {{else}}
