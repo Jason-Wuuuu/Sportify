@@ -20,9 +20,28 @@
 
 <h3>List of Events:</h3>
 <div id="eventList">
+    {{#if events}}
     <ul>
         {{#each events}}
         <li><a href="/admin/events/{{eventID}}">{{eventName}}</a></li>
         {{/each}}
     </ul>
+    {{else}}
+    <p>No events...</p>
+    {{/if}}
+</div>
+
+<p>-----------------------------------------------------------------------</p>
+
+<h3>List of Passed Events:</h3>
+<div id="passedEventList">
+    {{#if passedEvents}}
+    <ul>
+        {{#each passedEvents}}
+        <li><a href="/admin/events/{{eventID}}">{{eventName}}</a></li>
+        {{/each}}
+    </ul>
+    {{else}}
+    <p>No passed events...</p>
+    {{/if}}
 </div>

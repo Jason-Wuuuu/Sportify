@@ -303,7 +303,7 @@ for (let x = 0; x < 4; x++) {
     );
     capacity = capacity.toString();
     let date = faker.date
-      .between("2023-05-07T00:00:00.000Z", "2023-05-20T00:00:00.000Z")
+      .between("2023-05-20T00:00:00.000Z", "2023-05-30T00:00:00.000Z")
       .toISOString()
       .split("T")[0];
 
@@ -401,7 +401,7 @@ for (let x = 0; x < 4; x++) {
     );
     capacity = capacity.toString();
     let date = faker.date
-      .between("2023-05-07T00:00:00.000Z", "2023-05-20T00:00:00.000Z")
+      .between("2023-05-20T00:00:00.000Z", "2023-05-30T00:00:00.000Z")
       .toISOString()
       .split("T")[0];
 
