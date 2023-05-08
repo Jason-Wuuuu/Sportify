@@ -399,7 +399,7 @@ router.route("/myclasses/update_rating").post(async (req, res) => {
     let userID = req.body.userId;
     let rating = xss(req.body.rating);
     await classesData.rate(classID, userID, rating);
-    return res.redirect("/myclasses");
+    return res.redirect(`/myclasses/${classID}`);
   } catch (e) {
     return res.status(404).render("error", {
       title: "Error",
