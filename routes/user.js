@@ -1258,7 +1258,7 @@ router.route("/venueInfo/:id").get(async (req, res) => {
     let venuedetails = await sportsplaceData.getSportPlace(sportplaceid);
     return res.render("venueInfo", {
       venueinfo: venuedetails,
-      title: "Reserve Venue",
+      title: "Venue",
     });
   } catch (e) {
     return res.status(404).render("error", {
