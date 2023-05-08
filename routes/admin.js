@@ -12,6 +12,7 @@ import xss from "xss";
 import * as slotData from "../data/admin/timeSlot.js";
 import { sendEmail } from "../data/admin/mail.js";
 import * as slotUserData from "../data/user/venue.js";
+import * as instructorData from "../data/admin/instructor.js";
 
 const router = Router();
 
@@ -1773,6 +1774,61 @@ router.route("/searchSlot").post(async (req, res) => {
     });
   }
 });
+
+router
+  .route("/instructor")
+  .get(async (req, res) => {
+    const sports = await getSportOptions();
+    const instructorList = await instructorData.getall();
+
+    return res.render("admin/instructor", {
+      title: "Instructor",
+      hidden: "hidden",
+      n: instructorList.length,
+      sports: sports,    
+      instructor: instructorList
+    });
+  })
+  .post(async (req, res) => {
+    let instructorInfo = req.body;
+    if (!instructorInfo || Object.keys(instructorInfo).length === 0) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+    applyXSS(instructorInfo);
+    // validation
+    try {
+      instructorInfo.sportIDInput = validation.checkId(
+        instructorInfo.sportIDInput,
+        "sport"
+      );     
+      instructorInfo.nameInput = validation.checkString(
+        instructorInfo.nameInput,
+        "Name"
+      );     
+    } catch (e) {     
+      return res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      const newdata = await instructorData.create(
+        instructorInfo.sportIDInput,
+        instructorInfo.nameInput
+      );
+      if (!newdata.insertedInstructor) throw "Internal Server Error";
+      return res.redirect("instructor");
+    } catch (e) {
+      return res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+
+  });
 
 // all other admin urls
 router.route("*").get(async (req, res) => {

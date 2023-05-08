@@ -23,3 +23,4 @@ export const classes = getCollectionFn("classes");
 export const timeSlot = getCollectionFn("timeSlot");
 export const comments = getCollectionFn("comments");
 export const ratingVenue = getCollectionFn("ratingVenue");
+export const instructor = getCollectionFn("instructor");

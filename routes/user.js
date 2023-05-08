@@ -1590,6 +1590,7 @@ router.route("/updateRating/:id").post(async (req, res) => {
       title: "Error",
       error: e,
     });
+
   }
   try {
     await userData.get(req.session.user.userID);
