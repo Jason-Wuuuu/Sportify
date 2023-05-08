@@ -404,14 +404,29 @@ router
     const sports = await getSportOptions();
     const sportPlaces = await getSportPlaceOptions();
     const classList = await classData.getAll();
+
     let classes = [];
+    let passedClasses = [];
+
     if (classList) {
-      classes = classList.map((class_) =>
-        Object({
-          classID: class_._id,
-          className: class_.title,
-        })
-      );
+      classList.forEach((classInfo) => {
+        const classDate = new Date(`${classInfo.date}:${classInfo.endTime}`);
+        if (classDate < new Date()) {
+          passedClasses.push(
+            Object({
+              classID: classInfo._id,
+              className: classInfo.title,
+            })
+          );
+        } else {
+          classes.push(
+            Object({
+              classID: classInfo._id,
+              className: classInfo.title,
+            })
+          );
+        }
+      });
     }
 
     return res.render("admin/classes", {
@@ -421,6 +436,7 @@ router
       sports: sports,
       sportPlaces: sportPlaces,
       classes: classes,
+      passedClasses: passedClasses,
     });
   })
   .post(async (req, res) => {
@@ -694,17 +710,36 @@ router
 
 router.route("/events").get(async (req, res) => {
   const eventList = await eventData.getAll();
-  const events = eventList.map((event) =>
-    Object({
-      eventID: event._id,
-      eventName: event.name,
-    })
-  );
+
+  let events = [];
+  let passedEvents = [];
+
+  if (eventList) {
+    eventList.forEach((event) => {
+      const eventDate = new Date(`${event.date}:${event.endTime}`);
+      if (eventDate < new Date()) {
+        passedEvents.push(
+          Object({
+            eventID: event._id,
+            eventName: event.name,
+          })
+        );
+      } else {
+        events.push(
+          Object({
+            eventID: event._id,
+            eventName: event.name,
+          })
+        );
+      }
+    });
+  }
 
   return res.render("admin/events", {
     title: "Events",
     n: events.length,
     events: events,
+    passedEvents: passedEvents,
   });
 });
 

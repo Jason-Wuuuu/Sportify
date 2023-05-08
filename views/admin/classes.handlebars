@@ -122,9 +122,28 @@
 
 <h3>List of Classes:</h3>
 <div id="classList">
+    {{#if classes}}
     <ul>
         {{#each classes}}
         <li><a href="/admin/classes/{{classID}}">{{className}}</a></li>
         {{/each}}
     </ul>
+    {{else}}
+    <p>No classes...</p>
+    {{/if}}
+</div>
+
+<p>-----------------------------------------------------------------------</p>
+
+<h3>List of Passed Classes:</h3>
+<div id="passedClassList">
+    {{#if passedClasses}}
+    <ul>
+        {{#each passedClasses}}
+        <li><a href="/admin/classes/{{classID}}">{{className}}</a></li>
+        {{/each}}
+    </ul>
+    {{else}}
+    <p>No passed classes...</p>
+    {{/if}}
 </div>
