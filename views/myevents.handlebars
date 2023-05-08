@@ -20,6 +20,7 @@
       <th>Sport</th>
       <th>Venue</th>
       <th>Date</th>
+      <th>Chat</th>
       <th>Quit</th>
     </tr>
     <tr>
@@ -27,6 +28,11 @@
       <td>{{this.sport}}</td>
       <td>{{this.sportPlace}}</td>
       <td>{{this.date}}</td>
+      <td>
+        <a class="manageevent" href="/commentbox/{{this._id}}" style="color: #5b00a2;">
+          Chat
+        </a>
+      </td>
       <td>
         <a class="manageevent" href="/events/{{this._id}}/deregisteruser/{{this.tempUid}}" style="color: #830000;">
           Quit
@@ -37,13 +43,13 @@
   {{/each}}
 </div>
 {{else}}
-<p>Sorry! You have no joined events yet.</p>
+<p>Sorry! You have not joined any events yet.</p>
 {{/if}}
 
 <br>
 <h1 class="centertitle">My Created Events:</h1>
 {{#if isempty}}
-<p>Sorry! You have not created events yet.</p>
+<p>Sorry! You have not created any events yet.</p>
 {{else}}
 <div class="centertitle">
   <p>==============================================================================</p>

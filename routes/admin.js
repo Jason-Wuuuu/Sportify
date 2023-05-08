@@ -221,7 +221,7 @@ router
   .route("/register")
   .get(async (req, res) => {
     return res.render("admin/register", {
-      title: "Register",
+      title: "Admin Register",
       genderOptions: getGenderOptions(),
     });
   })
@@ -323,13 +323,13 @@ router
   .get(async (req, res) => {
     if (req.session.user) {
       return res.render("admin/login", {
-        title: "Login",
+        title: "Admin Login",
         hidden: "",
         error:
           "Seems like you have already logged in as an user. \nMake sure to login as an admin to access the rest of the admin pages.",
       });
     }
-    return res.render("admin/login", { title: "Login" });
+    return res.render("admin/login", { title: "Admin Login" });
   })
   .post(async (req, res) => {
     const admin = req.body;
