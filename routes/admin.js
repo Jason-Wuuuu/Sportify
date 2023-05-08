@@ -1008,6 +1008,23 @@ router
         sportPlaceInfo.name = "Please reselect";
       }
 
+      const userIdList = classInfo.students;
+      const users = [];
+      if (userIdList) {
+        for (let userId of userIdList) {
+          const user = await userData.get(userId);
+          users.push(
+            Object({
+              userId: user._id,
+              userFirstName: user.firstName,
+              userLastName: user.lastName,
+            })
+          );
+        }
+      }
+
+      if (!classInfo.rating) classInfo.rating = "NA";
+
       const sports = await getSportOptions(sportInfo._id);
       const sportPlaces = await getSportPlaceOptions(sportPlaceInfo._id);
 
@@ -1029,7 +1046,7 @@ router
         thumbnail: classInfo.thumbnail,
         rating: classInfo.rating,
         n: classInfo.students.length,
-        students: classInfo.students,
+        students: users,
         classTitle: classInfo.title,
         sportID: sportInfo._id,
         sportName: sportInfo.name,
@@ -1299,6 +1316,21 @@ router
         sportInfo.name = "Please reselect";
       }
 
+      const userIdList = sportPlace.users;
+      const users = [];
+      if (userIdList) {
+        for (let userId of userIdList) {
+          const user = await userData.get(userId);
+          users.push(
+            Object({
+              userId: user._id,
+              userFirstName: user.firstName,
+              userLastName: user.lastName,
+            })
+          );
+        }
+      }
+
       const sports = await getSportOptions(sportInfo._id);
       return res.render("admin/sportPlaceInfo", {
         title: "SportPlace Info",
@@ -1314,7 +1346,7 @@ router
         thumbnail: sportPlace.thumbnail,
         rating: sportPlace.rating,
         n: sportPlace.users.length,
-        users: sportPlace.users,
+        users: users,
         sportID: sportInfo._id,
         sportName: sportInfo.name,
         newName: sportPlace.name,
@@ -1444,6 +1476,21 @@ router.route("/events/:id").get(async (req, res) => {
   try {
     let event = await eventData.get(req.params.id);
 
+    const userIdList = event.participants;
+    const users = [];
+    if (userIdList) {
+      for (let userId of userIdList) {
+        const user = await userData.get(userId);
+        users.push(
+          Object({
+            userId: user._id,
+            userFirstName: user.firstName,
+            userLastName: user.lastName,
+          })
+        );
+      }
+    }
+
     return res.render("admin/eventInfo", {
       title: "Event Info",
       id: event._id,
@@ -1457,7 +1504,7 @@ router.route("/events/:id").get(async (req, res) => {
       startTime: event.startTime,
       endTime: event.endTime,
       n: event.participants.length,
-      participants: event.participants,
+      participants: users,
       thumbnail: event.image,
     });
   } catch (e) {
@@ -1569,132 +1616,128 @@ router
     }
   });
 
-router.route("/allVenue")
-  .get(async (req, res) => {
+router.route("/allVenue").get(async (req, res) => {
+  try {
+    let venueList = await slotData.getallvenue();
 
-    try {
-      let venueList = await slotData.getallvenue();
+    let pData = [];
+    let lData = [];
 
-      let pData = [];
-      let lData = [];
-
-      for (let i = 0; i < venueList.length; i++) {
-        if (venueList[i].Date >= new Date().toISOString().split('T')[0]
-        ) {
-          lData.push(venueList[i]);
-        }
-        else {
-          pData.push(venueList[i]);
-        }
+    for (let i = 0; i < venueList.length; i++) {
+      if (venueList[i].Date >= new Date().toISOString().split("T")[0]) {
+        lData.push(venueList[i]);
+      } else {
+        pData.push(venueList[i]);
       }
-
-      let empty = lData.length == 0 ? true : false;
-      let emptyold = pData.length == 0 ? true : false;
-
-      return res.render("admin/allVenue", {
-        title: "All Reserved Venue",
-        venueList: lData,
-        venuelistold: pData,
-        hidden: "hidden",
-        isempty: empty,
-        isemptyold: emptyold,
-      });
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-  });
-
-router
-  .route("/searchSlot")
-  .post(async (req, res) => {
-    let timeSlotInfo = req.body;
-    if (!timeSlotInfo || Object.keys(timeSlotInfo).length === 0) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: "There are no fields in the request body",
-      });
     }
 
-    applyXSS(timeSlotInfo);
-    // validation
-    try {
-      timeSlotInfo.sportIDInputS = validation.checkId(
-        timeSlotInfo.sportIDInputS,
-        "sportID"
-      );
-      timeSlotInfo.sportplaceIDInput1s = validation.checkId(
-        timeSlotInfo.sportplaceIDInput1s,
-        "sportPlaceID"
-      );
-      timeSlotInfo.dateInputs = validation.checkString(
-        timeSlotInfo.dateInputs,
-        "date"
-      );
+    let empty = lData.length == 0 ? true : false;
+    let emptyold = pData.length == 0 ? true : false;
 
-    } catch (e) {
-      // const sports = await getSportOptions(timeSlotInfo.sportIDInput);
-      // const sportPlacetList = await sportPlaceData.getAll();
-      // const sportPlaces = sportPlacetList.map((sportPlace) =>
-      //   Object({
-      //     sportPlaceID: sportPlace._id,
-      //     sportPlaceName: sportPlace.name,
-      //   })
-      // );
+    return res.render("admin/allVenue", {
+      title: "All Reserved Venue",
+      venueList: lData,
+      venuelistold: pData,
+      hidden: "hidden",
+      isempty: empty,
+      isemptyold: emptyold,
+    });
+  } catch (e) {
+    return res.status(400).render("admin/error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
 
-      // return res.status(400).render("admin/timeSlot", {
-      //   title: "Add TimeSlots",
-      //   hidden: "",
-      //   error: e,
-      //   sports: sports,
-      //   sportPlaces: sportPlaces,
-      //   name: timeSlotInfo.sportIDInput,
-      //   address: timeSlotInfo.sportplaceIDInput,
-      //   description: timeSlotInfo.dateInput,
-      //   capacity: timeSlotInfo.slotInput,
+router.route("/searchSlot").post(async (req, res) => {
+  let timeSlotInfo = req.body;
+  if (!timeSlotInfo || Object.keys(timeSlotInfo).length === 0) {
+    return res.status(400).render("admin/error", {
+      title: "Error",
+      error: "There are no fields in the request body",
+    });
+  }
 
-      // });
-      return res.status(500).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
+  applyXSS(timeSlotInfo);
+  // validation
+  try {
+    timeSlotInfo.sportIDInputS = validation.checkId(
+      timeSlotInfo.sportIDInputS,
+      "sportID"
+    );
+    timeSlotInfo.sportplaceIDInput1s = validation.checkId(
+      timeSlotInfo.sportplaceIDInput1s,
+      "sportPlaceID"
+    );
+    timeSlotInfo.dateInputs = validation.checkString(
+      timeSlotInfo.dateInputs,
+      "date"
+    );
+  } catch (e) {
+    // const sports = await getSportOptions(timeSlotInfo.sportIDInput);
+    // const sportPlacetList = await sportPlaceData.getAll();
+    // const sportPlaces = sportPlacetList.map((sportPlace) =>
+    //   Object({
+    //     sportPlaceID: sportPlace._id,
+    //     sportPlaceName: sportPlace.name,
+    //   })
+    // );
 
-    try {
-      const sportssearch = await getSportOptions();
-      const sportPlacetListsearch = await sportPlaceData.getAll();
-      const sportPlacesSearch = sportPlacetListsearch.map((sportPlace) =>
-        Object({
-          sportPlaceID: sportPlace._id,
-          sportPlaceName: sportPlace.name,
-          sportId1: sportPlace.sportID,
-        })
-      );
-      let slotList = await slotUserData.getslotsByDateSerach(timeSlotInfo.sportIDInputS, timeSlotInfo.sportplaceIDInput1s, timeSlotInfo.dateInputs);
+    // return res.status(400).render("admin/timeSlot", {
+    //   title: "Add TimeSlots",
+    //   hidden: "",
+    //   error: e,
+    //   sports: sports,
+    //   sportPlaces: sportPlaces,
+    //   name: timeSlotInfo.sportIDInput,
+    //   address: timeSlotInfo.sportplaceIDInput,
+    //   description: timeSlotInfo.dateInput,
+    //   capacity: timeSlotInfo.slotInput,
 
-      let empty = slotList.length == 0 ? true : false;
+    // });
+    return res.status(500).render("admin/error", {
+      title: "Error",
+      error: e,
+    });
+  }
 
-      return res.render("admin/timeSlot", {
-        title: "All TimeSlot",
-        sportsearchs: sportssearch,
-        sportPlacessearches: sportPlacesSearch,
-        venueListsearch: slotList,
-        hidden: "hidden",
-        isempty1: empty,
-        sports: sportssearch,
-        sportPlaces: sportPlacesSearch,
-        // datesearch: timeSlotInfo.dateInput,
+  try {
+    const sportssearch = await getSportOptions();
+    const sportPlacetListsearch = await sportPlaceData.getAll();
+    const sportPlacesSearch = sportPlacetListsearch.map((sportPlace) =>
+      Object({
+        sportPlaceID: sportPlace._id,
+        sportPlaceName: sportPlace.name,
+        sportId1: sportPlace.sportID,
+      })
+    );
+    let slotList = await slotUserData.getslotsByDateSerach(
+      timeSlotInfo.sportIDInputS,
+      timeSlotInfo.sportplaceIDInput1s,
+      timeSlotInfo.dateInputs
+    );
 
-      });
-    } catch (e) {
-      return res.status(400).render("admin/error", {
-        title: "Error",
-        error: e,
-      });
-    }
-  });
+    let empty = slotList.length == 0 ? true : false;
+
+    return res.render("admin/timeSlot", {
+      title: "All TimeSlot",
+      sportsearchs: sportssearch,
+      sportPlacessearches: sportPlacesSearch,
+      venueListsearch: slotList,
+      hidden: "hidden",
+      isempty1: empty,
+      sports: sportssearch,
+      sportPlaces: sportPlacesSearch,
+      // datesearch: timeSlotInfo.dateInput,
+    });
+  } catch (e) {
+    return res.status(400).render("admin/error", {
+      title: "Error",
+      error: e,
+    });
+  }
+});
 
 // all other admin urls
 router.route("*").get(async (req, res) => {

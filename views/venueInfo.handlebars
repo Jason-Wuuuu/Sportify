@@ -1,7 +1,6 @@
 <header>
     <nav class="navbar">
         <a href="/venue/{{venueinfo.sportname}}">Back</a>
-        <a href="/logout">Logout</a>
     </nav>
 </header>
 
@@ -34,9 +33,9 @@
         <input type="hidden" id="sportIDh" name="sportIDh" {{venueinfo.sportID}}> --}}
         <label for="dateInput">Select Date:</label>
         <br>
-        <input type="date" id="dateInput" name="dateInput" value="{{date}}" >
+        <input type="date" id="dateInput" name="dateInput" value="{{date}}">
         <br>
-        <input type="submit" value="Get Slots" >
+        <input type="submit" value="Get Slots">
         {{!--
         <a href="/venueGetslot/{{venueinfo._id}}/date/{{dateInput}}">Get Slots</a> --}}
 
@@ -45,7 +44,7 @@
 
     </form>
     <form action="/venueBook" method="post" id="VenueInfo-form2">
-      
+
         <label for="slotInput">Select Slot:</label>
         <select name="slotInput" id="slotInput">
             <option value="">-</option>
@@ -56,7 +55,7 @@
             {{/each}}
         </select>
         <br>
-        <input type="submit" value="Book Slot" >
-<div id="error" class="error" {{hidden}}>{{error}}</div>
+        <input type="submit" value="Book Slot">
+        <div id="error" class="error" {{hidden}}>{{error}}</div>
     </form>
 </div>

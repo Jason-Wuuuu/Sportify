@@ -176,6 +176,13 @@ app.use("/admin/logout", (req, res, next) => {
   next();
 });
 
+app.use("/error", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  next();
+});
+
 // middleware for users
 app.use("/events/:sports", (req, res, next) => {
   if (!req.session.user && !req.session.admin) {
@@ -261,6 +268,20 @@ app.use("/register", (req, res, next) => {
   next();
 });
 
+app.use("/logout", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
+app.use("/error", (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+});
+
 app.use("/profile", (req, res, next) => {
   if (!req.session.user) {
     return res.redirect("/login");
@@ -314,7 +335,7 @@ app.use("/deleteVenue/:id/del/:date", (req, res, next) => {
 });
 
 app.use("/admin/allVenue", (req, res, next) => {
-   if (!req.session.admin) {
+  if (!req.session.admin) {
     return res.redirect("/admin/login");
   }
   next();
@@ -324,7 +345,7 @@ app.use("/updateRating/:id", (req, res, next) => {
   if (!req.session.user) {
     return res.redirect("/");
   }
-   next();
+  next();
 });
 
 app.use("/admin/searchSlot", (req, res, next) => {
