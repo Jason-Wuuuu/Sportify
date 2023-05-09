@@ -9,9 +9,8 @@
 
 <form action="/addevent/{{sport}}" method="post" id="addeventform">
 
-  <label for="owner">Event by User:</label><br />
-  <input type="text" id="owner" name="owner" value="{{userID}}" readonly />
-  <br />
+  <label for="owner" hidden>Event by User:</label><br />
+  <input type="text" id="owner" name="owner" value="{{userID}} " readonly hidden />
 
   <label for="eventname">Enter Event Name Here:</label><br />
   <input type="text" id="eventname" name="eventname" value="{{name}}" required />
