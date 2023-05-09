@@ -7,6 +7,7 @@ import * as instructors from "./data/admin/instructor.js";
 import * as sportPlaces from "./data/admin/sportPlaces.js";
 import * as timeSlot from "./data/admin/timeSlot.js";
 import * as comments from "./data/user/comments.js";
+import * as instructor from "./data/admin/instructor.js";
 
 import { dbConnection, closeConnection } from "./config/mongoConnection.js";
 
@@ -237,6 +238,14 @@ try {
 
 console.log("Sports Data Added!\n");
 
+try {
+  await instructor.createinstructorseed();
+}
+catch (e) {
+  console.log(e);
+}
+console.log("Instructor Data Added!\n");
+
 for (let x = 0; x < 4; x++) {
   let sport_id = sportID[x];
   let placesarr = [];
@@ -305,11 +314,13 @@ console.log("\nInstructors Data Added for first 4 Sports!");
 
 for (let x = 0; x < 4; x++) {
   let sport_id = sportID[x];
+  //const instructorCollection = await instructor();  
+    const instructors = await instructor.getdetailsforclassSeed(sport_id);  
+  //const instructors = await instructorCollection.findOne({ sportID: sport_id });
   let classarr = [];
   for (let i = 0; i < 5; i++) {
-    let instructor_id = instructorID[x][i];
-    const instructorInfo = await instructors.get(instructor_id);
-    let title = instructorInfo.name + "'s Class";
+    let instructor = faker.name.fullName();
+    let title = instructors.name + "'s Class";
     let splaceID = sportPlacesID[x][i];
     let capacity = Math.floor(Math.random() * 10) + 1;
 
@@ -350,7 +361,7 @@ for (let x = 0; x < 4; x++) {
         sport_id,
         splaceID,
         capacity,
-        instructorInfo._id.toString(),
+        instructors._id.toString(),
         price,
         date,
         startTime,
@@ -500,6 +511,7 @@ for (let i = 0; i < 4; i++) {
   }
 }
 console.log("\nComments added for all the events of first 4 Sports!");
+
 
 await closeConnection();
 console.log("\nDone!");

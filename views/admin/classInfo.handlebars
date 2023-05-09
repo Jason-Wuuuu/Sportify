@@ -4,31 +4,63 @@
     </nav>
 </header>
 <script>
+    //if (window.location.href.substring(window.location.href.lastIndexOf('/') + 1) != '') {
+
+    //}
     function filterplaces(id) {
-        //  alert(sportPlaces[0]["sportPlaceName"]);
-        //var temp = [];
+
         var sportsPlacesArr = document.getElementById("sportplaceIDInput");
         var sportsPlacesArrFiltered = document.getElementById("sportplaceIDInput1");
-        for (var i = 0; i < sportsPlacesArrFiltered.options.length; i++) {
+        var len = sportsPlacesArrFiltered.options.length - 1;
+        for (var i = len; i >= 0; i--) {
             if (sportsPlacesArrFiltered.options[i].innerText != '-') {
                 sportsPlacesArrFiltered.remove(i);
             }
         }
-        //  debugger;
+
+
         for (var i = 0; i < sportsPlacesArr.options.length; i++) {
             if (id == sportsPlacesArr.options[i].className) {
-                //temp.push({ "Id": sportsPlacesArr.options[i].value, "Name": sportsPlacesArr.options[i].innerText });
+
                 var myoption = document.createElement('option');
                 myoption.value = sportsPlacesArr.options[i].value;
                 myoption.innerHTML = sportsPlacesArr.options[i].innerText;
                 sportsPlacesArrFiltered.appendChild(myoption);
             }
         }
+<<<<<<< Updated upstream
         //console.log(temp);
         //sportsPlacesArrFiltered.options = temp;
         // for(var i=0;i<)
 
+=======
+        var instructorsArr = document.getElementById("instructorInput");
+        var instructorsArrFiltered = document.getElementById("instructorInput1");
+        for (var i = instructorsArrFiltered.options.length - 1; i >= 0; i--) {
+            if (instructorsArrFiltered.options[i].innerText != '-') {
+                instructorsArrFiltered.remove(i);
+            }
+        }
+
+        for (var i = 0; i < instructorsArr.options.length; i++) {
+            if (id == instructorsArr.options[i].className) {
+                var myoption = document.createElement('option');
+                myoption.value = instructorsArr.options[i].value;
+                myoption.innerHTML = instructorsArr.options[i].innerText;
+                instructorsArrFiltered.appendChild(myoption);
+            }
+        }
+>>>>>>> Stashed changes
     }
+    var e = document.getElementById('expand');
+    e.attachEvent('onclick', function () {
+        filterplaces(window.location.href.substring(window.location.href.lastIndexOf('/') + 1));
+    });
+    document.addEventListener("DOMContentLoaded", function (event) {
+        // Your code to run since DOM is loaded and ready
+
+    });
+
 </script>
 <h1>{{name}}</h1>
 
@@ -90,15 +122,22 @@
             <option value="{{sportPlaceID}}" class="{{sportId1}}">{{name}}</option>
             {{/each}}
         </select>
-        <select id="sportplaceIDInput1" name="sportplaceIDInput1">
-            <option value="{{sportPlaceID}}">{{sportPlaceName}}</option>
-            <option value="">-</option>
 
+        <select id="sportplaceIDInput1" name="sportplaceIDInput1">
+            {{!-- <option value="{{sportPlaceID}}" class="">{{sportPlaceName}}</option> --}}
+            <option value="">-</option>
+            {{#each sportPlaces}}
+            <option value="{{sportPlaceID}}" class="{{sportId1}}">{{name}}</option>
+            {{/each}}
         </select>
         <br>
+<<<<<<< Updated upstream
 
         <label>Instructor:</label>
         <br>
+=======
+        <label for="instructorInput">Instructor:</label><br>
+>>>>>>> Stashed changes
         <select id="instructorInput" name="instructorInput" hidden>
             <option value="">-</option>
             {{#each instructors}}
@@ -108,7 +147,9 @@
         <select id="instructorInput1" name="instructorInput1">
             <option value="{{instructorID}}">{{instructorName}}</option>
             <option value="">-</option>
-
+            {{#each instructors}}
+            <option value="{{instructorID}}" class="{{sportId1}}">{{instructorName}}</option>
+            {{/each}}
         </select>
         <br>
 

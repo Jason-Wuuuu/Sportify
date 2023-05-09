@@ -31,29 +31,34 @@ const create = async (sportID, name) => {
   return { insertedInstructor: true };
 };
 
-const createdb = async (sportID, name) => {
-  // validation
-  sportID = validation.checkId(sportID, "sport");
-  name = validation.checkString(name, "Name");
 
+const createinstructorseed = async () => {
+
+  // add valid sport to db  
+
+  const sportCollection = await sports();
   const instructorCollection = await instructor();
-  const checkname = await instructorCollection.findOne({
-    sportID: sportID,
-    name: name,
-  });
-  if (checkname) throw "Error: can not enter duplicate instructor.";
+  const list = await sportCollection.find({}).toArray();
+  for (let i = 0; i < list.length; i++) {
+    let newSport = {
+      sportID: list[i]._id.toString(),
+      name: 'Instructor' + (i + 1),
+    };
+    const newdata = await instructorCollection.insertOne(newSport);
+  }
+  // const newId = newInsertInformation.insertedId;
+  // const sport = await get(newId.toString());
 
-  // add
-  let newInstructor = {
-    sportID: sportID,
-    name: name,
-  };
+  return { insertedSport: true };
+};
 
-  const newdata = await instructorCollection.insertOne(newInstructor);
-  const newId = newdata.insertedId;
-  // await get(newId.toString());
 
-  return { instructorId: newId.toString(), insertedInstructor: true };
+const getdetailsforclassSeed = async (ID) => {
+  ID = validation.checkId(ID, "ID");
+  const instructorCollection = await instructor();
+  const instructors = await instructorCollection.findOne({ sportID: ID });
+  if (!instructors) throw "Error: instructor can not be found";
+  return instructors;
 };
 
 const get = async (ID) => {
@@ -108,4 +113,4 @@ const remove = async (id) => {
   return { deleted: true };
 };
 
-export { create, createdb, get, getall, update, remove };
+export { create, get, getall, update, remove, createinstructorseed, getdetailsforclassSeed };

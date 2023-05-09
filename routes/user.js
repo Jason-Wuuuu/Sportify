@@ -18,7 +18,7 @@ import * as instructorData from "../data/admin/instructor.js";
 
 import xss from "xss";
 import { sendEmail } from "../data/admin/mail.js";
-import { instructor } from "../config/mongoCollections.js";
+import * as instructorData from "../data/admin/instructor.js";
 
 const router = Router();
 
@@ -593,6 +593,7 @@ router
       let sportObj = await sportsData.getByName(sportName);
       let sportObjectId = sportObj._id.toString();
       let classList = await classesData.getClassesBySport(sportObjectId);
+      let instructorList = await instructorData.getall();
 
       let classes = [];
 
@@ -607,16 +608,44 @@ router
             classInfo.instructor = "NA";
           }
           const classDate = new Date(classInfo.date);
-          if (classDate >= new Date()) {
+          if (classInfo.date >= new Date().toISOString().split("T")[0]) {             
             classes.push(classInfo);
           }
         }
       }
 
+      let arr = [];
+      for (let i = 0; i < classes.length; i++) {
+        let item = {
+          _id: classes[i]._id,
+          title: classes[i].title,
+          capacity: classes[i].capacity,
+          sportID: classes[i].sportID,
+          sportPlaceID: classes[i].sportPlaceID,
+          instructor: classes[i].instructor,
+          price: classes[i].price,
+          date: classes[i].date,
+          startTime: classes[i].startTime,
+          endTime: classes[i].endTime,
+          thumbnail: classes[i].thumbnail,
+          rating: classes[i].rating,
+          students: classes[i].students,
+          ratingProvider: classes[i].ratingProvider,
+        };
+    
+        for (let j = 0; j < instructorList.length; j++) {
+          if (instructorList[j]._id == classes[i].instructor) {
+            item["instructorName"] = instructorList[j].name;
+          }
+        }
+        arr.push(item);
+      }
+
+    //  if (venueList[i].Date > new Date().toISOString().split("T")[0]) {
       return res.render("classes", {
         title: sportObj.name,
         sport: sportObj.name,
-        classList: classes,
+        classList: arr,
       });
     } catch (e) {
       return res.status(404).render("error", {
