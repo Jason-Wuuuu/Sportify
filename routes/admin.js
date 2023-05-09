@@ -1785,7 +1785,7 @@ router
       title: "Instructor",
       hidden: "hidden",
       n: instructorList.length,
-      sports: sports,    
+      sports: sports,
       instructor: instructorList
     });
   })
@@ -1803,12 +1803,12 @@ router
       instructorInfo.sportIDInput = validation.checkId(
         instructorInfo.sportIDInput,
         "sport"
-      );     
+      );
       instructorInfo.nameInput = validation.checkString(
         instructorInfo.nameInput,
         "Name"
-      );     
-    } catch (e) {     
+      );
+    } catch (e) {
       return res.status(500).render("admin/error", {
         title: "Error",
         error: e,
@@ -1828,6 +1828,154 @@ router
       });
     }
 
+  });
+
+router
+  .route("/instructor/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let selectedinstructor = await instructorData.get(req.params.id);
+      let sportInfo = {};
+      try {
+        sportInfo = await sportData.get(selectedinstructor.sportID);
+      } catch (e) {
+        sportInfo.name = "Please reselect";
+      }
+
+      const sports = await getSportOptions(sportInfo._id);
+      return res.render("admin/instructorInfo", {
+        title: "Instructor Info",
+        hidden: "hidden",
+        id: selectedinstructor._id,
+        sports: sports,
+        name: selectedinstructor.name,
+        sport: sportInfo.name,
+        sportID: sportInfo._id,
+        sportName: sportInfo.name,
+        newName: selectedinstructor.name,
+      });
+    } catch (e) {
+      return res.status(404).render("admin/error", {
+        title: "Error",
+        error: `${e}`,
+        back: "instructor",
+      });
+    }
+  })
+  .put(async (req, res) => {
+    let instructorInfo = req.body;
+    if (!instructorInfo || Object.keys(instructorInfo).length === 0) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+
+    // XSS
+    applyXSS(instructorInfo);
+
+    // check id
+    let instructorid = req.params.id;
+    instructorid = validation.checkId(instructorid, "instructor");
+
+    // validation
+    try {
+      instructorInfo.nameInput = validation.checkTitle(
+        instructorInfo.nameInput,
+        "Name"
+      );
+      instructorInfo.sportIDInput = validation.checkId(
+        instructorInfo.sportIDInput,
+        "SportID"
+      );
+    } catch (e) {
+      const sports = await getSportOptions();
+
+      let originstructor = await instructorData.get(req.params.id);
+
+      return res.render("admin/instructorInfo", {
+        title: "instructor Info",
+        hidden: "",
+        error: e,
+        id: originstructor._id,
+        sports: sports,
+        name: originstructor.name,
+        sport: originstructor.sport,
+        newName: instructorInfo.nameInput
+      });
+    }
+
+    // update
+    try {
+      const newInsertInformation = await instructorData.update(
+        instructorid,
+        instructorInfo.nameInput,
+        instructorInfo.sportIDInput
+      );
+      if (!newInsertInformation.updatedInstructor) throw "Internal Server Error";
+      return res.redirect(`${instructorid}`);
+    } catch (e) {
+      return res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
+
+router
+  .route("/instructor/remove/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let instructoreInfo = await instructorData.get(req.params.id);
+      return res.render("admin/remove", {
+        title: "Remove",
+        back: `instructor/${instructoreInfo._id}`,
+        data: instructoreInfo._id,
+        db: "instructor",
+      });
+    } catch (e) {
+      return res.status(404).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  })
+  .delete(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let deleteInfo = await instructorData.remove(req.params.id);
+      if (deleteInfo.deleted) {
+        return res.redirect("/admin/instructor");
+      }
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
   });
 
 // all other admin urls

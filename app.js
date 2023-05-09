@@ -183,6 +183,43 @@ app.use("/error", (req, res, next) => {
   next();
 });
 
+app.use("/admin/searchSlot", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  next();
+});
+
+app.use("/admin/instructor", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }  
+  next();
+});
+
+app.use("/admin/instructor/:id", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  if (req.method === "POST") req.method = "PUT";
+  next();
+});
+
+app.use("/admin/allVenue", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  next();
+});
+
+app.use("/admin/instructor/remove/:id", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  if (req.method === "POST") req.method = "DELETE";
+  next();
+});
+
 // middleware for users
 app.use("/events/:sports", (req, res, next) => {
   if (!req.session.user && !req.session.admin) {
@@ -334,13 +371,6 @@ app.use("/deleteVenue/:id/del/:date", (req, res, next) => {
   next();
 });
 
-app.use("/admin/allVenue", (req, res, next) => {
-  if (!req.session.admin) {
-    return res.redirect("/admin/login");
-  }
-  next();
-});
-
 app.use("/updateRating/:id", (req, res, next) => {
   if (!req.session.user) {
     return res.redirect("/");
@@ -348,12 +378,14 @@ app.use("/updateRating/:id", (req, res, next) => {
   next();
 });
 
-app.use("/admin/searchSlot", (req, res, next) => {
-  if (!req.session.admin) {
-    return res.redirect("/admin/login");
-  }
-  next();
-});
+
+// app.use("/deleteVenue/:id/del/:date", (req, res, next) => {
+//   if (!req.session.user) {
+//     return res.redirect("/");
+//   }
+//   if (req.method === "POST") req.method = "PUT";
+//   next();
+// });
 
 app.use(async (req, res, next) => {
   const currentTime = new Date().toUTCString();

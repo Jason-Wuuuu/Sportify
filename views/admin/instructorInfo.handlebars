@@ -1,0 +1,42 @@
+<header>
+    <nav class="navbar">
+        <a href="/admin/instructor">Back</a>
+    </nav>
+</header>
+
+<h1>{{name}}</h1>
+
+<ul>
+    <li>Sport: {{sport}}</li>
+    <li>Instructor Name: {{name}}</li>
+</ul>
+
+<p>-----------------------------------------------------------------------</p>
+
+<label>Edit Instructor:</label>
+<button type="button" id="expand">Edit</button>
+
+<div id="error" class="error" {{hidden}}>{{error}}</div>
+<div id="form" class="form" {{hidden}}>
+    <form action="/admin/instructor/{{id}}" method="post" id="instructorinfo-form">
+        <label for="nameInput">Name:</label><br>
+        <input type="text" id="nameInput" name="nameInput" value="{{newName}}" />
+        <br>
+
+        <label for="sportIDInput">Sport:</label><br>
+        <select id="sportIDInput" name="sportIDInput">
+            <option value="{{sportID}}">{{sportName}}</option>
+            <option value="">-</option>
+            {{#each sports}}
+            <option value="{{sportID}}">{{name}}</option>
+            {{/each}}
+        </select>
+        <br>
+        <input type="submit" value="Save" />
+    </form>
+</div>
+
+<form action="/admin/instructor/remove/{{id}}" method="get">
+    <label for="remove">Remove Instructor:</label>
+    <button type="submit" id="remove">Remove</button>
+</form>
