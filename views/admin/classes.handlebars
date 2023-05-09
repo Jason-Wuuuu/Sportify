@@ -13,7 +13,7 @@
     </nav>
 </header>
 <script>
-    function filterplaces(id) {      
+    function filterplaces(id) {
         //sportplace 
         var sportsPlacesArr = document.getElementById("sportplaceIDInput");
         var sportsPlacesArrFiltered = document.getElementById("sportplaceIDInput1");
@@ -22,26 +22,26 @@
                 sportsPlacesArrFiltered.remove(i);
             }
         }
-      
+
         for (var i = 0; i < sportsPlacesArr.options.length; i++) {
-            if (id == sportsPlacesArr.options[i].className) {               
+            if (id == sportsPlacesArr.options[i].className) {
                 var myoption = document.createElement('option');
                 myoption.value = sportsPlacesArr.options[i].value;
                 myoption.innerHTML = sportsPlacesArr.options[i].innerText;
                 sportsPlacesArrFiltered.appendChild(myoption);
             }
         }
-      //instructor
-       var instructorsArr = document.getElementById("instructorInput");
+        //instructor
+        var instructorsArr = document.getElementById("instructorInput");
         var instructorsArrFiltered = document.getElementById("instructorInput1");
         for (var i = 0; i < instructorsArrFiltered.options.length; i++) {
             if (instructorsArrFiltered.options[i].innerText != '-') {
                 instructorsArrFiltered.remove(i);
             }
         }
-      
+
         for (var i = 0; i < instructorsArr.options.length; i++) {
-            if (id == instructorsArr.options[i].className) {               
+            if (id == instructorsArr.options[i].className) {
                 var myoption = document.createElement('option');
                 myoption.value = instructorsArr.options[i].value;
                 myoption.innerHTML = instructorsArr.options[i].innerText;
@@ -97,7 +97,7 @@
         </select> --}}
         <br>
 
-          <label>Instructor:</label>
+        <label>Instructor:</label>
         <br>
         <select id="instructorInput" name="instructorInput" hidden>
             {{#each instructors}}
@@ -106,7 +106,7 @@
         </select>
         <select id="instructorInput1" name="instructorInput1">
             <option value="">-</option>
-        </select>      
+        </select>
         <br>
 
         {{!-- <label for="instructorInput">Instructor:</label>

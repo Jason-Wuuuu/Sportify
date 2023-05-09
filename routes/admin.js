@@ -403,7 +403,7 @@ router
   .route("/classes")
   .get(async (req, res) => {
     const sports = await getSportOptions();
-    const sportPlaces = await getSportPlaceOptions();   
+    const sportPlaces = await getSportPlaceOptions();
     const classList = await classData.getAll();
 
     const instructorList = await instructorData.getall();
@@ -507,12 +507,12 @@ router
       const sportPlaces = await getSportPlaceOptions();
       const instructorList = await instructorData.getall();
       const instructors = instructorList.map((instructor) =>
-      Object({
-        instructorID: instructor._id,
-        instructorName: instructor.name,
-        sportId1: instructor.sportID,
-      })
-    );
+        Object({
+          instructorID: instructor._id,
+          instructorName: instructor.name,
+          sportId1: instructor.sportID,
+        })
+      );
       const classList = await classData.getAll();
       let classes = [];
       if (classList) {
@@ -1090,12 +1090,12 @@ router
       const sportPlaces = await getSportPlaceOptions(sportPlaceInfo._id);
       const instructorList = await getSportPlaceOptions(instructorInfo._id);
       const instructors = instructorList.map((instructor) =>
-      Object({
-        instructorID: instructor._id,
-        instructorName: instructor.name,
-        sportId1: instructor.sportID,
-      })
-    );
+        Object({
+          instructorID: instructor._id,
+          instructorName: instructor.name,
+          sportId1: instructor.sportID,
+        })
+      );
 
       return res.render("admin/classInfo", {
         title: "Class Info",
@@ -1125,7 +1125,7 @@ router
         instructorID: instructorInfo._id,
         instructorName: instructorInfo.name,
         newCapacity: classInfo.capacity,
-       // newInstructor: classInfo.instructor,
+        // newInstructor: classInfo.instructor,
         newPrice: classInfo.price,
         newDate: classInfo.date,
         newStartTime: classInfo.startTime,
@@ -1174,7 +1174,7 @@ router
         classInfo.capacityInput,
         "Capacity"
       );
-      classInfo.instructorInput1 = validation.checkName(
+      classInfo.instructorInput1 = validation.checkId(
         classInfo.instructorInput1,
         "Instructor"
       );
@@ -1207,12 +1207,12 @@ router
       const sportPlaces = await getSportPlaceOptions();
       const instructorList = await getSportPlaceOptions();
       const instructors = instructorList.map((instructor) =>
-      Object({
-        instructorID: instructor._id,
-        instructorName: instructor.name,
-        sportId1: instructor.sportID,
-      })
-    );
+        Object({
+          instructorID: instructor._id,
+          instructorName: instructor.name,
+          sportId1: instructor.sportID,
+        })
+      );
 
       let sportInfo = {};
       try {
@@ -1258,7 +1258,7 @@ router
         users: origClassInfo.students,
         classTitle: origClassInfo.title,
         newCapacity: classInfo.capacityInput,
-       // newInstructor: classInfo.instructorInput,
+        // newInstructor: classInfo.instructorInput,
         newPrice: classInfo.priceInput,
         newDate: classInfo.dateInput,
         newStartTime: classInfo.startTimeInput,
@@ -1839,7 +1839,7 @@ router
       hidden: "hidden",
       n: instructorList.length,
       sports: sports,
-      instructor: instructorList
+      instructor: instructorList,
     });
   })
   .post(async (req, res) => {
@@ -1880,7 +1880,6 @@ router
         error: e,
       });
     }
-
   });
 
 router
@@ -1962,7 +1961,7 @@ router
         sports: sports,
         name: originstructor.name,
         sport: originstructor.sport,
-        newName: instructorInfo.nameInput
+        newName: instructorInfo.nameInput,
       });
     }
 
@@ -1973,7 +1972,8 @@ router
         instructorInfo.nameInput,
         instructorInfo.sportIDInput
       );
-      if (!newInsertInformation.updatedInstructor) throw "Internal Server Error";
+      if (!newInsertInformation.updatedInstructor)
+        throw "Internal Server Error";
       return res.redirect(`${instructorid}`);
     } catch (e) {
       return res.status(500).render("admin/error", {
