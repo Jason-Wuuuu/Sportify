@@ -357,8 +357,12 @@ router.route("/myclasses/:classID").get(async (req, res) => {
     let classObj = await classesData.getClass(classID);
     classObj.rating ||= "NA";
 
-    const instructorInfo = await instructorData.get(classObj.instructor);
-    classObj.instructor = instructorInfo.name;
+    try {
+      const instructorInfo = await instructorData.get(classObj.instructor);
+      classObj.instructor = instructorInfo.name;
+    } catch (e) {
+      classObj.instructor = "NA";
+    }
 
     const classDate = new Date(`${classObj.date}:${classObj.endTime}`);
     const passed = classDate < new Date();
@@ -594,8 +598,14 @@ router
 
       if (classList) {
         for (let classInfo of classList) {
-          const instructorInfo = await instructorData.get(classInfo.instructor);
-          classInfo.instructor = instructorInfo.name;
+          try {
+            const instructorInfo = await instructorData.get(
+              classInfo.instructor
+            );
+            classInfo.instructor = instructorInfo.name;
+          } catch (e) {
+            classInfo.instructor = "NA";
+          }
           const classDate = new Date(classInfo.date);
           if (classDate >= new Date()) {
             classes.push(classInfo);
