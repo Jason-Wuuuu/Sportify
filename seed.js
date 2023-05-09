@@ -298,7 +298,7 @@ for (let x = 0; x < 4; x++) {
   for (let i = 0; i < 5; i++) {
     let instructorName = faker.name.fullName();
     try {
-      const newInstructor = await instructors.createdb(
+      const newInstructor = await instructors.createinstructorseed(
         sport_id,
         instructorName
       );
