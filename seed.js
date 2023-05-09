@@ -301,7 +301,7 @@ for (let x = 0; x < 4; x++) {
   }
   instructorID.push(instructorArr);
 }
-console.log("Instructors Data Added for first 4 Sports!");
+console.log("\nInstructors Data Added for first 4 Sports!");
 
 for (let x = 0; x < 4; x++) {
   let sport_id = sportID[x];
