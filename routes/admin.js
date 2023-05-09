@@ -12,6 +12,7 @@ import xss from "xss";
 import * as slotData from "../data/admin/timeSlot.js";
 import { sendEmail } from "../data/admin/mail.js";
 import * as slotUserData from "../data/user/venue.js";
+import * as instructorData from "../data/admin/instructor.js";
 
 const router = Router();
 
@@ -221,7 +222,7 @@ router
   .route("/register")
   .get(async (req, res) => {
     return res.render("admin/register", {
-      title: "Register",
+      title: "Admin Register",
       genderOptions: getGenderOptions(),
     });
   })
@@ -323,13 +324,13 @@ router
   .get(async (req, res) => {
     if (req.session.user) {
       return res.render("admin/login", {
-        title: "Login",
+        title: "Admin Login",
         hidden: "",
         error:
           "Seems like you have already logged in as an user. \nMake sure to login as an admin to access the rest of the admin pages.",
       });
     }
-    return res.render("admin/login", { title: "Login" });
+    return res.render("admin/login", { title: "Admin Login" });
   })
   .post(async (req, res) => {
     const admin = req.body;
@@ -405,6 +406,15 @@ router
     const sportPlaces = await getSportPlaceOptions();
     const classList = await classData.getAll();
 
+    const instructorList = await instructorData.getall();
+    const instructors = instructorList.map((instructor) =>
+      Object({
+        instructorID: instructor._id,
+        instructorName: instructor.name,
+        sportId1: instructor.sportID,
+      })
+    );
+
     let classes = [];
     let passedClasses = [];
 
@@ -435,6 +445,7 @@ router
       n: classes.length,
       sports: sports,
       sportPlaces: sportPlaces,
+      instructors: instructors,
       classes: classes,
       passedClasses: passedClasses,
     });
@@ -469,8 +480,8 @@ router
         classInfo.capacityInput,
         "Capacity"
       );
-      classInfo.instructorInput = validation.checkName(
-        classInfo.instructorInput,
+      classInfo.instructorInput1 = validation.checkId(
+        classInfo.instructorInput1,
         "Instructor"
       );
       classInfo.priceInput = validation.checkPrice(
@@ -494,6 +505,14 @@ router
     } catch (e) {
       const sports = await getSportOptions();
       const sportPlaces = await getSportPlaceOptions();
+      const instructorList = await instructorData.getall();
+      const instructors = instructorList.map((instructor) =>
+        Object({
+          instructorID: instructor._id,
+          instructorName: instructor.name,
+          sportId1: instructor.sportID,
+        })
+      );
       const classList = await classData.getAll();
       let classes = [];
       if (classList) {
@@ -510,10 +529,11 @@ router
         error: e,
         sports: sports,
         sportPlaces: sportPlaces,
+        instructors: instructors,
         classes: classes,
         classTitle: classInfo.titleInput,
         capacity: classInfo.capacityInput,
-        instructor: classInfo.instructorInput,
+        instructor: classInfo.instructorInput1,
         price: classInfo.priceInput,
         date: classInfo.dateInput,
         startTime: classInfo.startTimeInput,
@@ -527,7 +547,7 @@ router
         classInfo.sportIDInput,
         classInfo.sportplaceIDInput1,
         classInfo.capacityInput,
-        classInfo.instructorInput,
+        classInfo.instructorInput1,
         classInfo.priceInput,
         classInfo.dateInput,
         classInfo.startTimeInput,
@@ -1042,6 +1062,12 @@ router
       } catch (e) {
         sportPlaceInfo.name = "Please reselect";
       }
+      let instructorInfo = {};
+      try {
+        instructorInfo = await instructorData.get(classInfo.instructor);
+      } catch (e) {
+        instructorInfo.name = "Please reselect";
+      }
 
       const userIdList = classInfo.students;
       const users = [];
@@ -1062,6 +1088,14 @@ router
 
       const sports = await getSportOptions(sportInfo._id);
       const sportPlaces = await getSportPlaceOptions(sportPlaceInfo._id);
+      const instructorList = await getSportPlaceOptions(instructorInfo._id);
+      const instructors = instructorList.map((instructor) =>
+        Object({
+          instructorID: instructor._id,
+          instructorName: instructor.name,
+          sportId1: instructor.sportID,
+        })
+      );
 
       return res.render("admin/classInfo", {
         title: "Class Info",
@@ -1069,11 +1103,12 @@ router
         id: classInfo._id,
         sports: sports,
         sportPlaces: sportPlaces,
+        instructors: instructors,
         name: classInfo.title,
         sport: sportInfo.name,
         sportPlace: sportPlaceInfo.name,
         capacity: classInfo.capacity,
-        instructor: classInfo.instructor,
+        instructor: instructorInfo.name,
         price: classInfo.price,
         date: classInfo.date,
         startTime: classInfo.startTime,
@@ -1087,8 +1122,10 @@ router
         sportName: sportInfo.name,
         sportPlaceID: sportPlaceInfo._id,
         sportPlaceName: sportPlaceInfo.name,
+        instructorID: instructorInfo._id,
+        instructorName: instructorInfo.name,
         newCapacity: classInfo.capacity,
-        newInstructor: classInfo.instructor,
+        // newInstructor: classInfo.instructor,
         newPrice: classInfo.price,
         newDate: classInfo.date,
         newStartTime: classInfo.startTime,
@@ -1137,8 +1174,8 @@ router
         classInfo.capacityInput,
         "Capacity"
       );
-      classInfo.instructorInput = validation.checkName(
-        classInfo.instructorInput,
+      classInfo.instructorInput1 = validation.checkId(
+        classInfo.instructorInput1,
         "Instructor"
       );
       classInfo.priceInput = validation.checkPrice(
@@ -1168,6 +1205,14 @@ router
     } catch (e) {
       const sports = await getSportOptions();
       const sportPlaces = await getSportPlaceOptions();
+      const instructorList = await getSportPlaceOptions();
+      const instructors = instructorList.map((instructor) =>
+        Object({
+          instructorID: instructor._id,
+          instructorName: instructor.name,
+          sportId1: instructor.sportID,
+        })
+      );
 
       let sportInfo = {};
       try {
@@ -1181,6 +1226,12 @@ router
       } catch (e) {
         sportPlaceInfo.name = "Please reselect";
       }
+      let instructorInfo = {};
+      try {
+        instructorInfo = await instructorData.get(classInfo.instructorInput1);
+      } catch (e) {
+        instructorInfo.name = "Please reselect";
+      }
 
       let origClassInfo = await classData.get(req.params.id);
 
@@ -1191,6 +1242,7 @@ router
         error: e,
         sports: sports,
         sportPlaces: sportPlaces,
+        instructors: instructors,
         name: origClassInfo.title,
         sport: origClassInfo.sport,
         sportPlace: origClassInfo.sportPlace,
@@ -1206,7 +1258,7 @@ router
         users: origClassInfo.students,
         classTitle: origClassInfo.title,
         newCapacity: classInfo.capacityInput,
-        newInstructor: classInfo.instructorInput,
+        // newInstructor: classInfo.instructorInput,
         newPrice: classInfo.priceInput,
         newDate: classInfo.dateInput,
         newStartTime: classInfo.startTimeInput,
@@ -1216,6 +1268,8 @@ router
         sportName: sportInfo.name,
         sportPlaceID: sportPlaceInfo._id,
         sportPlaceName: sportPlaceInfo.name,
+        instructorID: instructorInfo._id,
+        instructorName: instructorInfo.name,
       });
     }
 
@@ -1227,7 +1281,7 @@ router
         classInfo.sportIDInput,
         classInfo.sportplaceIDInput1,
         classInfo.capacityInput,
-        classInfo.instructorInput,
+        classInfo.instructorInput1,
         classInfo.priceInput,
         classInfo.dateInput,
         classInfo.startTimeInput,
@@ -1773,6 +1827,209 @@ router.route("/searchSlot").post(async (req, res) => {
     });
   }
 });
+
+router
+  .route("/instructor")
+  .get(async (req, res) => {
+    const sports = await getSportOptions();
+    const instructorList = await instructorData.getall();
+
+    return res.render("admin/instructor", {
+      title: "Instructor",
+      hidden: "hidden",
+      n: instructorList.length,
+      sports: sports,
+      instructor: instructorList,
+    });
+  })
+  .post(async (req, res) => {
+    let instructorInfo = req.body;
+    if (!instructorInfo || Object.keys(instructorInfo).length === 0) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+    applyXSS(instructorInfo);
+    // validation
+    try {
+      instructorInfo.sportIDInput = validation.checkId(
+        instructorInfo.sportIDInput,
+        "sport"
+      );
+      instructorInfo.nameInput = validation.checkString(
+        instructorInfo.nameInput,
+        "Name"
+      );
+    } catch (e) {
+      return res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      const newdata = await instructorData.create(
+        instructorInfo.sportIDInput,
+        instructorInfo.nameInput
+      );
+      if (!newdata.insertedInstructor) throw "Internal Server Error";
+      return res.redirect("instructor");
+    } catch (e) {
+      return res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
+
+router
+  .route("/instructor/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let selectedinstructor = await instructorData.get(req.params.id);
+      let sportInfo = {};
+      try {
+        sportInfo = await sportData.get(selectedinstructor.sportID);
+      } catch (e) {
+        sportInfo.name = "Please reselect";
+      }
+
+      const sports = await getSportOptions(sportInfo._id);
+      return res.render("admin/instructorInfo", {
+        title: "Instructor Info",
+        hidden: "hidden",
+        id: selectedinstructor._id,
+        sports: sports,
+        name: selectedinstructor.name,
+        sport: sportInfo.name,
+        sportID: sportInfo._id,
+        sportName: sportInfo.name,
+        newName: selectedinstructor.name,
+      });
+    } catch (e) {
+      return res.status(404).render("admin/error", {
+        title: "Error",
+        error: `${e}`,
+        back: "instructor",
+      });
+    }
+  })
+  .put(async (req, res) => {
+    let instructorInfo = req.body;
+    if (!instructorInfo || Object.keys(instructorInfo).length === 0) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: "There are no fields in the request body",
+      });
+    }
+
+    // XSS
+    applyXSS(instructorInfo);
+
+    // check id
+    let instructorid = req.params.id;
+    instructorid = validation.checkId(instructorid, "instructor");
+
+    // validation
+    try {
+      instructorInfo.nameInput = validation.checkTitle(
+        instructorInfo.nameInput,
+        "Name"
+      );
+      instructorInfo.sportIDInput = validation.checkId(
+        instructorInfo.sportIDInput,
+        "SportID"
+      );
+    } catch (e) {
+      const sports = await getSportOptions();
+
+      let originstructor = await instructorData.get(req.params.id);
+
+      return res.render("admin/instructorInfo", {
+        title: "instructor Info",
+        hidden: "",
+        error: e,
+        id: originstructor._id,
+        sports: sports,
+        name: originstructor.name,
+        sport: originstructor.sport,
+        newName: instructorInfo.nameInput,
+      });
+    }
+
+    // update
+    try {
+      const newInsertInformation = await instructorData.update(
+        instructorid,
+        instructorInfo.nameInput,
+        instructorInfo.sportIDInput
+      );
+      if (!newInsertInformation.updatedInstructor)
+        throw "Internal Server Error";
+      return res.redirect(`${instructorid}`);
+    } catch (e) {
+      return res.status(500).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
+
+router
+  .route("/instructor/remove/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let instructoreInfo = await instructorData.get(req.params.id);
+      return res.render("admin/remove", {
+        title: "Remove",
+        back: `instructor/${instructoreInfo._id}`,
+        data: instructoreInfo._id,
+        db: "instructor",
+      });
+    } catch (e) {
+      return res.status(404).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  })
+  .delete(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "ID URL Param");
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+    try {
+      let deleteInfo = await instructorData.remove(req.params.id);
+      if (deleteInfo.deleted) {
+        return res.redirect("/admin/instructor");
+      }
+    } catch (e) {
+      return res.status(400).render("admin/error", {
+        title: "Error",
+        error: e,
+      });
+    }
+  });
 
 // all other admin urls
 router.route("*").get(async (req, res) => {

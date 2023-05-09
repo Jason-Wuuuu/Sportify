@@ -3,7 +3,16 @@
         <a href="/venue/{{venueinfo.sportname}}">Back</a>
     </nav>
 </header>
+<script>
+     function setMinDate() {
+        var dateInput = document.getElementById("dateInput");
+        var d = new Date();
+        if (dateInput) {
 
+            dateInput.setAttribute('min', new Date().toISOString().split("T")[0]);
+        }
+    }
+</script>
 <h1>{{title}}</h1>
 <h2>Venue Details for : {{venueinfo.name}}</h2>
 
@@ -33,7 +42,7 @@
         <input type="hidden" id="sportIDh" name="sportIDh" {{venueinfo.sportID}}> --}}
         <label for="dateInput">Select Date:</label>
         <br>
-        <input type="date" id="dateInput" name="dateInput" value="{{date}}">
+        <input type="date" id="dateInput" name="dateInput" onclick="setMinDate()" value="{{date}}">
         <br>
         <input type="submit" value="Get Slots">
         {{!--

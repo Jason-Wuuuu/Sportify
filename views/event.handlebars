@@ -1,94 +1,86 @@
 <header>
   {{#if event.auth}}
-    <nav class="navbar">
-      <a href="/" class="logo">Sportify</a>
+  <nav class="navbar">
+    <a href="/" class="logo">Sportify</a>
 
-      <a class="active" href="/events/{{sport}}">Events</a>
-      <a href="/myevents">MyEvents</a>
-      <a href="/classes/{{sport}}">Classes</a>
-      <a href="/venue/{{sport}}">Reserve Venue</a>
-      <a href="/profile">Profile</a>
-      <a href="/logout">Logout</a>
-    </nav>
+    <a class="active" href="/events/{{sport}}">Events</a>
+    <a href="/myevents">MyEvents</a>
+    <a href="/classes/{{sport}}">Classes</a>
+    <a href="/venue/{{sport}}">Reserve Venue</a>
+    <a href="/profile">Profile</a>
+    <a href="/logout">Logout</a>
+  </nav>
   {{else}}
-    <nav class="navbar">
-      <a href="/" class="logo">Sportify</a>
-      <a href="/login">Login</a>
-    </nav>
+  <nav class="navbar">
+    <a href="/" class="logo">Sportify</a>
+    <a href="/login">Login</a>
+  </nav>
   {{/if}}
 </header>
 
-<h2>Join Event! : {{event.name}}</h2>
+<h1>Join Event! : {{event.name}}</h1>
 
 {{#if event}}
-  <div class="bgcard">
-    <div class="info">
-      <div class="bgimg" style="background-image: url({{event.image}})"></div>
-      <ul class="info-list">
-        <li class="author">Event By : {{event.username}}</li>
-        <li class="date">Date : {{event.date}}</li>
-        <li class="location">Location : {{event.sportPlace}}</li>
-        <li class="time"> Time : {{event.startTime}} to {{event.endTime}}</li>
-      </ul>
-    </div>
-    <div class="textDetails">
-      <h1>{{event.name}}</h1>
-      <p>{{event.description}}</p>
-      {{#if event.registered}}
-        <p style="color: green; ">
-          Event Joined! ✅
-        </p>
-        <a href="/commentbox/{{event._id}}" style="color: rgb(139, 15, 241);">
-          Chat With Participants! 💬
-        </a>
-      {{/if}}
-      <button
-        onclick="popup()"
-        class="copylink{{event._id}} copylink"
-        data-clipboard-text="http://localhost:3000/event/{{event._id}}"
-      >Share Event</button><br />
-      <script>
-        var copy = new ClipboardJS(".copylink{{this._id}}"); function popup() {
-        alert("Event Link Copied!"); }
-      </script>
-      <p class="joinLink">
-        {{#if event.auth}}
-          {{#if event.available}}
-            {{#if event.registered}}
-              <a
-                style="color: rgb(241, 15, 15);"
-                href="/events/{{sport}}/deregister/{{event._id}}"
-              >
-                Deregister Event? ⚠️
-              </a>
-            {{else}}
-              <a href="/events/{{sport}}/register/{{event._id}}">
-                RSVP Event! [
-                {{event.participants.length}}/{{event.capacity}}]
-              </a>
-            {{/if}}
-          {{else}}
-            {{#if event.registered}}
-              <a
-                style="color: rgb(241, 15, 15);"
-                href="/events/{{sport}}/deregister/{{event._id}}"
-              >
-                Deregister Event? ⚠️
-              </a>
-            {{else}}
-              <a style="color: red;">Event Full! 😢 [
-                {{event.participants.length}}/{{event.capacity}}]
-              </a>
-            {{/if}}
-          {{/if}}
-        {{else}}
-          <a style="color: rgb(104, 251, 18);" href="/login">
-            Please Sign-Up/Log-in to register event!
-          </a>
-        {{/if}}
-      </p>
-    </div>
+<div class="bgcard">
+  <div class="info">
+    <div class="bgimg" style="background-image: url({{event.image}})"></div>
+    <ul class="info-list">
+      <li class="author">Event By : {{event.username}}</li>
+      <li class="date">Date : {{event.date}}</li>
+      <li class="location">Location : {{event.sportPlace}}</li>
+      <li class="time"> Time : {{event.startTime}} to {{event.endTime}}</li>
+    </ul>
   </div>
+  <div class="textDetails">
+    <h1>{{event.name}}</h1>
+    <p>{{event.description}}</p>
+    {{#if event.registered}}
+    <p style="color: green; ">
+      Event Joined! ✅
+    </p>
+    <a href="/commentbox/{{event._id}}" style="color: rgb(139, 15, 241);">
+      Chat With Participants! 💬
+    </a>
+    {{/if}}
+    <button onclick="popup()" class="copylink{{event._id}} copylink"
+      data-clipboard-text="http://localhost:3000/event/{{event._id}}">Share Event</button><br />
+    <script>
+      var copy = new ClipboardJS(".copylink{{this._id}}"); function popup() {
+        alert("Event Link Copied!");
+      }
+    </script>
+    <p class="joinLink">
+      {{#if event.auth}}
+      {{#if event.available}}
+      {{#if event.registered}}
+      <a style="color: rgb(241, 15, 15);" href="/events/{{sport}}/deregister/{{event._id}}">
+        Deregister Event? ⚠️
+      </a>
+      {{else}}
+      <a href="/events/{{sport}}/register/{{event._id}}">
+        RSVP Event! [
+        {{event.participants.length}}/{{event.capacity}}]
+      </a>
+      {{/if}}
+      {{else}}
+      {{#if event.registered}}
+      <a style="color: rgb(241, 15, 15);" href="/events/{{sport}}/deregister/{{event._id}}">
+        Deregister Event? ⚠️
+      </a>
+      {{else}}
+      <a style="color: red;">Event Full! 😢 [
+        {{event.participants.length}}/{{event.capacity}}]
+      </a>
+      {{/if}}
+      {{/if}}
+      {{else}}
+      <a style="color: #348800;" href="/login">
+        Please Sign-Up/Log-in to register event!
+      </a>
+      {{/if}}
+    </p>
+  </div>
+</div>
 {{else}}
-  <p>Sorry!<br /> Event not found.</p>
+<p>Sorry!<br /> Event not found.</p>
 {{/if}}

@@ -3,6 +3,7 @@ import * as events from "./data/user/events.js";
 import * as admin from "./data/admin/admins.js";
 import * as sports from "./data/admin/sports.js";
 import * as classes from "./data/admin/classes.js";
+import * as instructors from "./data/admin/instructor.js";
 import * as sportPlaces from "./data/admin/sportPlaces.js";
 import * as timeSlot from "./data/admin/timeSlot.js";
 import * as comments from "./data/user/comments.js";
@@ -23,6 +24,7 @@ let userIDList = [];
 let adminIDList = [];
 let sportID = [];
 let sportPlacesID = [];
+let instructorID = [];
 let classesID = [];
 let createdEventsID = [];
 let createdSlots = [];
@@ -282,11 +284,32 @@ for (let x = 0; x < 4; x++) {
 console.log("SportPlaces Data Added for first 4 Sports!");
 
 for (let x = 0; x < 4; x++) {
+  let instructorArr = [];
+  let sport_id = sportID[x];
+  for (let i = 0; i < 5; i++) {
+    let instructorName = faker.name.fullName();
+    try {
+      const newInstructor = await instructors.createdb(
+        sport_id,
+        instructorName
+      );
+      let instructorId = newInstructor.instructorId;
+      instructorArr.push(instructorId);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  instructorID.push(instructorArr);
+}
+console.log("\nInstructors Data Added for first 4 Sports!");
+
+for (let x = 0; x < 4; x++) {
   let sport_id = sportID[x];
   let classarr = [];
   for (let i = 0; i < 5; i++) {
-    let instructor = faker.name.fullName();
-    let title = instructor + "'s Class";
+    let instructor_id = instructorID[x][i];
+    const instructorInfo = await instructors.get(instructor_id);
+    let title = instructorInfo.name + "'s Class";
     let splaceID = sportPlacesID[x][i];
     let capacity = Math.floor(Math.random() * 10) + 1;
 
@@ -327,7 +350,7 @@ for (let x = 0; x < 4; x++) {
         sport_id,
         splaceID,
         capacity,
-        instructor,
+        instructorInfo._id.toString(),
         price,
         date,
         startTime,
@@ -450,8 +473,8 @@ function randomDate(start, end) {
   return date;
 }
 
-const startDate = new Date("2023-05-01");
-const endDate = new Date("2023-05-07");
+const startDate = new Date("2023-06-01");
+const endDate = new Date("2023-06-07");
 
 for (let i = 0; i < 4; i++) {
   for (let j = 0; j < 4; j++) {

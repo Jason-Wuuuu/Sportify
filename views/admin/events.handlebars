@@ -3,6 +3,7 @@
         <a href="/admin/profile">Profile</a>
         <a href="/admin/sports">Sports</a>
         <a href="/admin/sportPlaces">SportPlaces</a>
+        <a href="/admin/instructor">Instructors</a>
         <a href="/admin/classes">Classes</a>
         <a class="active" href="/admin/events">Events</a>
         <a href="/admin/users">Users</a>
@@ -38,7 +39,7 @@
     {{#if passedEvents}}
     <ul>
         {{#each passedEvents}}
-        <li><a href="/admin/events/{{eventID}}">{{eventName}}</a></li>
+        <li><a href="/admin/events/{{eventID}}" target=”_blank”>{{eventName}}</a></li>
         {{/each}}
     </ul>
     {{else}}

@@ -1,0 +1,59 @@
+<header>
+    <nav class="navbar">
+        <a href="/admin/profile">Profile</a>
+        <a href="/admin/sports">Sports</a>
+        <a href="/admin/sportPlaces">SportPlaces</a>
+        <a class="active" href="/admin/instructor">Instructors</a>
+        <a href="/admin/classes">Classes</a>
+        <a href="/admin/events">Events</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/timeSlot">Slots</a>
+        <a href="/admin/allVenue">Reserved Venue</a>
+        <a href="/admin/logout">Logout</a>
+    </nav>
+</header>
+
+<h1>{{title}}</h1>
+
+<h2>We have {{n}} Instructors.</h2>
+
+<label>Add Instructors:</label>
+<button type="button" id="expand">Add</button>
+
+<div id="error" class="error" {{hidden}}>{{error}}</div>
+<div id="form" class="form" {{hidden}}>
+    <form action="/admin/instructor" method="post" id="instructor-form">
+
+        <label for="sportIDInput">Select Sport:</label><br>
+        <select id="sportIDInput" name="sportIDInput">
+            <option value="">-</option>
+            {{#each sports}}
+            <option value="{{sportID}}">{{name}}</option>
+            {{/each}}
+        </select>
+        <br>
+
+        <label for="nameInput">Enter Name:</label>
+        <br>
+        <input type="text" id="nameInput" name="nameInput" value="{{name}}">
+        <br>
+        <br>
+
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
+<p>-----------------------------------------------------------------------</p>
+
+<h3>List of Instructors:</h3>
+<div id="instructor">
+    {{#if instructor}}
+    <ul>
+        {{#each instructor}}
+        <li><a href="/admin/instructor/{{_id}}">{{name}}</a></li>
+        {{/each}}
+    </ul>
+    {{else}}
+    <p>No instructor...</p>
+    {{/if}}
+</div>

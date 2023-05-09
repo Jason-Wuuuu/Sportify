@@ -462,11 +462,38 @@ if (document.URL.includes("/admin")) {
       } catch (e) {
         event.preventDefault();
         if (name) nameInput.value = name;
+        if (sportID) sportIDInput.value = sportID;
         if (address) addressInput.value = address;
         if (description) descriptionInput.value = description;
         if (capacity) capacityInput.value = capacity;
         if (price) priceInput.value = price;
         if (thumbnail) thumbnailInput.value = thumbnail;
+        show_error(e);
+      }
+    });
+  }
+
+  // Instructors and InstructorInfo
+  let instructorInfo = document.getElementById("instructor-form");
+  if (instructorInfo) {
+    // get elements
+    let sportIDInput = document.getElementById("sportIDInput");
+    let nameInput = document.getElementById("nameInput");
+
+    // submit
+    instructorInfo.addEventListener("submit", (event) => {
+      // get values
+      let sportID = sportIDInput.value;
+      let name = nameInput.value;
+
+      //validation
+      try {
+        sportID = checkId(sportID, "SportID");
+        name = checkName(name, "Name");
+      } catch (e) {
+        event.preventDefault();
+        if (name) nameInput.value = name;
+        if (sportID) sportIDInput.value = sportID;
         show_error(e);
       }
     });
@@ -478,9 +505,9 @@ if (document.URL.includes("/admin")) {
     // get elements
     let titleInput = document.getElementById("titleInput");
     let sportIDInput = document.getElementById("sportIDInput");
-    let sportPlaceIDInput = document.getElementById("sportPlaceIDInput");
+    let sportPlaceIDInput = document.getElementById("sportplaceIDInput1");
     let capacityInput = document.getElementById("capacityInput");
-    let instructorInput = document.getElementById("instructorInput");
+    let instructorInput = document.getElementById("instructorInput1");
     let priceInput = document.getElementById("priceInput");
     let dateInput = document.getElementById("dateInput");
     let startTimeInput = document.getElementById("startTimeInput");
@@ -513,10 +540,10 @@ if (document.URL.includes("/admin")) {
       //validation
       try {
         title = checkString(title, "Title");
-        sportID = checkString(sportID, "SportID");
-        sportPlaceID = checkString(sportPlaceID, "Sport PlaceID");
+        sportID = checkId(sportID, "SportID");
+        sportPlaceID = checkId(sportPlaceID, "Sport PlaceID");
+        instructor = checkId(instructor, "Instructor");
         capacity = checkCapacity(capacity, "Capacity");
-        instructor = checkName(instructor, "Instructor");
         price = checkPrice(price, "Price");
         date = checkDate(date, "Date");
         startTime = checkTime(startTime, "Start Time");
@@ -526,6 +553,8 @@ if (document.URL.includes("/admin")) {
       } catch (e) {
         event.preventDefault();
         if (title) titleInput.value = title;
+        if (sportID) sportIDInput.value = sportID;
+        if (sportPlaceID) sportPlaceIDInput.value = sportPlaceID;
         if (capacity) capacityInput.value = capacity;
         if (instructor) instructorInput.value = instructor;
         if (price) priceInput.value = price;
@@ -557,8 +586,8 @@ if (document.URL.includes("/admin")) {
 
     // submit
     timeslotInfo.addEventListener("submit", (event) => {
-      // get values   
-      //  console.log("test"); 
+      // get values
+      //  console.log("test");
       let sportID = sportIDInput.value;
       let sportPlaceID = sportPlaceIDInput.value;
       let date = dateInput.value;
@@ -595,8 +624,8 @@ if (document.URL.includes("/admin")) {
 
     // submit
     timeslotInfo1.addEventListener("submit", (event) => {
-      // get values   
-      // console.log("test"); 
+      // get values
+      // console.log("test");
       let sportID = sportIDInput.value;
       let sportPlaceID = sportPlaceIDInput.value;
       let date = dateInput.value;
@@ -841,7 +870,7 @@ else {
 
     // submit
     VenueInfo.addEventListener("submit", (event) => {
-      // get values   
+      // get values
       let date = dateInput.value;
 
       //validation
@@ -863,7 +892,7 @@ else {
     let slotInput = document.getElementById("slotInput");
     // submit
     VenueInfo1.addEventListener("submit", (event) => {
-      // get values   
+      // get values
       let slot = slotInput.value;
 
       //validation
@@ -885,9 +914,9 @@ else {
   //    let ratingInput = document.getElementById("ratingInput");
   //    // submit
   //    myvenueinfo.addEventListener("submit", (event) => {
-  //      // get values   
+  //      // get values
   //      let rate = ratingInput.value;
- 
+
   //      //validation
   //      try {
   //       rate = checkRating(rate, "rating");
@@ -898,5 +927,4 @@ else {
   //      }
   //    });
   //  }
-
 }

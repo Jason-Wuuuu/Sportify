@@ -27,6 +27,7 @@
         //console.log(temp);
         //sportsPlacesArrFiltered.options = temp;
         // for(var i=0;i<)
+
     }
 </script>
 <h1>{{name}}</h1>
@@ -96,9 +97,24 @@
         </select>
         <br>
 
-        <label for="instructorInput">Instructor:</label><br>
-        <input type="text" id="instructorInput" name="instructorInput" value="{{newInstructor}}" />
+        <label>Instructor:</label>
         <br>
+        <select id="instructorInput" name="instructorInput" hidden>
+            <option value="">-</option>
+            {{#each instructors}}
+            <option value="{{instructorID}}" class="{{sportId1}}">{{instructorName}}</option>
+            {{/each}}
+        </select>
+        <select id="instructorInput1" name="instructorInput1">
+            <option value="{{instructorID}}">{{instructorName}}</option>
+            <option value="">-</option>
+
+        </select>
+        <br>
+
+        {{!-- <label for="instructorInput">Instructor:</label><br>
+        <input type="text" id="instructorInput" name="instructorInput" value="{{newInstructor}}" />
+        <br> --}}
 
         <label for="capacityInput">Capacity:</label><br>
         <input type="number" id="capacityInput" name="capacityInput" value="{{newCapacity}}" min="1" />
@@ -141,7 +157,7 @@
     {{#if n}}
     <ul>
         {{#each students}}
-        <li><a href="/admin/users/{{this.userId}}">{{this.userFirstName}} {{this.userLastName}}</a></li>
+        <li><a href="/admin/users/{{this.userId}}" target=”_blank”>{{this.userFirstName}} {{this.userLastName}}</a></li>
         {{/each}}
     </ul>
     {{else}}

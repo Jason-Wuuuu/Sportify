@@ -14,9 +14,11 @@ import * as commentsData from "../data/user/comments.js";
 import * as slotsData from "../data/user/timeSlots.js";
 import * as venueData from "../data/user/venue.js";
 import * as ratingVenueData from "../data/user/ratingVenue.js";
+import * as instructorData from "../data/admin/instructor.js";
 
 import xss from "xss";
 import { sendEmail } from "../data/admin/mail.js";
+import { instructor } from "../config/mongoCollections.js";
 
 const router = Router();
 
@@ -246,7 +248,7 @@ router.route("/myevents").get(async (req, res) => {
       item.members = item.participants.length != 0 ? true : false;
     }
   }
-  eventList = eventList.reverse();
+  // eventList = eventList.reverse();
   let empty = eventList.length == 0 ? true : false;
 
   let events = await eventsData.getJoinedEvents(uid);
@@ -355,6 +357,9 @@ router.route("/myclasses/:classID").get(async (req, res) => {
     let classObj = await classesData.getClass(classID);
     classObj.rating ||= "NA";
 
+    const instructorInfo = await instructorData.get(classObj.instructor);
+    classObj.instructor = instructorInfo.name;
+
     const classDate = new Date(`${classObj.date}:${classObj.endTime}`);
     const passed = classDate < new Date();
     return res.render("classInfo", {
@@ -426,7 +431,7 @@ router
         item.members = item.participants.length != 0 ? true : false;
       }
     }
-    eventList = eventList.reverse();
+    // eventList = eventList.reverse();
     let empty = eventList.length == 0 ? true : false;
 
     const options = getGenderOptions(userInfo.gender);
@@ -568,7 +573,7 @@ router.route("/events/:sports").get(async (req, res) => {
       item.registered = false;
     }
   }
-  eventList = eventList.reverse();
+  // eventList = eventList.reverse();
   return res.render("events", {
     title: "events",
     sport: sport,
@@ -588,12 +593,14 @@ router
       let classes = [];
 
       if (classList) {
-        classList.forEach((classInfo) => {
+        for (let classInfo of classList) {
+          const instructorInfo = await instructorData.get(classInfo.instructor);
+          classInfo.instructor = instructorInfo.name;
           const classDate = new Date(classInfo.date);
           if (classDate >= new Date()) {
             classes.push(classInfo);
           }
-        });
+        }
       }
 
       return res.render("classes", {
@@ -1258,7 +1265,7 @@ router.route("/venueInfo/:id").get(async (req, res) => {
     let venuedetails = await sportsplaceData.getSportPlace(sportplaceid);
     return res.render("venueInfo", {
       venueinfo: venuedetails,
-      title: "Reserve Venue",
+      title: "Venue",
     });
   } catch (e) {
     return res.status(404).render("error", {
