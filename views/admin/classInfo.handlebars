@@ -28,12 +28,6 @@
                 sportsPlacesArrFiltered.appendChild(myoption);
             }
         }
-<<<<<<< Updated upstream
-        //console.log(temp);
-        //sportsPlacesArrFiltered.options = temp;
-        // for(var i=0;i<)
-
-=======
         var instructorsArr = document.getElementById("instructorInput");
         var instructorsArrFiltered = document.getElementById("instructorInput1");
         for (var i = instructorsArrFiltered.options.length - 1; i >= 0; i--) {
@@ -50,7 +44,6 @@
                 instructorsArrFiltered.appendChild(myoption);
             }
         }
->>>>>>> Stashed changes
     }
     var e = document.getElementById('expand');
     e.attachEvent('onclick', function () {
@@ -131,13 +124,7 @@
             {{/each}}
         </select>
         <br>
-<<<<<<< Updated upstream
-
-        <label>Instructor:</label>
-        <br>
-=======
         <label for="instructorInput">Instructor:</label><br>
->>>>>>> Stashed changes
         <select id="instructorInput" name="instructorInput" hidden>
             <option value="">-</option>
             {{#each instructors}}
