@@ -3,11 +3,11 @@
         <a href="/admin/profile">Profile</a>
         <a href="/admin/sports">Sports</a>
         <a href="/admin/sportPlaces">SportPlaces</a>
-        <a class="active" href="/admin/instructor">Instructor</a>
+        <a class="active" href="/admin/instructor">Instructors</a>
         <a href="/admin/classes">Classes</a>
         <a href="/admin/events">Events</a>
         <a href="/admin/users">Users</a>
-        <a  href="/admin/timeSlot">Slots</a>
+        <a href="/admin/timeSlot">Slots</a>
         <a href="/admin/allVenue">Reserved Venue</a>
         <a href="/admin/logout">Logout</a>
     </nav>
@@ -15,7 +15,7 @@
 
 <h1>{{title}}</h1>
 
-<label>Add Instructor:</label>
+<label>Add Instructors:</label>
 <button type="button" id="expand">Add</button>
 
 <div id="error" class="error" {{hidden}}>{{error}}</div>
@@ -23,7 +23,7 @@
     <form action="/admin/instructor" method="post" id="instructor-form">
 
         <label for="sportIDInput">Select Sport:</label><br>
-        <select id="sportIDInput" name="sportIDInput" >
+        <select id="sportIDInput" name="sportIDInput">
             <option value="">-</option>
             {{#each sports}}
             <option value="{{sportID}}">{{name}}</option>
@@ -43,7 +43,7 @@
 
 <p>-----------------------------------------------------------------------</p>
 
-<h3>List of Instructor:</h3>
+<h3>List of Instructors:</h3>
 <div id="instructor">
     {{#if instructor}}
     <ul>
@@ -55,4 +55,3 @@
     <p>No instructor...</p>
     {{/if}}
 </div>
-
