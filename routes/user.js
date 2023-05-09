@@ -18,7 +18,7 @@ import * as instructorData from "../data/admin/instructor.js";
 
 import xss from "xss";
 import { sendEmail } from "../data/admin/mail.js";
-import * as instructorData from "../data/admin/instructor.js";
+//import * as instructorData from "../data/admin/instructor.js";
 
 const router = Router();
 
