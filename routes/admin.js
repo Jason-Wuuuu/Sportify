@@ -1580,11 +1580,13 @@ router.route("/events/:id").get(async (req, res) => {
       }
     }
 
+    const holderInfo = await userData.get(event.userID);
+
     return res.render("admin/eventInfo", {
       title: "Event Info",
       id: event._id,
       name: event.name,
-      userID: event.userID,
+      userID: holderInfo.firstName,
       description: event.description,
       sport: event.sport,
       sportPlace: event.sportPlace,
