@@ -14,9 +14,11 @@ import * as commentsData from "../data/user/comments.js";
 import * as slotsData from "../data/user/timeSlots.js";
 import * as venueData from "../data/user/venue.js";
 import * as ratingVenueData from "../data/user/ratingVenue.js";
+import * as instructorData from "../data/admin/instructor.js";
 
 import xss from "xss";
 import { sendEmail } from "../data/admin/mail.js";
+import { instructor } from "../config/mongoCollections.js";
 
 const router = Router();
 
@@ -355,6 +357,9 @@ router.route("/myclasses/:classID").get(async (req, res) => {
     let classObj = await classesData.getClass(classID);
     classObj.rating ||= "NA";
 
+    const instructorInfo = await instructorData.get(classObj.instructor);
+    classObj.instructor = instructorInfo.name;
+
     const classDate = new Date(`${classObj.date}:${classObj.endTime}`);
     const passed = classDate < new Date();
     return res.render("classInfo", {
@@ -588,7 +593,9 @@ router
       let classes = [];
 
       if (classList) {
-        classList.forEach((classInfo) => {
+        classList.forEach(async (classInfo) => {
+          const instructorInfo = await instructorData.get(classInfo.instructor);
+          classInfo.instructor = instructorInfo.name;
           const classDate = new Date(classInfo.date);
           if (classDate >= new Date()) {
             classes.push(classInfo);
@@ -1590,7 +1597,6 @@ router.route("/updateRating/:id").post(async (req, res) => {
       title: "Error",
       error: e,
     });
-
   }
   try {
     await userData.get(req.session.user.userID);
