@@ -2,12 +2,7 @@
   {{#if event.auth}}
   <nav class="navbar">
     <a href="/" class="logo">Sportify</a>
-
-    <a class="active" href="/events/{{sport}}">Events</a>
-    <a href="/myevents">MyEvents</a>
-    <a href="/classes/{{sport}}">Classes</a>
-    <a href="/venue/{{sport}}">Reserve Venue</a>
-    <a href="/profile">Profile</a>
+    <a href="/events/{{sport}}">Back</a>
     <a href="/logout">Logout</a>
   </nav>
   {{else}}
@@ -53,7 +48,7 @@
       {{#if event.auth}}
       {{#if event.available}}
       {{#if event.registered}}
-      <a style="color: rgb(241, 15, 15);" href="/events/{{sport}}/deregister/{{event._id}}">
+      <a style="color: #ee0000" href="/events/{{sport}}/deregister/{{event._id}}">
         Deregister Event? ⚠️
       </a>
       {{else}}
@@ -64,11 +59,11 @@
       {{/if}}
       {{else}}
       {{#if event.registered}}
-      <a style="color: rgb(241, 15, 15);" href="/events/{{sport}}/deregister/{{event._id}}">
+      <a style="color: #ee0000" href="/events/{{sport}}/deregister/{{event._id}}">
         Deregister Event? ⚠️
       </a>
       {{else}}
-      <a style="color: red;">Event Full! 😢 [
+      <a style="color: #ee0000">Event Full! 😢 [
         {{event.participants.length}}/{{event.capacity}}]
       </a>
       {{/if}}
