@@ -193,7 +193,15 @@ app.use("/admin/searchSlot", (req, res, next) => {
 app.use("/admin/instructor", (req, res, next) => {
   if (!req.session.admin) {
     return res.redirect("/admin/login");
-  }  
+  }
+  next();
+});
+
+app.use("/admin/instructor/remove/:id", (req, res, next) => {
+  if (!req.session.admin) {
+    return res.redirect("/admin/login");
+  }
+  if (req.method === "POST") req.method = "DELETE";
   next();
 });
 
@@ -209,14 +217,6 @@ app.use("/admin/allVenue", (req, res, next) => {
   if (!req.session.admin) {
     return res.redirect("/admin/login");
   }
-  next();
-});
-
-app.use("/admin/instructor/remove/:id", (req, res, next) => {
-  if (!req.session.admin) {
-    return res.redirect("/admin/login");
-  }
-  if (req.method === "POST") req.method = "DELETE";
   next();
 });
 
@@ -378,7 +378,6 @@ app.use("/updateRating/:id", (req, res, next) => {
   next();
 });
 
-
 // app.use("/deleteVenue/:id/del/:date", (req, res, next) => {
 //   if (!req.session.user) {
 //     return res.redirect("/");
@@ -396,7 +395,7 @@ app.use(async (req, res, next) => {
   if (req.session.admin) authenticated = "Admin";
 
   const log_msg = `[${currentTime}]: ${req_method} ${req_route} (${authenticated})`;
-  //console.log(log_msg);
+  console.log(log_msg);
 
   next();
 });
