@@ -248,7 +248,7 @@ router.route("/myevents").get(async (req, res) => {
       item.members = item.participants.length != 0 ? true : false;
     }
   }
-  eventList = eventList.reverse();
+  // eventList = eventList.reverse();
   let empty = eventList.length == 0 ? true : false;
 
   let events = await eventsData.getJoinedEvents(uid);
@@ -431,7 +431,7 @@ router
         item.members = item.participants.length != 0 ? true : false;
       }
     }
-    eventList = eventList.reverse();
+    // eventList = eventList.reverse();
     let empty = eventList.length == 0 ? true : false;
 
     const options = getGenderOptions(userInfo.gender);
@@ -573,7 +573,7 @@ router.route("/events/:sports").get(async (req, res) => {
       item.registered = false;
     }
   }
-  eventList = eventList.reverse();
+  // eventList = eventList.reverse();
   return res.render("events", {
     title: "events",
     sport: sport,
