@@ -593,14 +593,14 @@ router
       let classes = [];
 
       if (classList) {
-        classList.forEach(async (classInfo) => {
+        for (let classInfo of classList) {
           const instructorInfo = await instructorData.get(classInfo.instructor);
           classInfo.instructor = instructorInfo.name;
           const classDate = new Date(classInfo.date);
           if (classDate >= new Date()) {
             classes.push(classInfo);
           }
-        });
+        }
       }
 
       return res.render("classes", {
