@@ -507,7 +507,7 @@ if (document.URL.includes("/admin")) {
     let sportIDInput = document.getElementById("sportIDInput");
     let sportPlaceIDInput = document.getElementById("sportplaceIDInput1");
     let capacityInput = document.getElementById("capacityInput");
-    let instructorInput = document.getElementById("instructorInput");
+    let instructorInput = document.getElementById("instructorInput1");
     let priceInput = document.getElementById("priceInput");
     let dateInput = document.getElementById("dateInput");
     let startTimeInput = document.getElementById("startTimeInput");
@@ -542,7 +542,7 @@ if (document.URL.includes("/admin")) {
         title = checkString(title, "Title");
         sportID = checkId(sportID, "SportID");
         sportPlaceID = checkId(sportPlaceID, "Sport PlaceID");
-        instructor = checkName(instructor, "Instructor");
+        instructor = checkId(instructor, "Instructor");
         capacity = checkCapacity(capacity, "Capacity");
         price = checkPrice(price, "Price");
         date = checkDate(date, "Date");
