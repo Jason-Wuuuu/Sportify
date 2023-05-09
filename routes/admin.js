@@ -403,8 +403,17 @@ router
   .route("/classes")
   .get(async (req, res) => {
     const sports = await getSportOptions();
-    const sportPlaces = await getSportPlaceOptions();
+    const sportPlaces = await getSportPlaceOptions();   
     const classList = await classData.getAll();
+
+    const instructorList = await instructorData.getall();
+    const instructors = instructorList.map((instructor) =>
+      Object({
+        instructorID: instructor._id,
+        instructorName: instructor.name,
+        sportId1: instructor.sportID,
+      })
+    );
 
     let classes = [];
     let passedClasses = [];
@@ -436,6 +445,7 @@ router
       n: classes.length,
       sports: sports,
       sportPlaces: sportPlaces,
+      instructors: instructors,
       classes: classes,
       passedClasses: passedClasses,
     });
@@ -470,8 +480,8 @@ router
         classInfo.capacityInput,
         "Capacity"
       );
-      classInfo.instructorInput = validation.checkName(
-        classInfo.instructorInput,
+      classInfo.instructorInput1 = validation.checkId(
+        classInfo.instructorInput1,
         "Instructor"
       );
       classInfo.priceInput = validation.checkPrice(
@@ -495,6 +505,14 @@ router
     } catch (e) {
       const sports = await getSportOptions();
       const sportPlaces = await getSportPlaceOptions();
+      const instructorList = await instructorData.getall();
+      const instructors = instructorList.map((instructor) =>
+      Object({
+        instructorID: instructor._id,
+        instructorName: instructor.name,
+        sportId1: instructor.sportID,
+      })
+    );
       const classList = await classData.getAll();
       let classes = [];
       if (classList) {
@@ -511,10 +529,11 @@ router
         error: e,
         sports: sports,
         sportPlaces: sportPlaces,
+        instructors: instructors,
         classes: classes,
         classTitle: classInfo.titleInput,
         capacity: classInfo.capacityInput,
-        instructor: classInfo.instructorInput,
+        instructor: classInfo.instructorInput1,
         price: classInfo.priceInput,
         date: classInfo.dateInput,
         startTime: classInfo.startTimeInput,
@@ -528,7 +547,7 @@ router
         classInfo.sportIDInput,
         classInfo.sportplaceIDInput1,
         classInfo.capacityInput,
-        classInfo.instructorInput,
+        classInfo.instructorInput1,
         classInfo.priceInput,
         classInfo.dateInput,
         classInfo.startTimeInput,
@@ -1043,6 +1062,12 @@ router
       } catch (e) {
         sportPlaceInfo.name = "Please reselect";
       }
+      let instructorInfo = {};
+      try {
+        instructorInfo = await instructorData.get(classInfo.instructor);
+      } catch (e) {
+        instructorInfo.name = "Please reselect";
+      }
 
       const userIdList = classInfo.students;
       const users = [];
@@ -1063,6 +1088,14 @@ router
 
       const sports = await getSportOptions(sportInfo._id);
       const sportPlaces = await getSportPlaceOptions(sportPlaceInfo._id);
+      const instructorList = await getSportPlaceOptions(instructorInfo._id);
+      const instructors = instructorList.map((instructor) =>
+      Object({
+        instructorID: instructor._id,
+        instructorName: instructor.name,
+        sportId1: instructor.sportID,
+      })
+    );
 
       return res.render("admin/classInfo", {
         title: "Class Info",
@@ -1070,11 +1103,12 @@ router
         id: classInfo._id,
         sports: sports,
         sportPlaces: sportPlaces,
+        instructors: instructors,
         name: classInfo.title,
         sport: sportInfo.name,
         sportPlace: sportPlaceInfo.name,
         capacity: classInfo.capacity,
-        instructor: classInfo.instructor,
+        instructor: instructorInfo.name,
         price: classInfo.price,
         date: classInfo.date,
         startTime: classInfo.startTime,
@@ -1088,8 +1122,10 @@ router
         sportName: sportInfo.name,
         sportPlaceID: sportPlaceInfo._id,
         sportPlaceName: sportPlaceInfo.name,
+        instructorID: instructorInfo._id,
+        instructorName: instructorInfo.name,
         newCapacity: classInfo.capacity,
-        newInstructor: classInfo.instructor,
+       // newInstructor: classInfo.instructor,
         newPrice: classInfo.price,
         newDate: classInfo.date,
         newStartTime: classInfo.startTime,
@@ -1138,8 +1174,8 @@ router
         classInfo.capacityInput,
         "Capacity"
       );
-      classInfo.instructorInput = validation.checkName(
-        classInfo.instructorInput,
+      classInfo.instructorInput1 = validation.checkName(
+        classInfo.instructorInput1,
         "Instructor"
       );
       classInfo.priceInput = validation.checkPrice(
@@ -1169,6 +1205,14 @@ router
     } catch (e) {
       const sports = await getSportOptions();
       const sportPlaces = await getSportPlaceOptions();
+      const instructorList = await getSportPlaceOptions();
+      const instructors = instructorList.map((instructor) =>
+      Object({
+        instructorID: instructor._id,
+        instructorName: instructor.name,
+        sportId1: instructor.sportID,
+      })
+    );
 
       let sportInfo = {};
       try {
@@ -1182,6 +1226,12 @@ router
       } catch (e) {
         sportPlaceInfo.name = "Please reselect";
       }
+      let instructorInfo = {};
+      try {
+        instructorInfo = await instructorData.get(classInfo.instructorInput1);
+      } catch (e) {
+        instructorInfo.name = "Please reselect";
+      }
 
       let origClassInfo = await classData.get(req.params.id);
 
@@ -1192,6 +1242,7 @@ router
         error: e,
         sports: sports,
         sportPlaces: sportPlaces,
+        instructors: instructors,
         name: origClassInfo.title,
         sport: origClassInfo.sport,
         sportPlace: origClassInfo.sportPlace,
@@ -1207,7 +1258,7 @@ router
         users: origClassInfo.students,
         classTitle: origClassInfo.title,
         newCapacity: classInfo.capacityInput,
-        newInstructor: classInfo.instructorInput,
+       // newInstructor: classInfo.instructorInput,
         newPrice: classInfo.priceInput,
         newDate: classInfo.dateInput,
         newStartTime: classInfo.startTimeInput,
@@ -1217,6 +1268,8 @@ router
         sportName: sportInfo.name,
         sportPlaceID: sportPlaceInfo._id,
         sportPlaceName: sportPlaceInfo.name,
+        instructorID: instructorInfo._id,
+        instructorName: instructorInfo.name,
       });
     }
 
@@ -1228,7 +1281,7 @@ router
         classInfo.sportIDInput,
         classInfo.sportplaceIDInput1,
         classInfo.capacityInput,
-        classInfo.instructorInput,
+        classInfo.instructorInput1,
         classInfo.priceInput,
         classInfo.dateInput,
         classInfo.startTimeInput,

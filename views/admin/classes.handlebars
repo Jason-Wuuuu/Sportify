@@ -13,9 +13,8 @@
     </nav>
 </header>
 <script>
-    function filterplaces(id) {
-        //  alert(sportPlaces[0]["sportPlaceName"]);
-        //var temp = [];
+    function filterplaces(id) {      
+        //sportplace 
         var sportsPlacesArr = document.getElementById("sportplaceIDInput");
         var sportsPlacesArrFiltered = document.getElementById("sportplaceIDInput1");
         for (var i = 0; i < sportsPlacesArrFiltered.options.length; i++) {
@@ -23,19 +22,32 @@
                 sportsPlacesArrFiltered.remove(i);
             }
         }
-        //  debugger;
+      
         for (var i = 0; i < sportsPlacesArr.options.length; i++) {
-            if (id == sportsPlacesArr.options[i].className) {
-                //temp.push({ "Id": sportsPlacesArr.options[i].value, "Name": sportsPlacesArr.options[i].innerText });
+            if (id == sportsPlacesArr.options[i].className) {               
                 var myoption = document.createElement('option');
                 myoption.value = sportsPlacesArr.options[i].value;
                 myoption.innerHTML = sportsPlacesArr.options[i].innerText;
                 sportsPlacesArrFiltered.appendChild(myoption);
             }
         }
-        //console.log(temp);
-        //sportsPlacesArrFiltered.options = temp;
-        // for(var i=0;i<)
+      //instructor
+       var instructorsArr = document.getElementById("instructorInput");
+        var instructorsArrFiltered = document.getElementById("instructorInput1");
+        for (var i = 0; i < instructorsArrFiltered.options.length; i++) {
+            if (instructorsArrFiltered.options[i].innerText != '-') {
+                instructorsArrFiltered.remove(i);
+            }
+        }
+      
+        for (var i = 0; i < instructorsArr.options.length; i++) {
+            if (id == instructorsArr.options[i].className) {               
+                var myoption = document.createElement('option');
+                myoption.value = instructorsArr.options[i].value;
+                myoption.innerHTML = instructorsArr.options[i].innerText;
+                instructorsArrFiltered.appendChild(myoption);
+            }
+        }
     }
 </script>
 
@@ -85,10 +97,22 @@
         </select> --}}
         <br>
 
-        <label for="instructorInput">Instructor:</label>
+          <label>Instructor:</label>
+        <br>
+        <select id="instructorInput" name="instructorInput" hidden>
+            {{#each instructors}}
+            <option value="{{instructorID}}" class="{{sportId1}}">{{instructorName}}</option>
+            {{/each}}
+        </select>
+        <select id="instructorInput1" name="instructorInput1">
+            <option value="">-</option>
+        </select>      
+        <br>
+
+        {{!-- <label for="instructorInput">Instructor:</label>
         <br>
         <input type="text" id="instructorInput" name="instructorInput" value="{{instructor}}" />
-        <br>
+        <br> --}}
 
         <label for="capacityInput">Capacity:</label>
         <br>
