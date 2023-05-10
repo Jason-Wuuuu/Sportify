@@ -292,25 +292,25 @@ for (let x = 0; x < 4; x++) {
 }
 console.log("SportPlaces Data Added for first 4 Sports!");
 
-for (let x = 0; x < 4; x++) {
-  let instructorArr = [];
-  let sport_id = sportID[x];
-  for (let i = 0; i < 5; i++) {
-    let instructorName = faker.name.fullName();
-    try {
-      const newInstructor = await instructors.createinstructorseed(
-        sport_id,
-        instructorName
-      );
-      let instructorId = newInstructor.instructorId;
-      instructorArr.push(instructorId);
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  instructorID.push(instructorArr);
-}
-console.log("\nInstructors Data Added for first 4 Sports!");
+// for (let x = 0; x < 4; x++) {
+//   let instructorArr = [];
+//   let sport_id = sportID[x];
+//   for (let i = 0; i < 5; i++) {
+//     let instructorName = faker.name.fullName();
+//     try {
+//       const newInstructor = await instructors.createinstructorseed(
+//         sport_id,
+//         instructorName
+//       );
+//       let instructorId = newInstructor.instructorId;
+//       instructorArr.push(instructorId);
+//     } catch (e) {
+//       console.log(e);
+//     }
+//   }
+//   instructorID.push(instructorArr);
+// }
+// console.log("\nInstructors Data Added for first 4 Sports!");
 
 for (let x = 0; x < 4; x++) {
   let sport_id = sportID[x];
