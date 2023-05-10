@@ -20,12 +20,17 @@
         var sportsPlacesArr = document.getElementById("sportplaceIDInput");
         var sportsPlacesArrFiltered = document.getElementById("sportplaceIDInput1");
 
-        for (var i = 0; i < sportsPlacesArrFiltered.options.length; i++) {
+        /* for (var i = 0; i < sportsPlacesArrFiltered.options.length; i++) {
+             if (sportsPlacesArrFiltered.options[i].innerText != '-') {
+                 sportsPlacesArrFiltered.remove(i);
+             }
+         }*/
+        var len = sportsPlacesArrFiltered.options.length - 1;
+        for (var i = len; i >= 0; i--) {
             if (sportsPlacesArrFiltered.options[i].innerText != '-') {
                 sportsPlacesArrFiltered.remove(i);
             }
         }
-
 
         // debugger;
         for (var i = 0; i < sportsPlacesArr.options.length; i++) {
@@ -47,12 +52,18 @@
         var sportsPlacesArr = document.getElementById("sportplaceIDInputs");
         var sportsPlacesArrFiltered = document.getElementById("sportplaceIDInput1s");
 
-        for (var i = 0; i < sportsPlacesArrFiltered.options.length; i++) {
+        /*  for (var i = 0; i < sportsPlacesArrFiltered.options.length; i++) {
+              if (sportsPlacesArrFiltered.options[i].innerText != '-') {
+                  sportsPlacesArrFiltered.remove(i);
+              }
+          }*/
+
+        var len = sportsPlacesArrFiltered.options.length - 1;
+        for (var i = len; i >= 0; i--) {
             if (sportsPlacesArrFiltered.options[i].innerText != '-') {
                 sportsPlacesArrFiltered.remove(i);
             }
         }
-
 
         // debugger;
         for (var i = 0; i < sportsPlacesArr.options.length; i++) {

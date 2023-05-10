@@ -17,7 +17,13 @@
         //sportplace 
         var sportsPlacesArr = document.getElementById("sportplaceIDInput");
         var sportsPlacesArrFiltered = document.getElementById("sportplaceIDInput1");
-        for (var i = 0; i < sportsPlacesArrFiltered.options.length; i++) {
+        /*  for (var i = 0; i < sportsPlacesArrFiltered.options.length; i++) {
+              if (sportsPlacesArrFiltered.options[i].innerText != '-') {
+                  sportsPlacesArrFiltered.remove(i);
+              }
+          }*/
+        var len = sportsPlacesArrFiltered.options.length - 1;
+        for (var i = len; i >= 0; i--) {
             if (sportsPlacesArrFiltered.options[i].innerText != '-') {
                 sportsPlacesArrFiltered.remove(i);
             }
@@ -34,12 +40,18 @@
         //instructor
         var instructorsArr = document.getElementById("instructorInput");
         var instructorsArrFiltered = document.getElementById("instructorInput1");
-        for (var i = 0; i < instructorsArrFiltered.options.length; i++) {
+        /*for (var i = 0; i < instructorsArrFiltered.options.length; i++) {
+            if (instructorsArrFiltered.options[i].innerText != '-') {
+                instructorsArrFiltered.remove(i);
+            }
+        }*/
+        var len1 = instructorsArrFiltered.options.length - 1;
+        for (var i = len1; i >= 0; i--) {
             if (instructorsArrFiltered.options[i].innerText != '-') {
                 instructorsArrFiltered.remove(i);
             }
         }
-
+        
         for (var i = 0; i < instructorsArr.options.length; i++) {
             if (id == instructorsArr.options[i].className) {
                 var myoption = document.createElement('option');
