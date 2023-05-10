@@ -22,6 +22,9 @@ Overall, Sportify aims to make it easier for people to stay active and engage in
 3. run `npm run seed` to generate data
 4. run `npm start` to start using the website
 
+### 💻 Reminder:
+Data generated with the seed file is just dummy data, it is possible that some names and images might not match real world situation. 
+
 ### 💻 Routs:
 1. routes for users: '/'
 2. routes for admins: '/admin' 
