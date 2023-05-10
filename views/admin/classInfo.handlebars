@@ -4,31 +4,99 @@
     </nav>
 </header>
 <script>
-    function filterplaces(id) {
-        //  alert(sportPlaces[0]["sportPlaceName"]);
-        //var temp = [];
+    //if (window.location.href.substring(window.location.href.lastIndexOf('/') + 1) != '') {
+
+    //}
+    function filterplaces(id, param) {
         var sportsPlacesArr = document.getElementById("sportplaceIDInput");
         var sportsPlacesArrFiltered = document.getElementById("sportplaceIDInput1");
-        for (var i = 0; i < sportsPlacesArrFiltered.options.length; i++) {
-            if (sportsPlacesArrFiltered.options[i].innerText != '-') {
-                sportsPlacesArrFiltered.remove(i);
+        var len = sportsPlacesArrFiltered.options.length - 1;
+        var selectedsportplace = "";
+        for (var i = len; i >= 0; i--) {
+            if (param == 1) {
+                if (sportsPlacesArrFiltered.options[i].className == '') {
+                    selectedsportplace = sportsPlacesArrFiltered.options[i].value;
+                }
+                if (sportsPlacesArrFiltered.options[i].innerText != '-' && sportsPlacesArrFiltered.options[i].className != '') {
+                    sportsPlacesArrFiltered.remove(i);
+                }
+            }
+            else {
+                if (sportsPlacesArrFiltered.options[i].innerText != '-') {
+                    sportsPlacesArrFiltered.remove(i);
+                }
             }
         }
-        //  debugger;
+
         for (var i = 0; i < sportsPlacesArr.options.length; i++) {
             if (id == sportsPlacesArr.options[i].className) {
-                //temp.push({ "Id": sportsPlacesArr.options[i].value, "Name": sportsPlacesArr.options[i].innerText });
                 var myoption = document.createElement('option');
                 myoption.value = sportsPlacesArr.options[i].value;
                 myoption.innerHTML = sportsPlacesArr.options[i].innerText;
-                sportsPlacesArrFiltered.appendChild(myoption);
+                if (param == 1) {
+                    if (selectedsportplace != myoption.value) {
+                        sportsPlacesArrFiltered.appendChild(myoption);
+                    }
+                }
+                else {
+                    sportsPlacesArrFiltered.appendChild(myoption);
+                }
             }
         }
-        //console.log(temp);
-        //sportsPlacesArrFiltered.options = temp;
-        // for(var i=0;i<)
+        var instructorsArr = document.getElementById("instructorInput");
+        var instructorsArrFiltered = document.getElementById("instructorInput1");
+        var len1 = instructorsArrFiltered.options.length - 1;
+        var selectedinstructor = "";
+        for (var i = len1; i >= 0; i--) {
+            if (param == 1) {
+                if (instructorsArrFiltered.options[i].className == '') {
+                    selectedinstructor = instructorsArrFiltered.options[i].value;
+                }
+                if (instructorsArrFiltered.options[i].innerText != '-' && instructorsArrFiltered.options[i].className != '') {
+                    instructorsArrFiltered.remove(i);
+                }
+            }
+            else {
+                if (instructorsArrFiltered.options[i].innerText != '-') {
+                    instructorsArrFiltered.remove(i);
+                }
+            }
 
+        }
+
+        for (var i = 0; i < instructorsArr.options.length; i++) {
+            if (id == instructorsArr.options[i].className) {
+                var myoption = document.createElement('option');
+                myoption.value = instructorsArr.options[i].value;
+                myoption.innerHTML = instructorsArr.options[i].innerText;
+                if (param == 1) {
+                    if (selectedinstructor != myoption.value) {
+                        instructorsArrFiltered.appendChild(myoption);
+                    }
+                }
+                else {
+                    instructorsArrFiltered.appendChild(myoption);
+                }
+
+            }
+        }
     }
+    /*var e = document.getElementById('expand');
+    e.attachEvent('onclick', function () {
+        filterplaces(window.location.href.substring(window.location.href.lastIndexOf('/') + 1));
+    });*/
+    document.addEventListener("DOMContentLoaded", function (event) {
+        // Your code to run since DOM is loaded and ready
+        var a = document.getElementById("sportIDInput");
+        if (a.selectedOptions.length > 0) {
+            filterplaces(a.selectedOptions[0].value, 1);
+        }
+        //while(tmp.options.length>0){
+        //filterplaces(window.location.href.substring(window.location.href.lastIndexOf('/') + 1));
+        //break;
+        //}
+    });
+
 </script>
 <h1>{{name}}</h1>
 
@@ -90,15 +158,16 @@
             <option value="{{sportPlaceID}}" class="{{sportId1}}">{{name}}</option>
             {{/each}}
         </select>
-        <select id="sportplaceIDInput1" name="sportplaceIDInput1">
-            <option value="{{sportPlaceID}}">{{sportPlaceName}}</option>
-            <option value="">-</option>
 
+        <select id="sportplaceIDInput1" name="sportplaceIDInput1">
+            <option value="{{sportPlaceID}}" class="{{sportId1}}">{{sportPlaceName}}</option>
+            <option value="">-</option>
+            {{#each sportPlaces}}
+            <option value="{{sportPlaceID}}" class="{{sportId1}}">{{name}}</option>
+            {{/each}}
         </select>
         <br>
-
-        <label>Instructor:</label>
-        <br>
+        <label for="instructorInput">Instructor:</label><br>
         <select id="instructorInput" name="instructorInput" hidden>
             <option value="">-</option>
             {{#each instructors}}
@@ -108,7 +177,9 @@
         <select id="instructorInput1" name="instructorInput1">
             <option value="{{instructorID}}">{{instructorName}}</option>
             <option value="">-</option>
-
+            {{#each instructors}}
+            <option value="{{instructorID}}" class="{{sportId1}}">{{instructorName}}</option>
+            {{/each}}
         </select>
         <br>
 

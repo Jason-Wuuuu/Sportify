@@ -70,6 +70,26 @@ const getSportPlaceOptions = async (sportPlaceID) => {
   }
   return sportPlaces;
 };
+const getSportPlaceOptionswithsport = async (sportID, sportPlaceID) => {
+  const sportPlacetList = await sportPlaceData.getbysportid(sportID);
+  let sportPlaces = [];
+  if (sportPlacetList) {
+    sportPlaces = sportPlacetList.map((sportPlace) =>
+      Object({
+        sportPlaceID: sportPlace._id,
+        name: sportPlace.name,
+        sportId1: sportPlace.sportID,
+      })
+    );
+  }
+  if (sportPlaceID) {
+    const i = sportPlaces.findIndex((object) => {
+      return object.sportPlaceID.toString() === sportPlaceID.toString();
+    });
+    sportPlaces.splice(i, 1);
+  }
+  return sportPlaces;
+};
 
 const applyXSS = (req_body) => {
   Object.keys(req_body).forEach(function (key, index) {
@@ -1087,8 +1107,18 @@ router
       if (!classInfo.rating) classInfo.rating = "NA";
 
       const sports = await getSportOptions(sportInfo._id);
-      const sportPlaces = await getSportPlaceOptions(sportPlaceInfo._id);
-      const instructorList = await getSportPlaceOptions(instructorInfo._id);
+      const sportPlacetList = await sportPlaceData.getAll();
+      let sportPlaces = [];
+      if (sportPlacetList) {
+        sportPlaces = sportPlacetList.map((sportPlace) =>
+          Object({
+            sportPlaceID: sportPlace._id,
+            name: sportPlace.name,
+            sportId1: sportPlace.sportID,
+          })
+        );
+      }
+      const instructorList = await instructorData.getall();
       const instructors = instructorList.map((instructor) =>
         Object({
           instructorID: instructor._id,
